@@ -1,13 +1,25 @@
 import AVFoundation
+import Combine
 
 class AudioManager: ObservableObject {
     private var engine: AVAudioEngine!
     private var player: AVAudioPlayerNode!
     private var mixer: AVAudioMixerNode!
     private var buffer: AVAudioPCMBuffer?
+    private var routeObserver: NSObjectProtocol?
+
+    @Published var outputRouteSummary: String = "Unknown"
+    @Published var outputRoutes: [String] = []
     
     init() {
         setupAudioEngine()
+        observeRouteChanges()
+    }
+
+    deinit {
+        if let routeObserver {
+            NotificationCenter.default.removeObserver(routeObserver)
+        }
     }
     
     private func setupAudioEngine() {
@@ -29,6 +41,57 @@ class AudioManager: ObservableObject {
             try engine.start()
         } catch {
             print("Audio Engine Error: \(error)")
+        }
+    }
+
+    private func observeRouteChanges() {
+        updateRouteInfo()
+        routeObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateRouteInfo()
+        }
+    }
+
+    private func updateRouteInfo() {
+        let outputs = AVAudioSession.sharedInstance().currentRoute.outputs
+        if outputs.isEmpty {
+            outputRouteSummary = "No Output"
+            outputRoutes = ["No active outputs"]
+            return
+        }
+
+        outputRouteSummary = outputs.map(\.portName).joined(separator: " + ")
+        outputRoutes = outputs.map { output in
+            let typeLabel = portTypeLabel(output.portType)
+            let channels = output.channels?.count ?? 0
+            let channelInfo = channels > 0 ? "\(channels) ch" : nil
+            return [typeLabel, output.portName, channelInfo]
+                .compactMap { $0 }
+                .joined(separator: " • ")
+        }
+    }
+
+    private func portTypeLabel(_ port: AVAudioSession.Port) -> String {
+        switch port {
+        case .hdmi: return "HDMI"
+        case .airPlay: return "AirPlay"
+        case .bluetoothA2DP: return "Bluetooth A2DP"
+        case .bluetoothLE: return "Bluetooth LE"
+        case .bluetoothHFP: return "Bluetooth HFP"
+        case .builtInSpeaker: return "Built-in Speaker"
+        case .builtInReceiver: return "Built-in Receiver"
+        case .lineOut: return "Line Out"
+        case .headphones: return "Headphones"
+        case .usbAudio: return "USB Audio"
+        case .carAudio: return "Car Audio"
+        case .avb: return "AVB"
+        case .fireWire: return "FireWire"
+        case .pci: return "PCI"
+        case .virtual: return "Virtual"
+        default: return port.rawValue
         }
     }
     

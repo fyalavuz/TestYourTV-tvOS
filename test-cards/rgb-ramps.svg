@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="redRamp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#ff0000"/>
+    </linearGradient>
+    <linearGradient id="greenRamp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#00ff00"/>
+    </linearGradient>
+    <linearGradient id="blueRamp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#0000ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="360" fill="url(#redRamp)"/>
+  <rect y="360" width="1920" height="360" fill="url(#greenRamp)"/>
+  <rect y="720" width="1920" height="360" fill="url(#blueRamp)"/>
+</svg>

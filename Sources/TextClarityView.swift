@@ -48,21 +48,46 @@ struct TextClarityView: View {
                         .foregroundStyle(foreground)
                         .lineSpacing(CGFloat(fontSize * (lineHeight - 1)))
                         .kerning(CGFloat(letterSpacing))
-                        .padding(.horizontal, 80)
-                        .padding(.vertical, 120)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
                 .scrollDisabled(true)
+                .ignoresSafeArea()
+
+                if showSmoothing {
+                    HStack(spacing: 12) {
+                        SmoothingBox(title: "Sharp", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0)
+                        SmoothingBox(title: "Soft", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0.8)
+                    }
+                    .padding(.trailing, 40)
+                    .padding(.bottom, 40)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                }
 
                 ControlPanelDock(title: "Text Clarity", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                     VStack(alignment: .leading, spacing: 16) {
                         SectionHeader(title: "Font Family")
-                        Picker("Font", selection: $fontOption) {
-                            ForEach(FontOption.allCases) { option in
-                                Text(option.rawValue).tag(option)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(FontOption.allCases) { option in
+                                    Button {
+                                        fontOption = option
+                                    } label: {
+                                        Text(option.rawValue)
+                                            .font(.callout.weight(.semibold))
+                                            .foregroundStyle(fontOption == option ? .black : .white)
+                                            .padding(.vertical, 10)
+                                            .padding(.horizontal, 14)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                                    .fill(fontOption == option ? Color.white : Color.white.opacity(0.12))
+                                            )
+                                    }
+                                    .buttonStyle(.glassFocus(cornerRadius: 14))
+                                }
                             }
+                            .padding(.vertical, 4)
                         }
-                        .pickerStyle(.menu)
-                        .glassInput(cornerRadius: 12)
 
                         SectionHeader(title: "Font Size")
                         LabeledSlider(value: $fontSize, range: 8...72, step: 1, suffix: "pt")
@@ -75,37 +100,17 @@ struct TextClarityView: View {
 
                         SectionHeader(title: "Color Mode")
                         HStack(spacing: 12) {
-                            ToggleChip(title: "Dark", isSelected: useDarkMode) {
+                            ColorOptionChip(title: "Dark", color: .black, isSelected: useDarkMode) {
                                 useDarkMode = true
                             }
-                            ToggleChip(title: "Light", isSelected: !useDarkMode) {
+                            ColorOptionChip(title: "Light", color: .white, isSelected: !useDarkMode) {
                                 useDarkMode = false
                             }
                         }
 
                         SectionHeader(title: "Smoothing Preview")
-                        Button {
+                        CheckboxRow(title: "Show comparison", isOn: showSmoothing) {
                             showSmoothing.toggle()
-                        } label: {
-                            HStack {
-                                Text(showSmoothing ? "Hide Comparison" : "Show Comparison")
-                                    .font(.callout.weight(.semibold))
-                                Spacer()
-                                Image(systemName: showSmoothing ? "chevron.up" : "chevron.down")
-                            }
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 12)
-                            .background(Color.white.opacity(0.12))
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        }
-                        .buttonStyle(.glassFocus(cornerRadius: 12))
-
-                        if showSmoothing {
-                            HStack(spacing: 12) {
-                                SmoothingBox(title: "Sharp", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0)
-                                SmoothingBox(title: "Soft", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0.8)
-                            }
                         }
 
                         Button {

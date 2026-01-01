@@ -140,7 +140,7 @@ struct ResponseTimeTestView: View {
                         SectionHeader(title: "Object Color")
                         HStack(spacing: 10) {
                             ForEach(MotionColor.allCases) { option in
-                                ToggleChip(title: option.rawValue, isSelected: objectColor == option) {
+                                ColorOptionChip(title: option.rawValue, color: option.color, isSelected: objectColor == option) {
                                     objectColor = option
                                 }
                             }

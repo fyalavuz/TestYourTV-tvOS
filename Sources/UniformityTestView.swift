@@ -29,6 +29,10 @@ struct UniformityTestView: View {
                 return Color(red: 0, green: 0, blue: value)
             }
         }
+
+        var swatchColor: Color {
+            color(brightness: 100)
+        }
     }
 
     @Environment(\.dismiss) private var dismiss
@@ -75,7 +79,7 @@ struct UniformityTestView: View {
                         SectionHeader(title: "Base Color")
                         HStack(spacing: 10) {
                             ForEach(BaseColor.allCases) { option in
-                                ToggleChip(title: option.rawValue, isSelected: selectedColor == option) {
+                                ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: selectedColor == option) {
                                     selectedColor = option
                                 }
                             }

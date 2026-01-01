@@ -6,6 +6,10 @@ class DeviceMonitor: ObservableObject {
     @Published var displayQuality: String = "HD"
     @Published var fps: Int = 60
     @Published var hdrStatus: String = "SDR"
+    @Published var deviceName: String = ""
+    @Published var deviceModel: String = ""
+    @Published var systemName: String = ""
+    @Published var systemVersion: String = ""
     
     init() {
         updateInfo()
@@ -43,5 +47,11 @@ class DeviceMonitor: ObservableObject {
         } else {
              self.hdrStatus = "SDR (sRGB)"
         }
+
+        let device = UIDevice.current
+        deviceName = device.name
+        deviceModel = device.model
+        systemName = device.systemName
+        systemVersion = device.systemVersion
     }
 }

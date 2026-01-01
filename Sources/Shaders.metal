@@ -138,12 +138,6 @@ using namespace metal;
 
         float yOffset = time * fallSpeed + rnd * 100.0;
 
-        
-
-        // Character cycling simulation
-
-        float charChangeSpeed = 10.0;
-
 
         // Vertical position in the trail
 

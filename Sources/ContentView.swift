@@ -25,6 +25,7 @@ struct ContentView: View {
 struct OnboardingView: View {
     let onComplete: () -> Void
     @FocusState private var isFocused: Bool
+    @Namespace private var focusScope
     
     var body: some View {
         ZStack {
@@ -55,24 +56,19 @@ struct OnboardingView: View {
                 }
                 .padding(.vertical, 40)
                 
-                Button(action: onComplete) {
-                    Text("Get Started")
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 60)
-                        .padding(.vertical, 20)
-                        .background(Color.white)
-                        .clipShape(Capsule())
-                }
-                .focused($isFocused)
-                .buttonStyle(.card)
-                .hoverEffect(.lift)
+                Button("Get Started", action: onComplete)
+                    .font(.title3.weight(.bold))
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .focused($isFocused)
+                    .prefersDefaultFocus(true, in: focusScope)
             }
             .padding(60)
         }
         .ignoresSafeArea()
+        .focusScope(focusScope)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.async {
                 isFocused = true
             }
         }
@@ -114,6 +110,14 @@ struct HomeHubView: View {
     // Netflix-style Navigation Data
     let menuSections: [MenuSection] = [
         MenuSection(
+            id: "video-tests",
+            title: "Video Tests",
+            subtitle: "Reference clips with selectable resolution, bitrate, and frame rate.",
+            items: [
+                MenuOption(title: "AVT VQDB UHD-1", icon: "film.stack", color: .purple, destination: .videoTests)
+            ]
+        ),
+        MenuSection(
             id: "core-tests",
             title: "Core Tests",
             subtitle: "Pixel defects, uniformity, gradients, and contrast checks.",
@@ -123,7 +127,8 @@ struct HomeHubView: View {
                 MenuOption(title: "Color Gradient", icon: "circle.lefthalf.filled", color: .blue, destination: .colorGradient),
                 MenuOption(title: "Color Distance", icon: "eyedropper.halffull", color: .cyan, destination: .colorDistance),
                 MenuOption(title: "Contrast", icon: "checkerboard.rectangle", color: .gray, destination: .contrast),
-                MenuOption(title: "Brightness", icon: "sun.max.fill", color: .yellow, destination: .brightness)
+                MenuOption(title: "Brightness", icon: "sun.max.fill", color: .yellow, destination: .brightness),
+                MenuOption(title: "Overscan & Safe Area", icon: "rectangle.inset.filled", color: .teal, destination: .overscan)
             ]
         ),
         MenuSection(
@@ -154,7 +159,9 @@ struct HomeHubView: View {
             items: [
                 MenuOption(title: "Audio Test", icon: "hifispeaker.2.fill", color: .green, destination: .audio),
                 MenuOption(title: "OLED Wiper", icon: "wand.and.stars", color: .purple, destination: .wiper),
-                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .white, destination: .matrix)
+                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .white, destination: .matrix),
+                MenuOption(title: "Input Test", icon: "gamecontroller.fill", color: .teal, destination: .inputTest),
+                MenuOption(title: "System Info", icon: "gearshape.2.fill", color: .cyan, destination: .systemInfo)
             ]
         )
     ]
@@ -168,21 +175,17 @@ struct HomeHubView: View {
                     
                     // --- HERO HEADER ---
                     VStack(alignment: .leading, spacing: 20) {
-                        HStack(alignment: .bottom) {
-                            // Info Badges on Header
-                            HStack(spacing: 20) {
-                                InfoBadge(title: "Quality", value: monitor.displayQuality)
-                                InfoBadge(title: "Resolution", value: monitor.resolution)
-                                InfoBadge(title: "HDR", value: monitor.hdrStatus)
-                            }
+                        // Info Badges on Header
+                        HStack(spacing: 20) {
+                            InfoBadge(title: "Quality", value: monitor.displayQuality)
+                            InfoBadge(title: "Resolution", value: monitor.resolution)
+                            InfoBadge(title: "HDR", value: monitor.hdrStatus)
+                        }
 
-                            Spacer()
-
-                            Text("Test Your TV")
-                                .font(.system(size: 70, weight: .bold, design: .default))
-                                .foregroundStyle(.white)
-                                .tracking(-1)
-                                .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
+                        HStack(spacing: 20) {
+                            InfoBadge(title: "Device", value: monitor.deviceModel)
+                            InfoBadge(title: monitor.systemName, value: monitor.systemVersion)
+                            InfoBadge(title: "Name", value: monitor.deviceName)
                         }
                     }
                     .padding(.top, 40)
@@ -253,6 +256,10 @@ struct HomeHubView: View {
         case .brightness: BrightnessTestView()
         case .contrast: ContrastTestView()
         case .matrix: MatrixTestView()
+        case .overscan: OverscanTestView()
+        case .videoTests: VideoTestsView()
+        case .inputTest: InputTestView()
+        case .systemInfo: SystemInfoView()
         }
     }
 }
@@ -262,7 +269,7 @@ struct HomeHubView: View {
 enum DestinationType: Hashable {
     case calibration, deadPixel, uniformity, colorGradient, colorDistance
     case textClarity, gamma, testPatterns, responseTime, viewingAngle
-    case brightness, contrast, matrix, audio, motion, wiper
+    case brightness, contrast, matrix, audio, motion, wiper, overscan, videoTests, inputTest, systemInfo
 }
 
 struct MenuOption: Identifiable {
@@ -277,26 +284,21 @@ struct ShelfCard: View {
     let item: MenuOption
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Icon Area
-            ZStack {
-                Image(systemName: item.icon)
-                    .font(.system(size: 80)) // Larger icon
-                    .foregroundStyle(item.color.gradient)
-                    .shadow(color: item.color.opacity(0.5), radius: 10)
-            }
-            .frame(width: 380, height: 220) // Standard landscape card ratio
-            
-            // Title Area
-            HStack {
-                Text(item.title)
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
-                Spacer()
-            }
-            .padding(20)
-            .background(.thinMaterial) // Glass bottom
+        VStack(spacing: 16) {
+            Image(systemName: item.icon)
+                .font(.system(size: 80)) // Larger icon
+                .foregroundStyle(item.color.gradient)
+                .shadow(color: item.color.opacity(0.5), radius: 10)
+
+            Text(item.title)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
+                .frame(maxWidth: .infinity)
         }
+        .frame(width: 380, height: 260)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         // No explicit frame here, NavigationLink buttonStyle handles scale
     }

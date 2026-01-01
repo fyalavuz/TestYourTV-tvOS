@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" shape-rendering="crispEdges">
+  <rect width="320" height="360" fill="#ff0000"/>
+  <rect x="320" width="320" height="360" fill="#00ff00"/>
+  <rect x="640" width="320" height="360" fill="#0000ff"/>
+  <rect x="960" width="320" height="360" fill="#00ffff"/>
+  <rect x="1280" width="320" height="360" fill="#ff00ff"/>
+  <rect x="1600" width="320" height="360" fill="#ffff00"/>
+
+  <rect y="360" width="320" height="360" fill="#bf4040"/>
+  <rect x="320" y="360" width="320" height="360" fill="#40bf40"/>
+  <rect x="640" y="360" width="320" height="360" fill="#4040bf"/>
+  <rect x="960" y="360" width="320" height="360" fill="#40bfbf"/>
+  <rect x="1280" y="360" width="320" height="360" fill="#bf40bf"/>
+  <rect x="1600" y="360" width="320" height="360" fill="#bfbf40"/>
+
+  <rect y="720" width="320" height="360" fill="#804040"/>
+  <rect x="320" y="720" width="320" height="360" fill="#408040"/>
+  <rect x="640" y="720" width="320" height="360" fill="#404080"/>
+  <rect x="960" y="720" width="320" height="360" fill="#408080"/>
+  <rect x="1280" y="720" width="320" height="360" fill="#804080"/>
+  <rect x="1600" y="720" width="320" height="360" fill="#808040"/>
+</svg>

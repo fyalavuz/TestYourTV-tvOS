@@ -21,6 +21,10 @@ struct MatrixTestView: View {
             case .red: return SIMD3<Float>(1.0, 0.0, 0.0)
             }
         }
+
+        var swatchColor: Color {
+            Color(red: Double(color.x), green: Double(color.y), blue: Double(color.z))
+        }
     }
 
     enum Background: String, CaseIterable, Identifiable {
@@ -38,6 +42,10 @@ struct MatrixTestView: View {
             case .navy: return SIMD3<Float>(0.0, 0.0, 0.2)
             case .darkBlue: return SIMD3<Float>(0.0, 0.0, 0.4)
             }
+        }
+
+        var swatchColor: Color {
+            Color(red: Double(color.x), green: Double(color.y), blue: Double(color.z))
         }
     }
 
@@ -77,7 +85,7 @@ struct MatrixTestView: View {
                         SectionHeader(title: "Text Color")
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 10)], spacing: 10) {
                             ForEach(Palette.allCases) { option in
-                                ToggleChip(title: option.rawValue, isSelected: textColor == option) {
+                                ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: textColor == option) {
                                     textColor = option
                                     saveSettings()
                                 }
@@ -87,7 +95,7 @@ struct MatrixTestView: View {
                         SectionHeader(title: "Background")
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
                             ForEach(Background.allCases) { option in
-                                ToggleChip(title: option.rawValue, isSelected: backgroundColor == option) {
+                                ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: backgroundColor == option) {
                                     backgroundColor = option
                                     saveSettings()
                                 }

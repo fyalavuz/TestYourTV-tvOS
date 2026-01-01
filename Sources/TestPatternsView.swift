@@ -1,229 +1,163 @@
 import SwiftUI
-import UIKit
+import WebKit
 
 struct TestPatternsView: View {
-    struct PatternItem: Identifiable, Hashable {
+    struct PatternItem: Identifiable {
         let id: String
+        let url: URL
         let name: String
-        let category: String
-    }
-
-    enum PatternResolution: String, CaseIterable, Identifiable {
-        case hd = "HD-1280x720"
-        case wxga = "WXGA-1280x800"
-        case fhd = "FHD-1920x1080"
-        case qhd = "QHD-2560x1440"
-        case wqxga = "WQXGA-2560x1600"
-        case uhd = "UHD-3840x2160"
-
-        var id: String { rawValue }
-
-        var label: String {
-            rawValue.replacingOccurrences(of: "-", with: " ")
-        }
-
-        var pixelCount: Int {
-            let parts = rawValue.split(separator: "-").last?.split(separator: "x") ?? []
-            guard parts.count == 2,
-                  let width = Int(parts[0]),
-                  let height = Int(parts[1]) else {
-                return 0
-            }
-            return width * height
-        }
     }
 
     @Environment(\.dismiss) private var dismiss
     @State private var isMinimized = false
-    @State private var selectedResolution: PatternResolution = .uhd
-    @State private var selectedCategory: String = ""
-    @State private var selectedPattern: PatternItem?
-    @State private var categories: [String: [PatternItem]] = [:]
+    @State private var patterns: [PatternItem] = []
+    @State private var selectedIndex: Int = 0
     @State private var isLoading = true
-    @State private var displayedImage: UIImage?
     @State private var controlsHidden = false
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if let image = displayedImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+            if let current = currentPattern {
+                SVGWebView(url: current.url)
                     .ignoresSafeArea()
+                    .allowsHitTesting(false)
             }
 
             if isLoading {
                 VStack(spacing: 12) {
                     ProgressView()
-                    Text("Loading pattern...")
+                    Text("Loading patterns...")
                         .font(.callout)
                         .foregroundStyle(.white.opacity(0.8))
                 }
-            } else if categories.isEmpty {
-                Text("No patterns found for \(selectedResolution.label).")
+            } else if patterns.isEmpty {
+                Text("No SVG patterns found.")
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }
 
-            ControlPanelDock(title: "Test Patterns", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
+            ControlPanelDock(title: "Test Patterns", isMinimized: $isMinimized, controlsHidden: controlsHidden, fillsHeight: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Select a category and pattern to test geometry, color, and resolution.")
+                    Text("Use left/right on the remote to switch between SVG patterns.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
 
-                    SectionHeader(title: "Resolution")
-                    Picker("Resolution", selection: $selectedResolution) {
-                        ForEach(PatternResolution.allCases.sorted(by: { $0.pixelCount < $1.pixelCount })) { resolution in
-                            Text(resolution.label).tag(resolution)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .glassInput(cornerRadius: 12)
+                    SectionHeader(title: "Current Pattern")
+                    Text(currentPattern?.name ?? "None")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.white)
 
-                    if !categories.isEmpty {
-                        SectionHeader(title: "Category")
-                        Picker("Category", selection: $selectedCategory) {
-                            ForEach(categories.keys.sorted(), id: \.self) { category in
-                                Text(category.capitalized).tag(category)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .glassInput(cornerRadius: 12)
-
-                        if let items = categories[selectedCategory] {
-                            SectionHeader(title: "Pattern")
-                            Picker("Pattern", selection: Binding(
-                                get: { selectedPattern?.id ?? items.first?.id ?? "" },
-                                set: { newValue in
-                                    if let match = items.first(where: { $0.id == newValue }) {
-                                        selectedPattern = match
-                                        loadImage()
-                                    }
-                                }
-                            )) {
-                                ForEach(items) { pattern in
-                                    Text(pattern.name).tag(pattern.id)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .glassInput(cornerRadius: 12)
-                        }
-                    }
+                    Text(patternIndexLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
         .onAppear {
-            let best = bestResolution()
-            if Bundle.main.url(forResource: "index", withExtension: "json", subdirectory: "Patterns/\(best.rawValue)") != nil {
-                selectedResolution = best
-            } else {
-                selectedResolution = .fhd
-            }
             loadPatterns()
         }
-        .onChange(of: selectedResolution) { _, _ in
-            loadPatterns()
+        .onMoveCommand { direction in
+            handleMove(direction)
         }
         .toolbar(.hidden, for: .navigationBar)
         .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
     }
 
-    private func bestResolution() -> PatternResolution {
-        let native = UIScreen.main.nativeBounds.size
-        let pixels = Int(native.width * native.height)
-        let sorted = PatternResolution.allCases.sorted { $0.pixelCount < $1.pixelCount }
-        return sorted.first(where: { $0.pixelCount >= pixels }) ?? sorted.last ?? .uhd
+    private var currentPattern: PatternItem? {
+        guard patterns.indices.contains(selectedIndex) else { return nil }
+        return patterns[selectedIndex]
+    }
+
+    private var patternIndexLabel: String {
+        guard !patterns.isEmpty else { return "0 / 0" }
+        return "\(selectedIndex + 1) / \(patterns.count)"
+    }
+
+    private func handleMove(_ direction: MoveCommandDirection) {
+        guard !patterns.isEmpty else { return }
+        switch direction {
+        case .left:
+            selectedIndex = (selectedIndex - 1 + patterns.count) % patterns.count
+        case .right:
+            selectedIndex = (selectedIndex + 1) % patterns.count
+        default:
+            break
+        }
     }
 
     private func loadPatterns() {
         isLoading = true
-        categories = [:]
-        selectedCategory = ""
-        selectedPattern = nil
-        displayedImage = nil
-
-        let subdirectory = "Patterns/\(selectedResolution.rawValue)"
+        patterns = []
+        selectedIndex = 0
 
         DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                let files: [String]
-                if let url = Bundle.main.url(forResource: "index", withExtension: "json", subdirectory: subdirectory) {
-                    let data = try Data(contentsOf: url)
-                    files = try JSONDecoder().decode([String].self, from: data)
-                } else if let urls = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: subdirectory) {
-                    files = urls.map { $0.lastPathComponent }
-                } else {
-                    DispatchQueue.main.async {
-                        isLoading = false
-                    }
-                    return
+            let urls = Bundle.main.urls(forResourcesWithExtension: "svg", subdirectory: "test-cards") ?? []
+            let items = urls
+                .map { url in
+                    let name = url.deletingPathExtension().lastPathComponent
+                    return PatternItem(id: name, url: url, name: displayName(for: name))
                 }
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
 
-                var mapped: [String: [PatternItem]] = [:]
-                for file in files {
-                    let item = parsePattern(filename: file)
-                    mapped[item.category, default: []].append(item)
-                }
-
-                let sorted = mapped.mapValues { $0.sorted { $0.name < $1.name } }
-
-                DispatchQueue.main.async {
-                    categories = sorted
-                    if let firstCategory = sorted.keys.sorted().first,
-                       let firstPattern = sorted[firstCategory]?.first {
-                        selectedCategory = firstCategory
-                        selectedPattern = firstPattern
-                    }
-                    loadImage()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    isLoading = false
-                }
-            }
-        }
-    }
-
-    private func loadImage() {
-        guard let selectedPattern else {
-            isLoading = false
-            return
-        }
-
-        isLoading = true
-        DispatchQueue.global(qos: .userInitiated).async {
-            let image = loadPatternImage(named: selectedPattern.id)
             DispatchQueue.main.async {
-                displayedImage = image
+                patterns = items
+                selectedIndex = 0
                 isLoading = false
             }
         }
     }
 
-    private func loadPatternImage(named name: String) -> UIImage? {
-        guard let url = Bundle.main.url(
-            forResource: name,
-            withExtension: nil,
-            subdirectory: "Patterns/\(selectedResolution.rawValue)"
-        ) else {
-            return nil
-        }
-        return UIImage(contentsOfFile: url.path)
+    private func displayName(for filename: String) -> String {
+        filename
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized
+    }
+}
+
+struct SVGWebView: UIViewRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
     }
 
-    private func parsePattern(filename: String) -> PatternItem {
-        let base = filename.replacingOccurrences(of: ".png", with: "")
-        let parts = base.split(separator: "-")
-        guard parts.count >= 3 else {
-            return PatternItem(id: filename, name: base, category: "General")
-        }
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        webView.scrollView.isScrollEnabled = false
+        webView.scrollView.bounces = false
+        return webView
+    }
 
-        let category = String(parts[1])
-        let nameParts = parts.dropFirst(2)
-        let name = nameParts.map { $0.capitalized }.joined(separator: " ")
-        return PatternItem(id: filename, name: name, category: category)
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        guard context.coordinator.currentURL != url else { return }
+        context.coordinator.currentURL = url
+        let svgContent = (try? String(contentsOf: url)) ?? ""
+        let html = """
+        <!doctype html>
+        <html>
+          <head>
+            <meta name=\"viewport\" content=\"width=device-width, height=device-height, initial-scale=1, user-scalable=no\" />
+            <style>
+              html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; }
+              svg { width: 100%; height: 100%; display: block; }
+            </style>
+          </head>
+          <body>
+            \(svgContent)
+          </body>
+        </html>
+        """
+        webView.loadHTMLString(html, baseURL: url.deletingLastPathComponent())
+    }
+
+    final class Coordinator {
+        var currentURL: URL?
     }
 }
 

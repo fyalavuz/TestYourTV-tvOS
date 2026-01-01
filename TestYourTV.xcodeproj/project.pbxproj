@@ -16,6 +16,11 @@
 		39626A07AB04B3B137B577C1 /* CloudingTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E3335DDDEC87021F92A814 /* CloudingTestView.swift */; };
 		46CC9591896D7F17A6B8A889 /* ContrastTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946BD4A2C716B0069061A2AD /* ContrastTestView.swift */; };
 		502DEF1087F4833702A406D4 /* MotionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB210F6A9542291E1447013D /* MotionTestView.swift */; };
+		9EDFAE8165D3426FBDDFBD2C /* test-cards in Resources */ = {isa = PBXBuildFile; fileRef = B5F88429F951426B822E388E /* test-cards */; };
+		8BFB8E7648864A5B8837FEAF /* VideoTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04159178297B4C078602E55B /* VideoTestsView.swift */; };
+		924541BAFA1F4F2F9EEA11A9 /* InputTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A56D546BFD4AA6B562DF47 /* InputTestView.swift */; };
+		204E4AD4824B45F4B10DA5FD /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */; };
+		D69841E465554AC3B456FCF4 /* OverscanTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */; };
 		525655DC9FB4AC9250AE5709 /* GradientTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */; };
 		6102574567436BDA820E094C /* DeadPixelTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D2013AA71F9282B7A12CE6 /* DeadPixelTestView.swift */; };
 		652EDA088D5354B99C639890 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1012AF4D9D47604908AA3C /* Glass.swift */; };
@@ -48,6 +53,9 @@
 		4C31501CC2C3EB42328A1F58 /* BurnInWiperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurnInWiperView.swift; sourceTree = "<group>"; };
 		511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestYourTVApp.swift; sourceTree = "<group>"; };
 		5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingAngleTestView.swift; sourceTree = "<group>"; };
+		04159178297B4C078602E55B /* VideoTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTestsView.swift; sourceTree = "<group>"; };
+		04A56D546BFD4AA6B562DF47 /* InputTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTestView.swift; sourceTree = "<group>"; };
+		6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
 		638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientTestView.swift; sourceTree = "<group>"; };
 		6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMonitor.swift; sourceTree = "<group>"; };
 		6893513FEAF2CE0723F90054 /* AudioTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTestsView.swift; sourceTree = "<group>"; };
@@ -58,7 +66,9 @@
 		946BD4A2C716B0069061A2AD /* ContrastTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastTestView.swift; sourceTree = "<group>"; };
 		A33D31F027189CB994322F0D /* GammaTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GammaTestView.swift; sourceTree = "<group>"; };
 		B82C55F6A6FE88DB25ABEABF /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		B5F88429F951426B822E388E /* test-cards */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "test-cards"; sourceTree = SOURCE_ROOT; };
 		BB210F6A9542291E1447013D /* MotionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTestView.swift; sourceTree = "<group>"; };
+		EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverscanTestView.swift; sourceTree = "<group>"; };
 		BF1012AF4D9D47604908AA3C /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		CC539CFF3DCE46A6B9078040 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D69EA9C14F4AAB145014C594 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
@@ -93,15 +103,19 @@
 				6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */,
 				A33D31F027189CB994322F0D /* GammaTestView.swift */,
 				638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */,
+				04A56D546BFD4AA6B562DF47 /* InputTestView.swift */,
 				EEB44DAB78D0C66FF2710F26 /* MatrixTestView.swift */,
 				BB210F6A9542291E1447013D /* MotionTestView.swift */,
+				EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */,
 				511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */,
 				20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */,
+				6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */,
 				D69EA9C14F4AAB145014C594 /* SettingsManager.swift */,
 				7F73BF261448CD237EC97240 /* Shaders.metal */,
 				7271CD661F5C212316BEFF07 /* TestPatternsView.swift */,
 				E086EE0107D6147D8F3741FC /* TextClarityView.swift */,
 				F41607C8B5EDEBA1466B5222 /* UniformityTestView.swift */,
+				04159178297B4C078602E55B /* VideoTestsView.swift */,
 				5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */,
 				4A664C7804FDF91D7A213BDD /* Design */,
 			);
@@ -130,6 +144,7 @@
 			children = (
 				69B5195FAC5AB27C7C5534C2 /* Assets.xcassets */,
 				00D4FEC946C43F58D6994485 /* Patterns */,
+				B5F88429F951426B822E388E /* test-cards */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -195,6 +210,7 @@
 			files = (
 				E50DC421524D3F163869FC5F /* Assets.xcassets in Resources */,
 				AEB16C895CE99069F9BA200D /* Patterns in Resources */,
+				9EDFAE8165D3426FBDDFBD2C /* test-cards in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,15 +236,19 @@
 				FBC20DC466132B7A35E80BBC /* GammaTestView.swift in Sources */,
 				652EDA088D5354B99C639890 /* Glass.swift in Sources */,
 				525655DC9FB4AC9250AE5709 /* GradientTestView.swift in Sources */,
+				924541BAFA1F4F2F9EEA11A9 /* InputTestView.swift in Sources */,
 				F6754304A31C0DBB96F9F1FD /* MatrixTestView.swift in Sources */,
 				502DEF1087F4833702A406D4 /* MotionTestView.swift in Sources */,
+				D69841E465554AC3B456FCF4 /* OverscanTestView.swift in Sources */,
 				07A366B9C805F5009A24E440 /* TestYourTVApp.swift in Sources */,
 				EAD0E12C307A8C4BFFF23F9C /* ResponseTimeTestView.swift in Sources */,
+				204E4AD4824B45F4B10DA5FD /* SystemInfoView.swift in Sources */,
 				B9AD9AF490F4830BAA65203E /* SettingsManager.swift in Sources */,
 				758486422CB72EAF91CB9B60 /* Shaders.metal in Sources */,
 				1F55C0581F1FB04759007F8E /* TestPatternsView.swift in Sources */,
 				A15D18E15D235997A73CCCF0 /* TextClarityView.swift in Sources */,
 				EB695C44C114A43DDE5D4AA5 /* UniformityTestView.swift in Sources */,
+				8BFB8E7648864A5B8837FEAF /* VideoTestsView.swift in Sources */,
 				2BE641B7B890255C6D398D46 /* ViewingAngleTestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

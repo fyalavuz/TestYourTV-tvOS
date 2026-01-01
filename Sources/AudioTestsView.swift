@@ -28,6 +28,9 @@ struct AudioTestsView: View {
                         .foregroundStyle(.white.opacity(0.7))
                 }
 
+                AudioRouteCard(summary: audioManager.outputRouteSummary, outputs: audioManager.outputRoutes)
+                    .frame(maxWidth: 860)
+
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 24)], spacing: 24) {
                     ForEach(speakers, id: \.0) { speaker in
                         Button(action: {
@@ -79,6 +82,31 @@ struct AudioTestsView: View {
                 audioManager.stop()
             }
         }
+    }
+}
+
+private struct AudioRouteCard: View {
+    let summary: String
+    let outputs: [String]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Audio Output Route")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Text(summary)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.white)
+
+            ForEach(outputs.indices, id: \.self) { index in
+                Text(outputs[index])
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassSurface(cornerRadius: 20, strokeOpacity: 0.16)
     }
 }
 

@@ -25,6 +25,11 @@ struct ColorGradientTestView: View {
             case .orange: return (1, 0.65, 0)
             }
         }
+
+        var color: Color {
+            let (r, g, b) = rgb
+            return Color(red: r, green: g, blue: b)
+        }
     }
 
     enum GradientDirection: String, CaseIterable, Identifiable {
@@ -95,7 +100,7 @@ struct ColorGradientTestView: View {
                     SectionHeader(title: "Target Color")
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 10)], spacing: 10) {
                         ForEach(TargetColor.allCases) { option in
-                            ToggleChip(title: option.rawValue, isSelected: targetColor == option) {
+                            ColorOptionChip(title: option.rawValue, color: option.color, isSelected: targetColor == option) {
                                 targetColor = option
                             }
                         }

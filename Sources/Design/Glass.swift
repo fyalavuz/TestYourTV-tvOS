@@ -61,14 +61,15 @@ struct GlassSurface: ViewModifier {
 struct FocusGlow: ViewModifier {
     @Environment(\.isFocused) private var isFocused
     let cornerRadius: CGFloat
+    private let focusRingColor = Color(red: 0.18, green: 0.90, blue: 0.95)
 
     func body(content: Content) -> some View {
         content
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(isFocused ? 0.7 : 0), lineWidth: isFocused ? 2 : 0)
+                    .stroke(focusRingColor.opacity(isFocused ? 0.95 : 0), lineWidth: isFocused ? 3 : 0)
             )
-            .shadow(color: Color.white.opacity(isFocused ? 0.3 : 0), radius: isFocused ? 10 : 0)
+            .shadow(color: focusRingColor.opacity(isFocused ? 0.55 : 0), radius: isFocused ? 18 : 0)
             .animation(.easeOut(duration: 0.2), value: isFocused)
             .zIndex(isFocused ? 1 : 0)
     }
@@ -241,16 +242,18 @@ extension ButtonStyle where Self == GlassFocusButtonStyle {
 struct ControlPanel<Content: View>: View {
     let title: String
     @Binding var isMinimized: Bool
+    let fillsHeight: Bool
     let content: Content
 
-    init(title: String, isMinimized: Binding<Bool>, @ViewBuilder content: () -> Content) {
+    init(title: String, isMinimized: Binding<Bool>, fillsHeight: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self._isMinimized = isMinimized
+        self.fillsHeight = fillsHeight
         self.content = content()
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: isMinimized ? 0 : 16) {
             HStack {
                 Text(title.uppercased())
                     .font(.caption)
@@ -275,12 +278,22 @@ struct ControlPanel<Content: View>: View {
                     .padding(.horizontal, 4)
                     .padding(.bottom, 4)
                 }
-                .frame(maxHeight: 460)
+                .frame(maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
                 .scrollIndicators(.visible)
             }
         }
-        .glassSurface()
-        .padding(30)
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, isMinimized ? 16 : 24)
+        .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+        )
         .transition(.move(edge: .leading).combined(with: .opacity))
     }
 }
@@ -289,29 +302,36 @@ struct ControlPanelDock<Content: View>: View {
     let title: String
     @Binding var isMinimized: Bool
     let controlsHidden: Bool
+    let fillsHeight: Bool
     let content: Content
 
-    init(title: String, isMinimized: Binding<Bool>, controlsHidden: Bool, @ViewBuilder content: () -> Content) {
+    init(title: String, isMinimized: Binding<Bool>, controlsHidden: Bool, fillsHeight: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self._isMinimized = isMinimized
         self.controlsHidden = controlsHidden
+        self.fillsHeight = fillsHeight
         self.content = content()
     }
 
     var body: some View {
-        HStack {
-            if !controlsHidden {
-                VStack {
-                    Spacer()
-                    ControlPanel(title: title, isMinimized: $isMinimized) {
+        GeometryReader { proxy in
+            let panelWidth = proxy.size.width * 0.25
+            let panelHeight: CGFloat? = isMinimized ? min(proxy.size.height, 88) : (fillsHeight ? proxy.size.height : nil)
+            HStack(alignment: .top, spacing: 0) {
+                if !controlsHidden {
+                    ControlPanel(title: title, isMinimized: $isMinimized, fillsHeight: fillsHeight) {
                         content
                     }
-                    Spacer()
+                    .frame(
+                        width: panelWidth,
+                        height: panelHeight,
+                        alignment: .topLeading
+                    )
                 }
+                Spacer(minLength: 0)
             }
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -358,30 +378,29 @@ struct ColorOptionChip: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 18, height: 18)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white.opacity(0.6), lineWidth: 1)
+            let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
+            shape
+                .fill(color)
+                .overlay(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.35),
+                            Color.clear,
+                            Color.black.opacity(0.35)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
-
-                Text(title)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(isSelected ? .black : .white)
-
-                Spacer(minLength: 0)
-            }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isSelected ? Color.white : Color.white.opacity(0.12))
-            )
+                    .clipShape(shape)
+                )
+                .overlay(
+                    shape
+                        .stroke(Color.white.opacity(isSelected ? 0.9 : 0.3), lineWidth: isSelected ? 3 : 1)
+                )
+                .frame(minWidth: 72, maxWidth: .infinity, minHeight: 48)
         }
         .buttonStyle(.glassFocus(cornerRadius: 14))
+        .accessibilityLabel(Text(title))
     }
 }
 
@@ -417,6 +436,44 @@ struct ToggleRow: View {
             )
         }
         .buttonStyle(.glassFocus(cornerRadius: 14))
+    }
+}
+
+struct CheckboxRow: View {
+    let title: String
+    let isOn: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(isOn ? Color.white : Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.white.opacity(isOn ? 0.9 : 0.4), lineWidth: 1)
+                    if isOn {
+                        Image(systemName: "checkmark")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(width: 22, height: 22)
+
+                Text(title)
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.white)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.white.opacity(isOn ? 0.14 : 0.06))
+            )
+        }
+        .buttonStyle(.glassFocus(cornerRadius: 12))
     }
 }
 
