@@ -42,11 +42,12 @@ struct OverscanTestView: View {
                             left: safeInsets.leading,
                             bottom: safeInsets.bottom,
                             right: safeInsets.trailing
-                        )
+                        ),
+                        labelAlignment: .bottomLeading
                     )
                 }
 
-                ControlPanelDock(title: "Overscan", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
+                ControlPanelDock(title: "Overscan", isMinimized: $isMinimized, controlsHidden: controlsHidden, dockSide: .trailing) {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Use these guides to verify if the TV is cropping edges and to read system overscan settings.")
                             .font(.callout)
@@ -210,12 +211,8 @@ private struct CornerLabel: View {
     var body: some View {
         Text(text)
             .font(.caption.weight(.bold))
-            .foregroundStyle(.black)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color.white.opacity(0.85))
-            .clipShape(Capsule())
-            .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
+            .foregroundStyle(Color.white.opacity(0.85))
+            .shadow(color: .black.opacity(0.45), radius: 2, y: 1)
     }
 }
 
@@ -223,6 +220,14 @@ private struct InsetGuide: View {
     let label: String
     let color: Color
     let insets: UIEdgeInsets
+    let labelAlignment: Alignment
+
+    init(label: String, color: Color, insets: UIEdgeInsets, labelAlignment: Alignment = .topLeading) {
+        self.label = label
+        self.color = color
+        self.insets = insets
+        self.labelAlignment = labelAlignment
+    }
 
     var body: some View {
         GeometryReader { proxy in
@@ -233,21 +238,26 @@ private struct InsetGuide: View {
                 height: max(0, proxy.size.height - insets.top - insets.bottom)
             )
 
-            ZStack(alignment: .topLeading) {
+            ZStack {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .stroke(color, style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
                     .frame(width: rect.width, height: rect.height)
                     .position(x: rect.midX, y: rect.midY)
 
                 if rect.width > 0 && rect.height > 0 {
-                    Text(label)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(color.opacity(0.9))
-                        .clipShape(Capsule())
-                        .offset(x: rect.minX + 12, y: rect.minY + 12)
+                    Color.clear
+                        .frame(width: rect.width, height: rect.height)
+                        .position(x: rect.midX, y: rect.midY)
+                        .overlay(alignment: labelAlignment) {
+                            Text(label)
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(color.opacity(0.9))
+                                .clipShape(Capsule())
+                                .padding(12)
+                        }
                 }
             }
         }

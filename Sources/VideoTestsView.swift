@@ -5,6 +5,8 @@ import UIKit
 
 struct VideoTestsView: View {
     @StateObject private var loader = VideoCatalogLoader()
+    @State private var featuredClip: VideoClip?
+    @State private var navigateToFeatured = false
 
     var body: some View {
         ZStack {
@@ -19,6 +21,18 @@ struct VideoTestsView: View {
                         Text("Reference clips for motion, compression, resolution and HDR checks.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
+                        HStack {
+                            Button {
+                                if let firstClip = loader.categories.first?.clips.first {
+                                    featuredClip = firstClip
+                                    navigateToFeatured = true
+                                }
+                            } label: {
+                                Text("Play Featured")
+                                    .font(.callout.weight(.bold))
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
                     }
                     .padding(.top, 40)
                     .padding(.horizontal, 80)
@@ -91,6 +105,15 @@ struct VideoTestsView: View {
                     }
                 }
                 .padding(.bottom, 80)
+            }
+
+            if let clip = featuredClip {
+                NavigationLink(isActive: $navigateToFeatured) {
+                    VideoPlayerQuickView(clip: clip)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -342,7 +365,7 @@ final class VideoQueuePlayerModel: ObservableObject {
         player.removeAllItems()
         guard !variants.isEmpty else {
             hasQueue = false
-#if os(iOS)
+#if os(iOS) || os(tvOS)
             UIApplication.shared.isIdleTimerDisabled = false
 #endif
             return
@@ -356,7 +379,7 @@ final class VideoQueuePlayerModel: ObservableObject {
         items.forEach { player.insert($0, after: nil) }
         hasQueue = true
         player.play()
-#if os(iOS)
+#if os(iOS) || os(tvOS)
         UIApplication.shared.isIdleTimerDisabled = true
 #endif
     }
@@ -365,7 +388,7 @@ final class VideoQueuePlayerModel: ObservableObject {
         player.pause()
         player.removeAllItems()
         hasQueue = false
-#if os(iOS)
+#if os(iOS) || os(tvOS)
         UIApplication.shared.isIdleTimerDisabled = false
 #endif
     }

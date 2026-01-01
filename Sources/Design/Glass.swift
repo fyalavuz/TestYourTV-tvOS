@@ -239,16 +239,37 @@ extension ButtonStyle where Self == GlassFocusButtonStyle {
     }
 }
 
+enum ControlPanelDockSide {
+    case leading
+    case trailing
+
+    var alignment: Alignment {
+        self == .leading ? .topLeading : .topTrailing
+    }
+
+    var transitionEdge: Edge {
+        self == .leading ? .leading : .trailing
+    }
+}
+
 struct ControlPanel<Content: View>: View {
     let title: String
     @Binding var isMinimized: Bool
     let fillsHeight: Bool
+    let transitionEdge: Edge
     let content: Content
 
-    init(title: String, isMinimized: Binding<Bool>, fillsHeight: Bool = true, @ViewBuilder content: () -> Content) {
+    init(
+        title: String,
+        isMinimized: Binding<Bool>,
+        fillsHeight: Bool = true,
+        transitionEdge: Edge = .leading,
+        @ViewBuilder content: () -> Content
+    ) {
         self.title = title
         self._isMinimized = isMinimized
         self.fillsHeight = fillsHeight
+        self.transitionEdge = transitionEdge
         self.content = content()
     }
 
@@ -294,7 +315,7 @@ struct ControlPanel<Content: View>: View {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .stroke(Color.white.opacity(0.18), lineWidth: 1)
         )
-        .transition(.move(edge: .leading).combined(with: .opacity))
+        .transition(.move(edge: transitionEdge).combined(with: .opacity))
     }
 }
 
@@ -303,13 +324,22 @@ struct ControlPanelDock<Content: View>: View {
     @Binding var isMinimized: Bool
     let controlsHidden: Bool
     let fillsHeight: Bool
+    let dockSide: ControlPanelDockSide
     let content: Content
 
-    init(title: String, isMinimized: Binding<Bool>, controlsHidden: Bool, fillsHeight: Bool = true, @ViewBuilder content: () -> Content) {
+    init(
+        title: String,
+        isMinimized: Binding<Bool>,
+        controlsHidden: Bool,
+        fillsHeight: Bool = true,
+        dockSide: ControlPanelDockSide = .leading,
+        @ViewBuilder content: () -> Content
+    ) {
         self.title = title
         self._isMinimized = isMinimized
         self.controlsHidden = controlsHidden
         self.fillsHeight = fillsHeight
+        self.dockSide = dockSide
         self.content = content()
     }
 
@@ -318,8 +348,11 @@ struct ControlPanelDock<Content: View>: View {
             let panelWidth = proxy.size.width * 0.25
             let panelHeight: CGFloat? = isMinimized ? min(proxy.size.height, 88) : (fillsHeight ? proxy.size.height : nil)
             HStack(alignment: .top, spacing: 0) {
+                if dockSide == .trailing {
+                    Spacer(minLength: 0)
+                }
                 if !controlsHidden {
-                    ControlPanel(title: title, isMinimized: $isMinimized, fillsHeight: fillsHeight) {
+                    ControlPanel(title: title, isMinimized: $isMinimized, fillsHeight: fillsHeight, transitionEdge: dockSide.transitionEdge) {
                         content
                     }
                     .frame(
@@ -328,9 +361,11 @@ struct ControlPanelDock<Content: View>: View {
                         alignment: .topLeading
                     )
                 }
-                Spacer(minLength: 0)
+                if dockSide == .leading {
+                    Spacer(minLength: 0)
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: dockSide.alignment)
         }
     }
 }
@@ -575,4 +610,3 @@ struct GlassCheckboxToggleStyle: ToggleStyle {
         .accessibilityValue(configuration.isOn ? "On" : "Off")
     }
 }
-

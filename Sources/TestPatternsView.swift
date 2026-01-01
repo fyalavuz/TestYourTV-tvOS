@@ -30,9 +30,6 @@ struct TestPatternsView: View {
         }
     }
 
-    @Environment(\.dismiss) private var dismiss
-    @State private var isMinimized = false
-    @State private var controlsHidden = false
     @State private var selectedIndex = 0
 
     private let patterns = PatternKind.allCases
@@ -46,28 +43,25 @@ struct TestPatternsView: View {
                     .ignoresSafeArea()
             }
 
-            ControlPanelDock(title: "Test Patterns", isMinimized: $isMinimized, controlsHidden: controlsHidden, fillsHeight: false) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Use left/right on the remote to switch between patterns.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-
-                    SectionHeader(title: "Current Pattern")
-                    Text(currentPattern?.title ?? "None")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
-
-                    Text(patternIndexLabel)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            VStack {
+                Spacer()
+                HStack(spacing: 12) {
+                    GlassIconButton(symbol: "chevron.left", size: 48) {
+                        handleMove(.left)
+                    }
+                    Text("\(currentPattern?.title ?? "None")  •  \(patternIndexLabel)")
+                        .glassHUD()
+                    GlassIconButton(symbol: "chevron.right", size: 48) {
+                        handleMove(.right)
+                    }
                 }
+                .padding(.bottom, 40)
             }
         }
         .onMoveCommand { direction in
             handleMove(direction)
         }
         .toolbar(.hidden, for: .navigationBar)
-        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
     }
 
     private var currentPattern: PatternKind? {

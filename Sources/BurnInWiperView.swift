@@ -1,10 +1,8 @@
 import SwiftUI
 
 struct BurnInWiperView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var mode = 0 // 0: Noise, 1: Sweeper
-    @State private var isMinimized = false
-    @State private var controlsHidden = false
+    @State private var mode = 0 // 0: Noise, 1: Sweeper, 2: Luma Sweep
+    @State private var speed: Double = 1.0
     @State private var startDate = Date()
     
     var body: some View {
@@ -13,15 +11,22 @@ struct BurnInWiperView: View {
                 let time = Float(timeline.date.timeIntervalSince(startDate))
                 
                 if mode == 0 {
+                    // RGB Noise
                     Color.black
                         .colorEffect(ShaderLibrary.color_noise(
-                            .float(time)
+                            .float(time * Float(speed))
+                        ))
+                        .ignoresSafeArea()
+                } else if mode == 1 {
+                    // Luma Noise
+                    Color.black
+                        .colorEffect(ShaderLibrary.noise_animated(
+                            .float(time * Float(speed))
                         ))
                         .ignoresSafeArea()
                 } else {
+                    // Luma Sweep
                     GeometryReader { proxy in
-                        // Scrolling White Bar logic (Manual simplified without new shader for now, or reuse gradient)
-                        // Let's use a moving gradient
                         Rectangle()
                             .fill(
                                 LinearGradient(
@@ -30,7 +35,7 @@ struct BurnInWiperView: View {
                                     endPoint: .trailing
                                 )
                             )
-                            .offset(x: CGFloat((time * 500).remainder(dividingBy: Float(proxy.size.width + 400))) - 200)
+                            .offset(x: CGFloat((time * 500 * Float(speed)).remainder(dividingBy: Float(proxy.size.width + 400))) - 200)
                             .frame(width: 400)
                     }
                     .background(Color.black)
@@ -38,31 +43,41 @@ struct BurnInWiperView: View {
                 }
             }
             
-            ControlPanelDock(title: "OLED Refresher", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Professional tools to clear image retention and exercise sub-pixels.")
-                        .font(.callout)
+            VStack {
+                Spacer()
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("OLED Refresher")
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
-
-                    SectionHeader(title: "Mode")
                     HStack(spacing: 10) {
-                        ToggleChip(title: "RGB Noise", isSelected: mode == 0) {
-                            mode = 0
-                        }
-                        ToggleChip(title: "Luma Sweep", isSelected: mode == 1) {
-                            mode = 1
-                        }
+                        ToggleChip(title: "RGB Noise", isSelected: mode == 0) { mode = 0 }
+                        ToggleChip(title: "Luma Noise", isSelected: mode == 1) { mode = 1 }
+                        ToggleChip(title: "Luma Sweep", isSelected: mode == 2) { mode = 2 }
                     }
-                    
-                    Text(mode == 0 ? "Uses high-frequency RGB noise to evenly wear all sub-pixels." : "Scrolls a high-contrast bar to wash out static retention.")
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.6))
-                        .fixedSize(horizontal: false, vertical: true)
+                    LabeledSlider(value: $speed, range: 0.5...3.0, step: 0.1, suffix: "x")
                 }
+                .padding()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                )
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
             }
         }
         .toolbar(.hidden, for: .navigationBar)
-        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
+        .onAppear {
+            #if os(iOS) || os(tvOS)
+            UIApplication.shared.isIdleTimerDisabled = true
+            #endif
+        }
+        .onDisappear {
+            #if os(iOS) || os(tvOS)
+            UIApplication.shared.isIdleTimerDisabled = false
+            #endif
+        }
     }
 }
 

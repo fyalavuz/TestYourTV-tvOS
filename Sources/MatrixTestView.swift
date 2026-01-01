@@ -50,12 +50,10 @@ struct MatrixTestView: View {
     }
 
     @Environment(\.dismiss) private var dismiss
-    @State private var isMinimized = false
     @State private var textColor: Palette = .matrixGreen
     @State private var backgroundColor: Background = .black
     @State private var fontSize: Double = 30
     @State private var speed: Double = 50
-    @State private var controlsHidden = false
     
     // Shader start time
     @State private var startDate = Date()
@@ -73,67 +71,96 @@ struct MatrixTestView: View {
                         .float(Float(speed) / 20.0),
                         .float(Float(fontSize))
                     ))
-            }
-            .ignoresSafeArea()
-            .overlay {
-                ControlPanelDock(title: "Matrix", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("\"How deep the rabbit hole goes\" mode for motion and persistence testing using Metal.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-
-                        SectionHeader(title: "Text Color")
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 10)], spacing: 10) {
-                            ForEach(Palette.allCases) { option in
-                                ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: textColor == option) {
-                                    textColor = option
-                                    saveSettings()
+                    .ignoresSafeArea()
+                    .overlay {
+                        VStack {
+                            Spacer()
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Matrix")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                HStack(spacing: 16) {
+                                    LabeledSlider(value: $fontSize, range: 10...100, step: 2, suffix: "px")
+                                    LabeledSlider(value: $speed, range: 10...200, step: 10, suffix: "%")
                                 }
-                            }
-                        }
 
-                        SectionHeader(title: "Background")
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
-                            ForEach(Background.allCases) { option in
-                                ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: backgroundColor == option) {
-                                    backgroundColor = option
-                                    saveSettings()
+                                SectionHeader(title: "Text Color")
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 10) {
+                                        ForEach(Palette.allCases) { option in
+                                            ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: textColor == option) {
+                                                textColor = option
+                                                saveSettings()
+                                            }
+                                        }
+                                    }
                                 }
+
+                                SectionHeader(title: "Background")
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 10) {
+                                        ForEach(Background.allCases) { option in
+                                            ColorOptionChip(title: option.rawValue, color: option.swatchColor, isSelected: backgroundColor == option) {
+                                                backgroundColor = option
+                                                saveSettings()
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Button {
+                                    textColor = .matrixGreen
+                                    backgroundColor = .black
+                                    fontSize = 30
+                                    speed = 50
+                                    saveSettings()
+                                } label: {
+                                    Text("Reset Settings")
+                                        .font(.callout.weight(.semibold))
+                                        .foregroundStyle(.black)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(Color.white)
+                                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                }
+                                .buttonStyle(.glassFocus(cornerRadius: 12))
                             }
+                            .padding()
+                            .background(.ultraThinMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                            )
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 40)
                         }
-
-                        SectionHeader(title: "Font Size")
-                        LabeledSlider(value: $fontSize, range: 10...100, step: 2, suffix: "px")
-                            .onChange(of: fontSize) { _, _ in saveSettings() }
-
-                        SectionHeader(title: "Speed")
-                        LabeledSlider(value: $speed, range: 10...200, step: 10, suffix: "%")
-                            .onChange(of: speed) { _, _ in saveSettings() }
-
-                        Button {
-                            textColor = .matrixGreen
-                            backgroundColor = .black
-                            fontSize = 30
-                            speed = 50
-                            saveSettings()
-                        } label: {
-                            Text("Reset Settings")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        }
-                        .buttonStyle(.glassFocus(cornerRadius: 12))
                     }
-                }
             }
         }
         .toolbar(.hidden, for: .navigationBar)
-        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
         .onAppear {
             loadSettings()
+            #if os(iOS) || os(tvOS)
+            UIApplication.shared.isIdleTimerDisabled = true
+            #endif
+        }
+        .onDisappear {
+            #if os(iOS) || os(tvOS)
+            UIApplication.shared.isIdleTimerDisabled = false
+            #endif
+        }
+        .onChange(of: fontSize) { _, _ in
+            saveSettings()
+        }
+        .onChange(of: speed) { _, _ in
+            saveSettings()
+        }
+        .onChange(of: textColor) { _, _ in
+            saveSettings()
+        }
+        .onChange(of: backgroundColor) { _, _ in
+            saveSettings()
         }
     }
 
