@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07A366B9C805F5009A24E440 /* ProDisplayTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511BF2EAB6243C1C2B34D45D /* ProDisplayTVApp.swift */; };
+		07A366B9C805F5009A24E440 /* TestYourTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */; };
 		1F55C0581F1FB04759007F8E /* TestPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7271CD661F5C212316BEFF07 /* TestPatternsView.swift */; };
 		24F8A736DFD0D07973F02A16 /* AudioTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6893513FEAF2CE0723F90054 /* AudioTestsView.swift */; };
 		270A9059A4057922DEF73F24 /* BrightnessTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D24177936A2E4262F756491 /* BrightnessTestView.swift */; };
@@ -43,10 +43,10 @@
 		20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTimeTestView.swift; sourceTree = "<group>"; };
 		35E3335DDDEC87021F92A814 /* CloudingTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudingTestView.swift; sourceTree = "<group>"; };
 		3D24177936A2E4262F756491 /* BrightnessTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessTestView.swift; sourceTree = "<group>"; };
-		49FCBF8DF6ADF892BF0DC88C /* ProDisplayTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProDisplayTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestYourTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A1ECE1AD03A4E737F5CA2E2 /* ColorDistanceTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorDistanceTestView.swift; sourceTree = "<group>"; };
 		4C31501CC2C3EB42328A1F58 /* BurnInWiperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurnInWiperView.swift; sourceTree = "<group>"; };
-		511BF2EAB6243C1C2B34D45D /* ProDisplayTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProDisplayTVApp.swift; sourceTree = "<group>"; };
+		511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestYourTVApp.swift; sourceTree = "<group>"; };
 		5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingAngleTestView.swift; sourceTree = "<group>"; };
 		638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientTestView.swift; sourceTree = "<group>"; };
 		6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMonitor.swift; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 				638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */,
 				EEB44DAB78D0C66FF2710F26 /* MatrixTestView.swift */,
 				BB210F6A9542291E1447013D /* MotionTestView.swift */,
-				511BF2EAB6243C1C2B34D45D /* ProDisplayTVApp.swift */,
+				511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */,
 				20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */,
 				D69EA9C14F4AAB145014C594 /* SettingsManager.swift */,
 				7F73BF261448CD237EC97240 /* Shaders.metal */,
@@ -111,7 +111,7 @@
 		7333E46C2B39FED8E8E1FEA0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				49FCBF8DF6ADF892BF0DC88C /* ProDisplayTV.app */,
+				49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,9 +137,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E42BC414B7F5A36756198B8A /* ProDisplayTV */ = {
+		E42BC414B7F5A36756198B8A /* TestYourTV */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "ProDisplayTV" */;
+			buildConfigurationList = 9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "TestYourTV" */;
 			buildPhases = (
 				9E58327758D2006585F4A54F /* Sources */,
 				292A3B8CA5F37247A29165DB /* Resources */,
@@ -148,11 +148,11 @@
 			);
 			dependencies = (
 			);
-			name = ProDisplayTV;
+			name = TestYourTV;
 			packageProductDependencies = (
 			);
-			productName = ProDisplayTV;
-			productReference = 49FCBF8DF6ADF892BF0DC88C /* ProDisplayTV.app */;
+			productName = TestYourTV;
+			productReference = 49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -170,7 +170,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "ProDisplayTV" */;
+			buildConfigurationList = C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "TestYourTV" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -183,7 +183,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E42BC414B7F5A36756198B8A /* ProDisplayTV */,
+				E42BC414B7F5A36756198B8A /* TestYourTV */,
 			);
 		};
 /* End PBXProject section */
@@ -222,7 +222,7 @@
 				525655DC9FB4AC9250AE5709 /* GradientTestView.swift in Sources */,
 				F6754304A31C0DBB96F9F1FD /* MatrixTestView.swift in Sources */,
 				502DEF1087F4833702A406D4 /* MotionTestView.swift in Sources */,
-				07A366B9C805F5009A24E440 /* ProDisplayTVApp.swift in Sources */,
+				07A366B9C805F5009A24E440 /* TestYourTVApp.swift in Sources */,
 				EAD0E12C307A8C4BFFF23F9C /* ResponseTimeTestView.swift in Sources */,
 				B9AD9AF490F4830BAA65203E /* SettingsManager.swift in Sources */,
 				758486422CB72EAF91CB9B60 /* Shaders.metal in Sources */,
@@ -252,7 +252,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.firat.ProDisplayTV;
+				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
@@ -399,7 +399,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.firat.ProDisplayTV;
+				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
@@ -408,7 +408,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "ProDisplayTV" */ = {
+		9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "TestYourTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9C6BE011212FB7236DCC96BD /* Debug */,
@@ -417,7 +417,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "ProDisplayTV" */ = {
+		C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "TestYourTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C342FC08CA56E699A32262E2 /* Debug */,

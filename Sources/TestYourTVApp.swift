@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct ProDisplayTVApp: App {
+struct TestYourTVApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

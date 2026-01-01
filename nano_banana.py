@@ -95,8 +95,8 @@ def render_layers(w, h):
     f_size = int(ss_h * 0.16) # Larger text
     font = get_font(f_size, "Bold")
     
-    # Text: "ProDisplay"
-    txt = "ProDisplay"
+    # Text: "Test Your"
+    txt = "Test Your"
     
     # Shadow
     # Render shadow text
@@ -115,7 +115,7 @@ def render_layers(w, h):
     
     # "TV" Badge
     # Small box next to text? Or below?
-    # Let's put "TV" in a sleek blue box below "ProDisplay"
+    # Let's put "TV" in a sleek blue box below "Test Your"
     
     font_small = get_font(int(f_size * 0.4), "Bold")
     tv_txt = "TV"
