@@ -39,7 +39,7 @@ struct OnboardingView: View {
                     .padding(.bottom, 20)
                 
                 VStack(spacing: 16) {
-                    Text("Welcome to ProDisplay TV")
+                    Text("Welcome to Test Your TV")
                         .font(.system(size: 60, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                     
@@ -178,7 +178,7 @@ struct HomeHubView: View {
 
                             Spacer()
 
-                            Text("ProDisplay TV")
+                            Text("Test Your TV")
                                 .font(.system(size: 70, weight: .bold, design: .default))
                                 .foregroundStyle(.white)
                                 .tracking(-1)
