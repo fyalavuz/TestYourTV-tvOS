@@ -14,7 +14,7 @@ struct VideoTestsView: View {
                 VStack(alignment: .leading, spacing: 40) {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Video Tests")
-                            .font(.system(size: 64, weight: .bold, design: .default))
+                            .font(.largeTitle.weight(.bold))
                             .foregroundStyle(.white)
                         Text("AVT VQDB UHD-1 reference clips. Choose a clip, then filter by resolution, fps, bitrate, and codec.")
                             .font(.callout)
@@ -202,9 +202,14 @@ struct VideoClipDetailView: View {
                     SectionHeader(title: "Display Matching")
                     DisplayStatusRow(title: "Match Content Setting", value: displayMatchingEnabled ? "Enabled" : "Disabled")
                     DisplayStatusRow(title: "Mode Switch", value: displaySwitchInProgress ? "In Progress" : "Idle")
-                    CheckboxRow(title: "Apply display criteria", isOn: matchDisplayMode) {
-                        matchDisplayMode.toggle()
-                        if matchDisplayMode {
+                    Toggle(isOn: $matchDisplayMode) {
+                        Text("Apply display criteria")
+                            .font(.callout.weight(.semibold))
+                            .foregroundStyle(.white)
+                    }
+                    .toggleStyle(GlassCheckboxToggleStyle())
+                    .onChange(of: matchDisplayMode) { newValue in
+                        if newValue {
                             playerModel.applyDisplayCriteria(for: activeVariant)
                         } else {
                             playerModel.clearDisplayCriteria()
@@ -236,13 +241,13 @@ struct VideoClipDetailView: View {
         .onAppear {
             refreshDisplayStatus()
         }
-        .onReceive(NotificationCenter.default.publisher(for: AVDisplayManagerModeSwitchSettingsChangedNotification)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchSettingsChanged)) { _ in
             refreshDisplayStatus()
         }
-        .onReceive(NotificationCenter.default.publisher(for: AVDisplayManagerModeSwitchStartNotification)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchStart)) { _ in
             refreshDisplayStatus()
         }
-        .onReceive(NotificationCenter.default.publisher(for: AVDisplayManagerModeSwitchEndNotification)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchEnd)) { _ in
             refreshDisplayStatus()
         }
         .onDisappear {
@@ -402,13 +407,13 @@ final class VideoQueuePlayerModel: ObservableObject {
     let player = AVQueuePlayer()
     @Published var hasQueue = false
 
-    func play(variants: [VideoVariant], applyDisplayCriteria: Bool) {
+    func play(variants: [VideoVariant], applyDisplayCriteria shouldApplyDisplayCriteria: Bool) {
         player.removeAllItems()
         guard !variants.isEmpty else {
             hasQueue = false
             return
         }
-        if applyDisplayCriteria {
+        if shouldApplyDisplayCriteria {
             applyDisplayCriteria(for: variants.first)
         } else {
             clearDisplayCriteria()
@@ -436,11 +441,11 @@ final class VideoQueuePlayerModel: ObservableObject {
             guard status == .loaded else { return }
 
             let track = asset.tracks(withMediaType: .video).first
-            let formatDescription = track?.formatDescriptions.first as? CMFormatDescription
+            let formatDescription = track?.formatDescriptions.first.map { $0 as! CMFormatDescription }
             let refreshRate = Float(variant.fps ?? Double(track?.nominalFrameRate ?? 0))
 
             var criteria: AVDisplayCriteria?
-            if let formatDescription, refreshRate > 0, #available(tvos 17.0, *) {
+            if let formatDescription, refreshRate > 0, #available(tvOS 17.0, *) {
                 criteria = AVDisplayCriteria(refreshRate: refreshRate, formatDescription: formatDescription)
             } else {
                 criteria = asset.preferredDisplayCriteria
@@ -457,10 +462,14 @@ final class VideoQueuePlayerModel: ObservableObject {
     }
 
     static func activeDisplayManager() -> AVDisplayManager? {
+        #if os(iOS)
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         let windows = scenes.flatMap { $0.windows }
         let window = windows.first(where: { $0.isKeyWindow }) ?? windows.first
-        return window?.avDisplayManager
+        return window?.windowScene?.avDisplayManager
+        #else
+        return nil
+        #endif
     }
 }
 
@@ -768,7 +777,7 @@ private func stableHash(_ input: String) -> Int {
     return abs(hash)
 }
 
-private func sortedUnique<T: Comparable>(_ values: [T]) -> [T] {
+private func sortedUnique<T: Comparable & Hashable>(_ values: [T]) -> [T] {
     let unique = Array(Set(values))
     return unique.sorted()
 }

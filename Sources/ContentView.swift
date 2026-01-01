@@ -41,7 +41,8 @@ struct OnboardingView: View {
                 
                 VStack(spacing: 16) {
                     Text("Welcome to Test Your TV")
-                        .font(.system(size: 60, weight: .bold, design: .rounded))
+                        .font(.largeTitle.weight(.bold))
+                        .fontDesign(.rounded)
                         .foregroundStyle(.white)
                     
                     Text("The professional calibration suite for your home theater.")

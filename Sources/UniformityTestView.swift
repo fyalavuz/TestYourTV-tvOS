@@ -103,18 +103,24 @@ struct UniformityTestView: View {
                         }
 
                         SectionHeader(title: "Grid Overlay")
-                        ToggleRow(title: "Show grid lines", isOn: showGridLines) {
-                            showGridLines.toggle()
+                        Toggle(isOn: $showGridLines) {
+                            Text("Show grid lines")
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle(.white)
                         }
+                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         if showGridLines {
                             LabeledSlider(value: $gridSize, range: 2...8, step: 1, suffix: "x")
                         }
 
                         SectionHeader(title: "Crosshair")
-                        ToggleRow(title: "Show center crosshair", isOn: showCrosshair) {
-                            showCrosshair.toggle()
+                        Toggle(isOn: $showCrosshair) {
+                            Text("Show center crosshair")
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle(.white)
                         }
+                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         Button {
                             brightness = 50

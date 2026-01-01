@@ -76,7 +76,11 @@ class AudioManager: ObservableObject {
 
     private func portTypeLabel(_ port: AVAudioSession.Port) -> String {
         switch port {
+        #if !os(tvOS)
         case .hdmi: return "HDMI"
+        case .avb: return "AVB"
+        case .pci: return "PCI"
+        #endif
         case .airPlay: return "AirPlay"
         case .bluetoothA2DP: return "Bluetooth A2DP"
         case .bluetoothLE: return "Bluetooth LE"
@@ -87,9 +91,7 @@ class AudioManager: ObservableObject {
         case .headphones: return "Headphones"
         case .usbAudio: return "USB Audio"
         case .carAudio: return "Car Audio"
-        case .avb: return "AVB"
         case .fireWire: return "FireWire"
-        case .pci: return "PCI"
         case .virtual: return "Virtual"
         default: return port.rawValue
         }

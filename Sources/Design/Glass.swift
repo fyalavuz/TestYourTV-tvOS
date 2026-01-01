@@ -541,3 +541,38 @@ extension View {
         modifier(TestControlsModifier(controlsHidden: controlsHidden, dismiss: dismiss))
     }
 }
+struct GlassCheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(configuration.isOn ? Color.white : Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.white.opacity(configuration.isOn ? 0.9 : 0.4), lineWidth: 1)
+                    if configuration.isOn {
+                        Image(systemName: "checkmark")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(width: 22, height: 22)
+
+                configuration.label
+
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.white.opacity(configuration.isOn ? 0.14 : 0.06))
+            )
+        }
+        .buttonStyle(.glassFocus(cornerRadius: 12))
+        .accessibilityValue(configuration.isOn ? "On" : "Off")
+    }
+}
+
