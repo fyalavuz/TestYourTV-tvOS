@@ -112,8 +112,8 @@ struct HomeHubView: View {
     let menuSections: [MenuSection] = [
         MenuSection(
             id: "video-tests",
-            title: "Video Tests",
-            subtitle: "Reference clips with selectable resolution, bitrate, and frame rate.",
+            title: "Reference Videos",
+            subtitle: "Motion, compression, resolution and HDR checks.",
             items: [
                 MenuOption(title: "AVT VQDB UHD-1", icon: "film.stack", color: .purple, destination: .videoTests)
             ]
@@ -335,3 +335,4 @@ struct MenuSection: Identifiable {
 #Preview {
     ContentView()
 }
+

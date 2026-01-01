@@ -5,8 +5,6 @@ import Combine
 
 struct SystemInfoView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var isMinimized = false
-    @State private var controlsHidden = false
     @StateObject private var deviceMonitor = DeviceMonitor()
     @StateObject private var networkMonitor = NetworkMonitor()
     @StateObject private var audioMonitor = AudioRouteMonitor()
@@ -36,13 +34,13 @@ struct SystemInfoView: View {
                     SystemInfoTile(title: "Time Zone", value: timeZoneSummary)
                     SystemInfoTile(title: "Audio Route", value: audioMonitor.outputSummary)
                 }
-            }
-            .padding(.top, 40)
-            .padding(.horizontal, 80)
 
-            ControlPanelDock(title: "System Info", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                 VStack(alignment: .leading, spacing: 16) {
-                    SectionHeader(title: "Device")
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Device")
+                        .font(.headline)
+                        .foregroundStyle(.white)
                     InfoRow(title: "Name", value: deviceMonitor.deviceName)
                     InfoRow(title: "Model", value: deviceMonitor.deviceModel)
                     InfoRow(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
@@ -50,28 +48,41 @@ struct SystemInfoView: View {
                     InfoRow(title: "Display", value: deviceMonitor.displayQuality)
                     InfoRow(title: "HDR", value: deviceMonitor.hdrStatus)
 
-                    SectionHeader(title: "Locale & Time")
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Locale & Time")
+                        .font(.headline)
+                        .foregroundStyle(.white)
                     InfoRow(title: "Locale", value: localeSummary)
                     InfoRow(title: "Preferred Language", value: preferredLanguage)
                     InfoRow(title: "Time Zone", value: timeZoneSummary)
                     InfoRow(title: "Local Time", value: localTimeString)
 
-                    SectionHeader(title: "Network")
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Network")
+                        .font(.headline)
+                        .foregroundStyle(.white)
                     InfoRow(title: "Status", value: networkMonitor.statusText)
                     InfoRow(title: "Interface", value: networkMonitor.interfaceText)
                     InfoRow(title: "Constrained", value: networkMonitor.isConstrained ? "Yes" : "No")
                     InfoRow(title: "Expensive", value: networkMonitor.isExpensive ? "Yes" : "No")
 
-                    SectionHeader(title: "Audio Route")
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Audio Route")
+                        .font(.headline)
+                        .foregroundStyle(.white)
                     InfoRow(title: "Summary", value: audioMonitor.outputSummary)
                     ForEach(audioMonitor.outputDetails.indices, id: \.self) { index in
                         InfoRow(title: "Output \(index + 1)", value: audioMonitor.outputDetails[index])
                     }
                 }
             }
+            .padding(.top, 40)
+            .padding(.horizontal, 80)
         }
         .toolbar(.hidden, for: .navigationBar)
-        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
     }
 
     private var localeSummary: String {

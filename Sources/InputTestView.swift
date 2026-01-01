@@ -4,98 +4,107 @@ import GameController
 struct InputTestView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var monitor = ControllerMonitor()
-    @State private var isMinimized = false
-    @State private var controlsHidden = false
 
     var body: some View {
-        GeometryReader { _ in
-            ZStack {
-                AmbientBackground()
+        ZStack {
+            AmbientBackground()
 
-                VStack(spacing: 28) {
-                    statusRow
+            VStack(spacing: 28) {
+                statusRow
 
-                    HStack(spacing: 32) {
-                        InputCard(title: "D-pad / Touch") {
-                            DpadVisualizer(
-                                x: monitor.dpadX,
-                                y: monitor.dpadY,
-                                up: monitor.dpadUp,
-                                down: monitor.dpadDown,
-                                left: monitor.dpadLeft,
-                                right: monitor.dpadRight
-                            )
-                        }
-
-                        InputCard(title: "Buttons") {
-                            ButtonsGrid(
-                                profile: monitor.profile,
-                                buttonA: monitor.buttonA,
-                                buttonB: monitor.buttonB,
-                                buttonX: monitor.buttonX,
-                                buttonY: monitor.buttonY,
-                                buttonMenu: monitor.buttonMenu,
-                                buttonOptions: monitor.buttonOptions,
-                                buttonHome: monitor.buttonHome
-                            )
-                        }
-
-                        if monitor.profile == .extended {
-                            InputCard(title: "Sticks & Triggers") {
-                                ExtendedInputsView(
-                                    leftStick: CGPoint(x: CGFloat(monitor.leftStickX), y: CGFloat(monitor.leftStickY)),
-                                    rightStick: CGPoint(x: CGFloat(monitor.rightStickX), y: CGFloat(monitor.rightStickY)),
-                                    leftStickPressed: monitor.leftStickPressed,
-                                    rightStickPressed: monitor.rightStickPressed,
-                                    leftTrigger: monitor.leftTriggerValue,
-                                    rightTrigger: monitor.rightTriggerValue,
-                                    leftShoulder: monitor.leftShoulderValue,
-                                    rightShoulder: monitor.rightShoulderValue
-                                )
-                            }
-                        }
+                HStack(spacing: 32) {
+                    InputCard(title: "D-pad / Touch") {
+                        DpadVisualizer(
+                            x: monitor.dpadX,
+                            y: monitor.dpadY,
+                            up: monitor.dpadUp,
+                            down: monitor.dpadDown,
+                            left: monitor.dpadLeft,
+                            right: monitor.dpadRight
+                        )
                     }
 
-                    Spacer(minLength: 0)
-                }
-                .padding(.top, 40)
-                .padding(.horizontal, 80)
+                    InputCard(title: "Buttons") {
+                        ButtonsGrid(
+                            profile: monitor.profile,
+                            buttonA: monitor.buttonA,
+                            buttonB: monitor.buttonB,
+                            buttonX: monitor.buttonX,
+                            buttonY: monitor.buttonY,
+                            buttonMenu: monitor.buttonMenu,
+                            buttonOptions: monitor.buttonOptions,
+                            buttonHome: monitor.buttonHome
+                        )
+                    }
 
-                ControlPanelDock(title: "Input Test", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Use Siri Remote or a game controller to verify input events.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-
-                        SectionHeader(title: "Controller")
-                        InputValueRow(title: "Status", value: monitor.isConnected ? "Connected" : "Waiting")
-                        InputValueRow(title: "Count", value: "\(monitor.controllerCount)")
-                        InputValueRow(title: "Profile", value: monitor.profile.rawValue)
-                        InputValueRow(title: "Name", value: monitor.controllerName)
-                        if monitor.isConnected {
-                            InputValueRow(title: "Vendor", value: monitor.vendorName)
-                        }
-
-                        SectionHeader(title: "Last Input")
-                        Text(lastInputSummary)
-                            .font(.callout.weight(.semibold))
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color.white.opacity(0.08))
+                    if monitor.profile == .extended {
+                        InputCard(title: "Sticks & Triggers") {
+                            ExtendedInputsView(
+                                leftStick: CGPoint(x: CGFloat(monitor.leftStickX), y: CGFloat(monitor.leftStickY)),
+                                rightStick: CGPoint(x: CGFloat(monitor.rightStickX), y: CGFloat(monitor.rightStickY)),
+                                leftStickPressed: monitor.leftStickPressed,
+                                rightStickPressed: monitor.rightStickPressed,
+                                leftTrigger: monitor.leftTriggerValue,
+                                rightTrigger: monitor.rightTriggerValue,
+                                leftShoulder: monitor.leftShoulderValue,
+                                rightShoulder: monitor.rightShoulderValue
                             )
-
-                        SectionHeader(title: "D-pad")
-                        InputValueRow(title: "X", value: formatAxis(monitor.dpadX))
-                        InputValueRow(title: "Y", value: formatAxis(monitor.dpadY))
+                        }
                     }
                 }
+
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Input Test")
+                        .font(.title.weight(.bold))
+                        .foregroundStyle(.white)
+
+                    Text("Use Siri Remote or a game controller to verify input events.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Controller")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    InputValueRow(title: "Status", value: monitor.isConnected ? "Connected" : "Waiting")
+                    InputValueRow(title: "Count", value: "\(monitor.controllerCount)")
+                    InputValueRow(title: "Profile", value: monitor.profile.rawValue)
+                    InputValueRow(title: "Name", value: monitor.controllerName)
+                    if monitor.isConnected {
+                        InputValueRow(title: "Vendor", value: monitor.vendorName)
+                    }
+
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("Last Input")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    Text(lastInputSummary)
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.white.opacity(0.08))
+                        )
+
+                    Divider().overlay(Color.white.opacity(0.2))
+
+                    Text("D-pad")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    InputValueRow(title: "X", value: formatAxis(monitor.dpadX))
+                    InputValueRow(title: "Y", value: formatAxis(monitor.dpadY))
+                }
+
+                Spacer(minLength: 0)
             }
-            .toolbar(.hidden, for: .navigationBar)
-            .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
+            .padding(.top, 40)
+            .padding(.horizontal, 80)
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private var statusRow: some View {

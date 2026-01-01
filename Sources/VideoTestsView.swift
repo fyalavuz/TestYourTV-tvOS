@@ -13,10 +13,10 @@ struct VideoTestsView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 40) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Video Tests")
+                        Text("Reference Videos")
                             .font(.largeTitle.weight(.bold))
                             .foregroundStyle(.white)
-                        Text("AVT VQDB UHD-1 reference clips. Choose a clip, then filter by resolution, fps, bitrate, and codec.")
+                        Text("Reference clips for motion, compression, resolution and HDR checks.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }
@@ -76,7 +76,7 @@ struct VideoTestsView: View {
                                         Spacer().frame(width: 40)
 
                                         ForEach(category.clips) { clip in
-                                            NavigationLink(destination: VideoClipDetailView(clip: clip)) {
+                                            NavigationLink(destination: VideoPlayerQuickView(clip: clip)) {
                                                 VideoClipCard(clip: clip)
                                             }
                                             .buttonStyle(.card)
@@ -85,6 +85,7 @@ struct VideoTestsView: View {
                                         Spacer().frame(width: 80)
                                     }
                                 }
+                                .scrollClipDisabled()
                             }
                         }
                     }
@@ -101,191 +102,91 @@ struct VideoTestsView: View {
 
 struct VideoClipDetailView: View {
     let clip: VideoClip
+    var body: some View { VideoPlayerQuickView(clip: clip) }
+}
+
+struct VideoPlayerQuickView: View {
+    let clip: VideoClip
 
     @StateObject private var playerModel = VideoQueuePlayerModel()
-    @State private var selectedResolution: Int?
-    @State private var selectedFps: Double?
-    @State private var selectedBitrate: Int?
-    @State private var selectedCodec: String?
-    @State private var selectedVariantId: String?
-    @State private var isMinimized = false
     @State private var matchDisplayMode = true
-    @State private var displayMatchingEnabled = false
-    @State private var displaySwitchInProgress = false
+    @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
         ZStack {
             NativeVideoPlayer(player: playerModel.player, appliesDisplayCriteriaAutomatically: matchDisplayMode)
                 .ignoresSafeArea()
 
-            if !playerModel.hasQueue {
-                VStack(spacing: 16) {
-                    Image(systemName: "play.tv")
-                        .font(.system(size: 72))
-                        .foregroundStyle(.white.opacity(0.8))
-                    Text("Select a variant to begin playback")
-                        .font(.headline)
-                        .foregroundStyle(.white.opacity(0.9))
-                }
-            }
+            VStack(spacing: 8) {
+                Spacer()
 
-            ControlPanelDock(title: clip.displayName, isMinimized: $isMinimized, controlsHidden: false) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Test set \(clip.testSetLabel)")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
+                VStack(spacing: 8) {
+                    Text(clip.displayName)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.7), radius: 2, x: 0, y: 0)
 
-                    SectionHeader(title: "Resolution")
-                    FilterScroll {
-                        ToggleChip(title: "Any", isSelected: selectedResolution == nil) {
-                            selectedResolution = nil
-                        }
-                        ForEach(clip.availableResolutions, id: \.self) { value in
-                            ToggleChip(title: "\(value)p", isSelected: selectedResolution == value) {
-                                selectedResolution = value
-                            }
-                        }
-                    }
-
-                    SectionHeader(title: "Frame Rate")
-                    FilterScroll {
-                        ToggleChip(title: "Any", isSelected: selectedFps == nil) {
-                            selectedFps = nil
-                        }
-                        ForEach(clip.availableFps, id: \.self) { value in
-                            ToggleChip(title: formatFps(value), isSelected: selectedFps == value) {
-                                selectedFps = value
-                            }
-                        }
-                    }
-
-                    SectionHeader(title: "Bitrate")
-                    FilterScroll {
-                        ToggleChip(title: "Any", isSelected: selectedBitrate == nil) {
-                            selectedBitrate = nil
-                        }
-                        ForEach(clip.availableBitrates, id: \.self) { value in
-                            ToggleChip(title: "\(value) kbps", isSelected: selectedBitrate == value) {
-                                selectedBitrate = value
-                            }
-                        }
-                    }
-
-                    SectionHeader(title: "Codec")
-                    FilterScroll {
-                        ToggleChip(title: "Any", isSelected: selectedCodec == nil) {
-                            selectedCodec = nil
-                        }
-                        ForEach(clip.availableCodecs, id: \.self) { value in
-                            ToggleChip(title: value.uppercased(), isSelected: selectedCodec == value) {
-                                selectedCodec = value
-                            }
-                        }
-                    }
-
-                    SectionHeader(title: "Playback")
-                    HStack(spacing: 12) {
-                        Button("Play First Match") {
-                            guard let first = filteredVariants.first else { return }
-                            selectedVariantId = first.id
-                            playerModel.play(variants: [first], applyDisplayCriteria: matchDisplayMode)
-                        }
-                        .buttonStyle(.borderedProminent)
-
-                        Button("Play Playlist (\(filteredVariants.count))") {
-                            playerModel.play(variants: filteredVariants, applyDisplayCriteria: matchDisplayMode)
-                            selectedVariantId = filteredVariants.first?.id
-                        }
-                        .buttonStyle(.bordered)
-                    }
-
-                    SectionHeader(title: "Display Matching")
-                    DisplayStatusRow(title: "Match Content Setting", value: displayMatchingEnabled ? "Enabled" : "Disabled")
-                    DisplayStatusRow(title: "Mode Switch", value: displaySwitchInProgress ? "In Progress" : "Idle")
                     Toggle(isOn: $matchDisplayMode) {
-                        Text("Apply display criteria")
+                        Text("Match display criteria")
                             .font(.callout.weight(.semibold))
                             .foregroundStyle(.white)
                     }
                     .toggleStyle(GlassCheckboxToggleStyle())
                     .onChange(of: matchDisplayMode) { newValue in
                         if newValue {
-                            playerModel.applyDisplayCriteria(for: activeVariant)
+                            // Try to match currently playing item to a variant
+                            let currentURL = (playerModel.player.items().first?.asset as? AVURLAsset)?.url
+                            let currentVariant = clip.variants.first { $0.url == currentURL }
+                            playerModel.applyDisplayCriteria(for: currentVariant)
                         } else {
                             playerModel.clearDisplayCriteria()
                         }
                     }
 
-                    SectionHeader(title: "Variants")
-                    VStack(spacing: 10) {
-                        ForEach(filteredVariants) { variant in
-                            VariantRow(
-                                variant: variant,
-                                isSelected: variant.id == selectedVariantId
-                            ) {
-                                selectedVariantId = variant.id
-                                playerModel.play(variants: [variant], applyDisplayCriteria: matchDisplayMode)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(clip.variants) { variant in
+                                VariantRow(
+                                    variant: variant,
+                                    isSelected: playerModel.player.items().first?.asset.asURLString() == variant.url.absoluteString
+                                ) {
+                                    playerModel.play(variants: [variant], applyDisplayCriteria: matchDisplayMode)
+                                }
                             }
                         }
+                        .padding(.horizontal, 12)
                     }
 
-                    if filteredVariants.isEmpty {
-                        Text("No variants match the current filters.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    Button("Close") {
+                        presentationMode.wrappedValue.dismiss()
                     }
+                    .buttonStyle(.borderedProminent)
                 }
+                .padding()
+                .background(.ultraThinMaterial)
+                .cornerRadius(16)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
         .onAppear {
-            refreshDisplayStatus()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchSettingsChanged)) { _ in
-            refreshDisplayStatus()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchStart)) { _ in
-            refreshDisplayStatus()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .AVDisplayManagerModeSwitchEnd)) { _ in
-            refreshDisplayStatus()
+            if let first = clip.variants.first {
+                playerModel.play(variants: [first], applyDisplayCriteria: matchDisplayMode)
+            }
         }
         .onDisappear {
             playerModel.stop()
             playerModel.clearDisplayCriteria()
         }
     }
+}
 
-    private var filteredVariants: [VideoVariant] {
-        clip.variants.filter { variant in
-            if let selectedResolution, variant.resolutionHeight != selectedResolution { return false }
-            if let selectedFps, variant.fps != selectedFps { return false }
-            if let selectedBitrate, variant.bitrateKbps != selectedBitrate { return false }
-            if let selectedCodec, variant.codec != selectedCodec { return false }
-            return true
+private extension AVAsset {
+    func asURLString() -> String? {
+        if let urlAsset = self as? AVURLAsset {
+            return urlAsset.url.absoluteString
         }
-    }
-
-    private func formatFps(_ value: Double) -> String {
-        if value.rounded(.down) == value {
-            return String(format: "%.0f fps", value)
-        }
-        return String(format: "%.2f fps", value)
-    }
-
-    private var activeVariant: VideoVariant? {
-        guard let selectedVariantId else { return filteredVariants.first }
-        return filteredVariants.first(where: { $0.id == selectedVariantId }) ?? filteredVariants.first
-    }
-
-    private func refreshDisplayStatus() {
-        guard let manager = VideoQueuePlayerModel.activeDisplayManager() else {
-            displayMatchingEnabled = false
-            displaySwitchInProgress = false
-            return
-        }
-        displayMatchingEnabled = manager.isDisplayCriteriaMatchingEnabled
-        displaySwitchInProgress = manager.isDisplayModeSwitchInProgress
+        return nil
     }
 }
 
@@ -310,30 +211,60 @@ private struct VideoClipCard: View {
     let clip: VideoClip
 
     var body: some View {
-        let colors = clip.palette
         VStack(alignment: .leading, spacing: 12) {
             ZStack(alignment: .bottomLeading) {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                    )
+                if let thumbnailURL = thumbnailURL(for: clip) {
+                    AsyncImage(url: thumbnailURL) { phase in
+                        switch phase {
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        case .failure:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                        @unknown default:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                        }
+                    }
+                    .frame(width: 360, height: 200)
+                    .clipped()
+                    .cornerRadius(20)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 360, height: 200)
+                        .cornerRadius(20)
+                }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(clip.displayName)
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(.white)
                         .lineLimit(2)
+                        .shadow(color: .black.opacity(0.7), radius: 2, x: 0, y: 0)
                     Text(clip.summary)
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.7))
+                        .shadow(color: .black.opacity(0.7), radius: 1, x: 0, y: 0)
                 }
                 .padding(14)
             }
             .frame(width: 360, height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
     }
+}
+
+private func thumbnailURL(for clip: VideoClip) -> URL? {
+    guard let first = clip.variants.first else { return nil }
+    let mp4 = first.url.absoluteString
+    let thumb = mp4.replacingOccurrences(of: ".mp4", with: ".jpg")
+    return URL(string: thumb)
 }
 
 private struct VariantRow: View {
@@ -411,6 +342,9 @@ final class VideoQueuePlayerModel: ObservableObject {
         player.removeAllItems()
         guard !variants.isEmpty else {
             hasQueue = false
+#if os(iOS)
+            UIApplication.shared.isIdleTimerDisabled = false
+#endif
             return
         }
         if shouldApplyDisplayCriteria {
@@ -422,12 +356,18 @@ final class VideoQueuePlayerModel: ObservableObject {
         items.forEach { player.insert($0, after: nil) }
         hasQueue = true
         player.play()
+#if os(iOS)
+        UIApplication.shared.isIdleTimerDisabled = true
+#endif
     }
 
     func stop() {
         player.pause()
         player.removeAllItems()
         hasQueue = false
+#if os(iOS)
+        UIApplication.shared.isIdleTimerDisabled = false
+#endif
     }
 
     func applyDisplayCriteria(for variant: VideoVariant?) {
