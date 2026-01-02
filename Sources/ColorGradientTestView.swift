@@ -74,6 +74,7 @@ struct ColorGradientTestView: View {
     @State private var distribution: Distribution = .linear
     @State private var isMinimized = false
     @State private var controlsHidden = false
+    @State private var showSmoothing = false
 
     var body: some View {
         ZStack {
@@ -134,6 +135,12 @@ struct ColorGradientTestView: View {
                                 distribution = option
                             }
                         }
+                    }
+
+                    Toggle(isOn: $showSmoothing) {
+                        Text("Show comparison")
+                            .font(.callout.weight(.semibold))
+                            .foregroundStyle(.white)
                     }
 
                     Button {

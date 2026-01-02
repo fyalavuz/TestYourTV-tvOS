@@ -99,14 +99,11 @@ struct TextClarityView: View {
                         LabeledSlider(value: $letterSpacing, range: -2...10, step: 0.5, suffix: "pt")
 
                         SectionHeader(title: "Color Mode")
-                        HStack(spacing: 12) {
-                            ColorOptionChip(title: "Dark", color: .black, isSelected: useDarkMode) {
-                                useDarkMode = true
-                            }
-                            ColorOptionChip(title: "Light", color: .white, isSelected: !useDarkMode) {
-                                useDarkMode = false
-                            }
+                        Picker("Color Mode", selection: $useDarkMode) {
+                            Text("Dark").tag(true)
+                            Text("Light").tag(false)
                         }
+                        .pickerStyle(.segmented)
 
                         SectionHeader(title: "Smoothing Preview")
                         CheckboxRow(title: "Show comparison", isOn: showSmoothing) {

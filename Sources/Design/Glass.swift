@@ -5,9 +5,8 @@ struct AmbientBackground: View {
         ZStack {
             LinearGradient(
                 colors: [
-                    Color(red: 0.05, green: 0.12, blue: 0.18),
-                    Color(red: 0.03, green: 0.06, blue: 0.10),
-                    Color(red: 0.02, green: 0.03, blue: 0.05)
+                    DS.ColorPalette.backgroundTop,
+                    DS.ColorPalette.backgroundBottom
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -15,7 +14,7 @@ struct AmbientBackground: View {
 
             RadialGradient(
                 colors: [
-                    Color(red: 0.15, green: 0.35, blue: 0.40, opacity: 0.35),
+                    DS.ColorPalette.accentA.opacity(0.35),
                     Color.clear
                 ],
                 center: .topLeading,
@@ -25,13 +24,13 @@ struct AmbientBackground: View {
             .blendMode(.screen)
 
             Circle()
-                .fill(Color(red: 0.90, green: 0.45, blue: 0.15, opacity: 0.20))
+                .fill(DS.ColorPalette.accentB.opacity(0.20))
                 .frame(width: 520, height: 520)
                 .blur(radius: 80)
                 .offset(x: -360, y: 180)
 
             Circle()
-                .fill(Color(red: 0.20, green: 0.65, blue: 0.85, opacity: 0.20))
+                .fill(DS.ColorPalette.accentA.opacity(0.20))
                 .frame(width: 640, height: 640)
                 .blur(radius: 90)
                 .offset(x: 380, y: -240)
@@ -53,7 +52,7 @@ struct GlassSurface: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(strokeOpacity), lineWidth: 1)
+                    .stroke(DS.ColorPalette.surfaceStroke.opacity(strokeOpacity / 0.18), lineWidth: 1)
             )
     }
 }
@@ -61,7 +60,7 @@ struct GlassSurface: ViewModifier {
 struct FocusGlow: ViewModifier {
     @Environment(\.isFocused) private var isFocused
     let cornerRadius: CGFloat
-    private let focusRingColor = Color(red: 0.18, green: 0.90, blue: 0.95)
+    private let focusRingColor = DS.ColorPalette.accentA
 
     func body(content: Content) -> some View {
         content
@@ -84,11 +83,11 @@ struct GlassInput: ViewModifier {
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(DS.ColorPalette.surface.opacity(0.08))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    .stroke(DS.ColorPalette.surfaceStroke.opacity(0.1), lineWidth: 1)
             )
             .modifier(FocusGlow(cornerRadius: cornerRadius))
     }
@@ -108,14 +107,14 @@ struct GlassFocusButtonStyle: ButtonStyle {
 struct GlassHUD: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .font(.caption.weight(.semibold))
+            .font(DS.Typography.caption.weight(.semibold))
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(.ultraThinMaterial)
             .clipShape(Capsule())
             .overlay(
                 Capsule()
-                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    .stroke(DS.ColorPalette.surfaceStroke, lineWidth: 1)
             )
             .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
     }
@@ -224,9 +223,9 @@ struct ProgressTrack: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color.white.opacity(0.12))
+                    .fill(DS.ColorPalette.surface)
                 Capsule()
-                    .fill(Color.white.opacity(0.7))
+                    .fill(DS.ColorPalette.textPrimary.opacity(0.7))
                     .frame(width: proxy.size.width * CGFloat(max(0, min(1, progress))))
             }
         }
@@ -308,8 +307,12 @@ struct ControlPanel<Content: View>: View {
         .padding(.bottom, isMinimized ? 16 : 24)
         .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
         .background(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(.ultraThinMaterial)
+            ZStack {
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(Color.black.opacity(0.25))
+            }
         )
         .overlay(
             RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -345,7 +348,7 @@ struct ControlPanelDock<Content: View>: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let panelWidth = proxy.size.width * 0.25
+            let panelWidth = proxy.size.width * 0.35
             let panelHeight: CGFloat? = isMinimized ? min(proxy.size.height, 88) : (fillsHeight ? proxy.size.height : nil)
             HStack(alignment: .top, spacing: 0) {
                 if dockSide == .trailing {

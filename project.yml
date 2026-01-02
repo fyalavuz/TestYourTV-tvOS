@@ -9,10 +9,11 @@ targets:
     platform: tvOS
     sources:
       - path: Sources
-    resources:
       - path: Resources/Assets.xcassets
+        buildPhase: resources
       - path: Resources/Patterns
         type: folder
+        buildPhase: resources
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.firat.TestYourTV
       DEVELOPMENT_TEAM: VAW6FMKNP9

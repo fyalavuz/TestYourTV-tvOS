@@ -47,7 +47,7 @@ struct OverscanTestView: View {
                     )
                 }
 
-                ControlPanelDock(title: "Overscan", isMinimized: $isMinimized, controlsHidden: controlsHidden, dockSide: .trailing) {
+                ControlPanelDock(title: "Overscan", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Use these guides to verify if the TV is cropping edges and to read system overscan settings.")
                             .font(.callout)
@@ -72,21 +72,18 @@ struct OverscanTestView: View {
                                 .font(.callout.weight(.semibold))
                                 .foregroundStyle(.white)
                         }
-                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         Toggle(isOn: $showOverscanGuide) {
                             Text("Show overscan insets")
                                 .font(.callout.weight(.semibold))
                                 .foregroundStyle(.white)
                         }
-                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         Toggle(isOn: $showSafeAreaGuide) {
                             Text("Show safe area")
                                 .font(.callout.weight(.semibold))
                                 .foregroundStyle(.white)
                         }
-                        .toggleStyle(GlassCheckboxToggleStyle())
                     }
                 }
             }
@@ -148,25 +145,25 @@ private struct OverscanGrid: View {
     var body: some View {
         ZStack {
             Canvas { context, size in
-            let rect = CGRect(origin: .zero, size: size)
-            context.stroke(Path(rect), with: .color(.white.opacity(0.4)), lineWidth: 2)
+                let rect = CGRect(origin: .zero, size: size)
+                context.stroke(Path(rect), with: .color(.white.opacity(0.8)), lineWidth: 3)
 
-            let guides: [CGFloat] = [0.01, 0.02, 0.03]
-            for inset in guides {
-                let xInset = size.width * inset
-                let yInset = size.height * inset
-                let guideRect = rect.insetBy(dx: xInset, dy: yInset)
-                context.stroke(Path(guideRect), with: .color(.white.opacity(0.2)), lineWidth: 1)
-            }
+                let guides: [CGFloat] = [0.01, 0.02, 0.03]
+                for inset in guides {
+                    let xInset = size.width * inset
+                    let yInset = size.height * inset
+                    let guideRect = rect.insetBy(dx: xInset, dy: yInset)
+                    context.stroke(Path(guideRect), with: .color(.white.opacity(0.5)), lineWidth: 2)
+                }
 
-            let midX = size.width / 2
-            let midY = size.height / 2
-            var cross = Path()
-            cross.move(to: CGPoint(x: midX, y: 0))
-            cross.addLine(to: CGPoint(x: midX, y: size.height))
-            cross.move(to: CGPoint(x: 0, y: midY))
-            cross.addLine(to: CGPoint(x: size.width, y: midY))
-            context.stroke(cross, with: .color(.white.opacity(0.2)), lineWidth: 1)
+                let midX = size.width / 2
+                let midY = size.height / 2
+                var cross = Path()
+                cross.move(to: CGPoint(x: midX, y: 0))
+                cross.addLine(to: CGPoint(x: midX, y: size.height))
+                cross.move(to: CGPoint(x: 0, y: midY))
+                cross.addLine(to: CGPoint(x: size.width, y: midY))
+                context.stroke(cross, with: .color(.white.opacity(0.3)), lineWidth: 1.5)
             }
 
             CornerMarkers()
@@ -240,7 +237,7 @@ private struct InsetGuide: View {
 
             ZStack {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .stroke(color, style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
+                    .stroke(color, style: StrokeStyle(lineWidth: 3, dash: [8, 6]))
                     .frame(width: rect.width, height: rect.height)
                     .position(x: rect.midX, y: rect.midY)
 
@@ -248,7 +245,7 @@ private struct InsetGuide: View {
                     Color.clear
                         .frame(width: rect.width, height: rect.height)
                         .position(x: rect.midX, y: rect.midY)
-                        .overlay(alignment: labelAlignment) {
+                        .overlay {
                             Text(label)
                                 .font(.caption2.weight(.semibold))
                                 .foregroundStyle(.black)
@@ -256,7 +253,9 @@ private struct InsetGuide: View {
                                 .padding(.vertical, 4)
                                 .background(color.opacity(0.9))
                                 .clipShape(Capsule())
-                                .padding(12)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                                .padding(.trailing, 16)
+                                .padding(.top, 60)
                         }
                 }
             }

@@ -4,12 +4,9 @@ struct GammaTestView: View {
     private let gammaValues: [Double] = [1.8, 2.0, 2.2, 2.4]
     private let brightnessLevels: [Double] = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    @Environment(\.dismiss) private var dismiss
-    @State private var isMinimized = false
     @State private var boxSize: Double = 100
     @State private var background: BackgroundOption = .gray
     @State private var showValues = true
-    @State private var controlsHidden = false
 
     enum BackgroundOption: String, CaseIterable, Identifiable {
         case white = "White"
@@ -51,54 +48,62 @@ struct GammaTestView: View {
                 .padding(.vertical, 80)
             }
             .scrollDisabled(true)
+            .overlay {
+                VStack {
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Gamma")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
 
-            ControlPanelDock(title: "Gamma", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Find the row where the steps look evenly spaced. That row matches your display gamma.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
+                        // Box Size
+                        SectionHeader(title: "Box Size")
+                        LabeledSlider(value: $boxSize, range: 50...200, step: 5, suffix: "px")
 
-                    SectionHeader(title: "Box Size")
-                    LabeledSlider(value: $boxSize, range: 50...200, step: 5, suffix: "px")
-
-                    SectionHeader(title: "Background")
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 10)], spacing: 10) {
-                        ForEach(BackgroundOption.allCases) { option in
-                            ColorOptionChip(title: option.rawValue, color: option.color, isSelected: background == option) {
-                                background = option
+                        // Background Picker (native)
+                        SectionHeader(title: "Background")
+                        Picker("Background", selection: $background) {
+                            ForEach(BackgroundOption.allCases) { option in
+                                Text(option.rawValue).tag(option)
                             }
                         }
-                    }
+                        .pickerStyle(.segmented)
 
-                    SectionHeader(title: "Values")
-                    HStack(spacing: 10) {
-                        ToggleChip(title: "Show", isSelected: showValues) {
+                        // Show Values Toggle (native)
+                        Toggle(isOn: $showValues) {
+                            Text("Show values")
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle(.white)
+                        }
+
+                        Button {
+                            boxSize = 100
+                            background = .gray
                             showValues = true
+                        } label: {
+                            Text("Reset Settings")
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         }
-                        ToggleChip(title: "Hide", isSelected: !showValues) {
-                            showValues = false
-                        }
+                        .buttonStyle(.glassFocus(cornerRadius: 12))
                     }
-
-                    Button {
-                        boxSize = 100
-                        background = .gray
-                        showValues = true
-                    } label: {
-                        Text("Reset Settings")
-                            .font(.callout.weight(.semibold))
-                            .foregroundStyle(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    }
-                    .buttonStyle(.glassFocus(cornerRadius: 12))
+                    .padding()
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
             }
         }
         .toolbar(.hidden, for: .navigationBar)
-        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
     }
 }
 

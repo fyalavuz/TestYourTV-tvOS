@@ -13,74 +13,77 @@ struct SystemInfoView: View {
         ZStack {
             AmbientBackground()
 
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("System Debug")
-                        .font(.system(size: 52, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("System Debug")
+                            .font(.system(size: 52, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
 
-                    Text("Device, display, network, and locale diagnostics.")
-                        .font(.headline)
-                        .foregroundStyle(.white.opacity(0.7))
-                }
+                        Text("Device, display, network, and locale diagnostics.")
+                            .font(.headline)
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 18)], spacing: 18) {
-                    SystemInfoTile(title: "Device", value: deviceMonitor.deviceModel)
-                    SystemInfoTile(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
-                    SystemInfoTile(title: "Resolution", value: deviceMonitor.resolution)
-                    SystemInfoTile(title: "HDR", value: deviceMonitor.hdrStatus)
-                    SystemInfoTile(title: "Network", value: networkMonitor.statusText)
-                    SystemInfoTile(title: "Locale", value: localeSummary)
-                    SystemInfoTile(title: "Time Zone", value: timeZoneSummary)
-                    SystemInfoTile(title: "Audio Route", value: audioMonitor.outputSummary)
-                }
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 18)], spacing: 18) {
+                        SystemInfoTile(title: "Device", value: deviceMonitor.deviceModel)
+                        SystemInfoTile(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
+                        SystemInfoTile(title: "Resolution", value: deviceMonitor.resolution)
+                        SystemInfoTile(title: "HDR", value: deviceMonitor.hdrStatus)
+                        SystemInfoTile(title: "Network", value: networkMonitor.statusText)
+                        SystemInfoTile(title: "Locale", value: localeSummary)
+                        SystemInfoTile(title: "Time Zone", value: timeZoneSummary)
+                        SystemInfoTile(title: "Audio Route", value: audioMonitor.outputSummary)
+                    }
 
-                VStack(alignment: .leading, spacing: 16) {
-                    Divider().overlay(Color.white.opacity(0.2))
+                    VStack(alignment: .leading, spacing: 16) {
+                        Divider().overlay(Color.white.opacity(0.2))
 
-                    Text("Device")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    InfoRow(title: "Name", value: deviceMonitor.deviceName)
-                    InfoRow(title: "Model", value: deviceMonitor.deviceModel)
-                    InfoRow(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
-                    InfoRow(title: "Resolution", value: deviceMonitor.resolution)
-                    InfoRow(title: "Display", value: deviceMonitor.displayQuality)
-                    InfoRow(title: "HDR", value: deviceMonitor.hdrStatus)
+                        Text("Device")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        InfoRow(title: "Name", value: deviceMonitor.deviceName)
+                        InfoRow(title: "Model", value: deviceMonitor.deviceModel)
+                        InfoRow(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
+                        InfoRow(title: "Resolution", value: deviceMonitor.resolution)
+                        InfoRow(title: "Display", value: deviceMonitor.displayQuality)
+                        InfoRow(title: "HDR", value: deviceMonitor.hdrStatus)
 
-                    Divider().overlay(Color.white.opacity(0.2))
+                        Divider().overlay(Color.white.opacity(0.2))
 
-                    Text("Locale & Time")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    InfoRow(title: "Locale", value: localeSummary)
-                    InfoRow(title: "Preferred Language", value: preferredLanguage)
-                    InfoRow(title: "Time Zone", value: timeZoneSummary)
-                    InfoRow(title: "Local Time", value: localTimeString)
+                        Text("Locale & Time")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        InfoRow(title: "Locale", value: localeSummary)
+                        InfoRow(title: "Preferred Language", value: preferredLanguage)
+                        InfoRow(title: "Time Zone", value: timeZoneSummary)
+                        InfoRow(title: "Local Time", value: localTimeString)
 
-                    Divider().overlay(Color.white.opacity(0.2))
+                        Divider().overlay(Color.white.opacity(0.2))
 
-                    Text("Network")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    InfoRow(title: "Status", value: networkMonitor.statusText)
-                    InfoRow(title: "Interface", value: networkMonitor.interfaceText)
-                    InfoRow(title: "Constrained", value: networkMonitor.isConstrained ? "Yes" : "No")
-                    InfoRow(title: "Expensive", value: networkMonitor.isExpensive ? "Yes" : "No")
+                        Text("Network")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        InfoRow(title: "Status", value: networkMonitor.statusText)
+                        InfoRow(title: "Interface", value: networkMonitor.interfaceText)
+                        InfoRow(title: "Constrained", value: networkMonitor.isConstrained ? "Yes" : "No")
+                        InfoRow(title: "Expensive", value: networkMonitor.isExpensive ? "Yes" : "No")
 
-                    Divider().overlay(Color.white.opacity(0.2))
+                        Divider().overlay(Color.white.opacity(0.2))
 
-                    Text("Audio Route")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    InfoRow(title: "Summary", value: audioMonitor.outputSummary)
-                    ForEach(audioMonitor.outputDetails.indices, id: \.self) { index in
-                        InfoRow(title: "Output \(index + 1)", value: audioMonitor.outputDetails[index])
+                        Text("Audio Route")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        InfoRow(title: "Summary", value: audioMonitor.outputSummary)
+                        ForEach(audioMonitor.outputDetails.indices, id: \.self) { index in
+                            InfoRow(title: "Output \(index + 1)", value: audioMonitor.outputDetails[index])
+                        }
                     }
                 }
+                .padding(.top, 40)
+                .padding(.horizontal, 80)
+                .padding(.bottom, 80)
             }
-            .padding(.top, 40)
-            .padding(.horizontal, 80)
         }
         .toolbar(.hidden, for: .navigationBar)
     }
@@ -234,6 +237,9 @@ private struct SystemInfoTile: View {
             Text(value)
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.white)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .allowsTightening(true)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -257,12 +263,17 @@ private struct InfoRow: View {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
 
             Spacer(minLength: 0)
 
             Text(value)
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(.white)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .minimumScaleFactor(0.8)
+                .allowsTightening(true)
         }
     }
 }

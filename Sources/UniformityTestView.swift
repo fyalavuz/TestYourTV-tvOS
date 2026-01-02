@@ -108,7 +108,6 @@ struct UniformityTestView: View {
                                 .font(.callout.weight(.semibold))
                                 .foregroundStyle(.white)
                         }
-                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         if showGridLines {
                             LabeledSlider(value: $gridSize, range: 2...8, step: 1, suffix: "x")
@@ -120,7 +119,6 @@ struct UniformityTestView: View {
                                 .font(.callout.weight(.semibold))
                                 .foregroundStyle(.white)
                         }
-                        .toggleStyle(GlassCheckboxToggleStyle())
 
                         Button {
                             brightness = 50

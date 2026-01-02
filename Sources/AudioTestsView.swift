@@ -44,6 +44,10 @@ struct AudioTestsView: View {
                                 Text(speaker.0)
                                     .font(.headline)
                                     .foregroundStyle(.white)
+                                    .multilineTextAlignment(.center)
+                                    .minimumScaleFactor(0.75)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 8)
                             }
                             .frame(maxWidth: .infinity, minHeight: 190)
                             .glassSurface(cornerRadius: 26, strokeOpacity: activeSpeaker == speaker.0 ? 0.45 : 0.18)

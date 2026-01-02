@@ -112,15 +112,16 @@ struct HomeHubView: View {
     let menuSections: [MenuSection] = [
         MenuSection(
             id: "video-tests",
-            title: "Reference Videos",
-            subtitle: "Motion, compression, resolution and HDR checks.",
+            title: "Video Tests",
+            subtitle: "Reference samples and instrumented technical clips.",
             items: [
-                MenuOption(title: "AVT VQDB UHD-1", icon: "film.stack", color: .purple, destination: .videoTests)
+                MenuOption(title: "Provider Samples", icon: "film.stack", color: .purple, destination: .videoTests),
+                MenuOption(title: "Technical Tests", icon: "waveform.path.ecg", color: .teal, destination: .technicalTests)
             ]
         ),
         MenuSection(
-            id: "core-tests",
-            title: "Core Tests",
+            id: "display-analysis",
+            title: "Display Analysis",
             subtitle: "Pixel defects, uniformity, gradients, and contrast checks.",
             items: [
                 MenuOption(title: "Dead Pixel", icon: "dot.squareshape.split.2x2", color: .red, destination: .deadPixel),
@@ -128,40 +129,67 @@ struct HomeHubView: View {
                 MenuOption(title: "Color Gradient", icon: "circle.lefthalf.filled", color: .blue, destination: .colorGradient),
                 MenuOption(title: "Color Distance", icon: "eyedropper.halffull", color: .cyan, destination: .colorDistance),
                 MenuOption(title: "Contrast", icon: "checkerboard.rectangle", color: .gray, destination: .contrast),
-                MenuOption(title: "Brightness", icon: "sun.max.fill", color: .yellow, destination: .brightness),
-                MenuOption(title: "Overscan & Safe Area", icon: "rectangle.inset.filled", color: .teal, destination: .overscan)
+                MenuOption(title: "Brightness", icon: "sun.max.fill", color: .yellow, destination: .brightness)
             ]
         ),
         MenuSection(
             id: "calibration",
-            title: "Calibration",
-            subtitle: "Text clarity, gamma, and reference patterns.",
+            title: "Calibration & Geometry",
+            subtitle: "Gamma, sharpness, overscan and reference patterns.",
             items: [
-                MenuOption(title: "Text Clarity", icon: "textformat.size", color: .indigo, destination: .textClarity),
-                MenuOption(title: "Gamma", icon: "circle.righthalf.filled", color: .purple, destination: .gamma),
                 MenuOption(title: "Test Patterns", icon: "square.grid.3x3.square", color: .orange, destination: .testPatterns),
-                MenuOption(title: "Calibration", icon: "slider.horizontal.3", color: .teal, destination: .calibration)
+                MenuOption(title: "Gamma", icon: "circle.righthalf.filled", color: .purple, destination: .gamma),
+                MenuOption(title: "Calibration", icon: "slider.horizontal.3", color: .teal, destination: .calibration),
+                MenuOption(title: "Text Clarity", icon: "textformat.size", color: .indigo, destination: .textClarity),
+                MenuOption(title: "Overscan", icon: "rectangle.inset.filled", color: .teal, destination: .overscan)
             ]
         ),
         MenuSection(
-            id: "motion-angle",
-            title: "Motion & Angle",
-            subtitle: "Response time, viewing angle, and motion behavior.",
+            id: "motion-processing",
+            title: "Motion & Processing",
+            subtitle: "Response time, frame rate, and real-time rendering stress tests.",
             items: [
+                MenuOption(title: "Motion Test", icon: "wind", color: .orange, destination: .motion),
                 MenuOption(title: "Response Time", icon: "move.3d", color: .pink, destination: .responseTime),
                 MenuOption(title: "Viewing Angle", icon: "eye.fill", color: .green, destination: .viewingAngle),
-                MenuOption(title: "Motion Test", icon: "wind", color: .orange, destination: .motion)
+                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .white, destination: .matrix),
+                MenuOption(title: "Infinite Cubes", icon: "cube.transparent", color: .indigo, destination: .rayMarching),
+                MenuOption(title: "Starfield", icon: "sparkles", color: .yellow, destination: .starfield),
+                MenuOption(title: "Spiral", icon: "tornado", color: .red, destination: .spiral),
+                MenuOption(title: "Fractal Stress", icon: "hexagon.fill", color: .cyan, destination: .fractal),
+                MenuOption(title: "Neon Rain", icon: "cloud.rain.fill", color: .blue, destination: .rain),
+                MenuOption(title: "Infinite Pipes", icon: "infinity.circle", color: .orange, destination: .noodles),
+                MenuOption(title: "Spectral Flow", icon: "rainbow", color: .pink, destination: .spectral),
+                MenuOption(title: "Synth Terrain", icon: "mountain.2.fill", color: .green, destination: .terrain),
+                MenuOption(title: "Hyper Ring", icon: "circle.circle.fill", color: .cyan, destination: .ring),
+                MenuOption(title: "Color Twist", icon: "tornado.circle.fill", color: .orange, destination: .twist),
+                MenuOption(title: "Polar Lattice", icon: "snowflake", color: .indigo, destination: .lattice),
+                MenuOption(title: "Nebula Flow", icon: "smoke.fill", color: .gray, destination: .cloud)
             ]
         ),
         MenuSection(
-            id: "tools-extras",
-            title: "Tools & Extras",
-            subtitle: "Audio channel checks, OLED care, and diagnostics.",
+            id: "audio",
+            title: "Audio Suite",
+            subtitle: "Speaker configuration checks and signal generation.",
             items: [
-                MenuOption(title: "Audio Test", icon: "hifispeaker.2.fill", color: .green, destination: .audio),
+                MenuOption(title: "Speaker Check", icon: "hifispeaker.2.fill", color: .green, destination: .audio),
+                MenuOption(title: "Signal Generator", icon: "waveform.circle", color: .orange, destination: .audioLab)
+            ]
+        ),
+        MenuSection(
+            id: "maintenance",
+            title: "Maintenance & Input",
+            subtitle: "OLED care utilities and controller testing.",
+            items: [
                 MenuOption(title: "OLED Wiper", icon: "wand.and.stars", color: .purple, destination: .wiper),
-                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .white, destination: .matrix),
-                MenuOption(title: "Input Test", icon: "gamecontroller.fill", color: .teal, destination: .inputTest),
+                MenuOption(title: "Input Test", icon: "gamecontroller.fill", color: .teal, destination: .inputTest)
+            ]
+        ),
+        MenuSection(
+            id: "system",
+            title: "System",
+            subtitle: "Device specifications and capabilities.",
+            items: [
                 MenuOption(title: "System Info", icon: "gearshape.2.fill", color: .cyan, destination: .systemInfo)
             ]
         )
@@ -259,8 +287,22 @@ struct HomeHubView: View {
         case .matrix: MatrixTestView()
         case .overscan: OverscanTestView()
         case .videoTests: VideoTestsView()
+        case .technicalTests: VideoTestsView(mode: .technical)
         case .inputTest: InputTestView()
         case .systemInfo: SystemInfoView()
+        case .audioLab: AudioLabView()
+        case .rayMarching: RayMarchingView()
+        case .starfield: StarfieldView()
+        case .spiral: SpiralView()
+        case .fractal: FractalView()
+        case .rain: RainView()
+        case .noodles: NoodlesView()
+        case .spectral: SpectralView()
+        case .terrain: TerrainView()
+        case .ring: RingView()
+        case .twist: TwistView()
+        case .lattice: LatticeView()
+        case .cloud: CloudView()
         }
     }
 }
@@ -270,7 +312,7 @@ struct HomeHubView: View {
 enum DestinationType: Hashable {
     case calibration, deadPixel, uniformity, colorGradient, colorDistance
     case textClarity, gamma, testPatterns, responseTime, viewingAngle
-    case brightness, contrast, matrix, audio, motion, wiper, overscan, videoTests, inputTest, systemInfo
+    case brightness, contrast, matrix, audio, motion, wiper, overscan, videoTests, technicalTests, inputTest, systemInfo, audioLab, rayMarching, starfield, spiral, fractal, rain, noodles, spectral, terrain, ring, twist, lattice, cloud
 }
 
 struct MenuOption: Identifiable {
@@ -317,6 +359,9 @@ struct InfoBadge: View {
             Text(value)
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .allowsTightening(true)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -335,4 +380,3 @@ struct MenuSection: Identifiable {
 #Preview {
     ContentView()
 }
-

@@ -3,161 +3,203 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07A366B9C805F5009A24E440 /* TestYourTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */; };
-		1F55C0581F1FB04759007F8E /* TestPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7271CD661F5C212316BEFF07 /* TestPatternsView.swift */; };
-		24F8A736DFD0D07973F02A16 /* AudioTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6893513FEAF2CE0723F90054 /* AudioTestsView.swift */; };
-		270A9059A4057922DEF73F24 /* BrightnessTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D24177936A2E4262F756491 /* BrightnessTestView.swift */; };
-		2AE14C7F05E5BDE2EBB997FD /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82C55F6A6FE88DB25ABEABF /* AudioManager.swift */; };
-		2BE641B7B890255C6D398D46 /* ViewingAngleTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */; };
-		39626A07AB04B3B137B577C1 /* CloudingTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E3335DDDEC87021F92A814 /* CloudingTestView.swift */; };
-		46CC9591896D7F17A6B8A889 /* ContrastTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946BD4A2C716B0069061A2AD /* ContrastTestView.swift */; };
-		502DEF1087F4833702A406D4 /* MotionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB210F6A9542291E1447013D /* MotionTestView.swift */; };
-		9EDFAE8165D3426FBDDFBD2C /* test-cards in Resources */ = {isa = PBXBuildFile; fileRef = B5F88429F951426B822E388E /* test-cards */; };
-		8BFB8E7648864A5B8837FEAF /* VideoTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04159178297B4C078602E55B /* VideoTestsView.swift */; };
-		924541BAFA1F4F2F9EEA11A9 /* InputTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A56D546BFD4AA6B562DF47 /* InputTestView.swift */; };
-		204E4AD4824B45F4B10DA5FD /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */; };
-		D69841E465554AC3B456FCF4 /* OverscanTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */; };
-		525655DC9FB4AC9250AE5709 /* GradientTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */; };
-		6102574567436BDA820E094C /* DeadPixelTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D2013AA71F9282B7A12CE6 /* DeadPixelTestView.swift */; };
-		652EDA088D5354B99C639890 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1012AF4D9D47604908AA3C /* Glass.swift */; };
-		69755E825D9371A804680BE9 /* BurnInWiperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C31501CC2C3EB42328A1F58 /* BurnInWiperView.swift */; };
-		71ADEF5F75226EE53D506F96 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC539CFF3DCE46A6B9078040 /* ContentView.swift */; };
-		722EE10F840B5A573A7A68A6 /* DeviceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */; };
-		758486422CB72EAF91CB9B60 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7F73BF261448CD237EC97240 /* Shaders.metal */; };
-		92B1D20C056C95E1417A8D3F /* CalibrationPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9D86AEDD84584A98899017 /* CalibrationPatternsView.swift */; };
-		A15D18E15D235997A73CCCF0 /* TextClarityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E086EE0107D6147D8F3741FC /* TextClarityView.swift */; };
-		AEB16C895CE99069F9BA200D /* Patterns in Resources */ = {isa = PBXBuildFile; fileRef = 00D4FEC946C43F58D6994485 /* Patterns */; };
-		B9AD9AF490F4830BAA65203E /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69EA9C14F4AAB145014C594 /* SettingsManager.swift */; };
-		CEECD0A30739B5935C21F371 /* ColorDistanceTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1ECE1AD03A4E737F5CA2E2 /* ColorDistanceTestView.swift */; };
-		E50DC421524D3F163869FC5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69B5195FAC5AB27C7C5534C2 /* Assets.xcassets */; };
-		EAD0E12C307A8C4BFFF23F9C /* ResponseTimeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */; };
-		EB695C44C114A43DDE5D4AA5 /* UniformityTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41607C8B5EDEBA1466B5222 /* UniformityTestView.swift */; };
-		F6754304A31C0DBB96F9F1FD /* MatrixTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB44DAB78D0C66FF2710F26 /* MatrixTestView.swift */; };
-		FBC20DC466132B7A35E80BBC /* GammaTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33D31F027189CB994322F0D /* GammaTestView.swift */; };
-		FF8F216385C45DD9B6E267CD /* ColorGradientTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAF36D1967A1CBAE22E939F /* ColorGradientTestView.swift */; };
+		00D4BB7B71B9C0DAB6F2F507 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A087CC94501CCDD2B091C1D /* Assets.xcassets */; };
+		0E4944EDBB719E509F34CB59 /* SpectralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EC0F1E093DD4A0B16CFBBA /* SpectralView.swift */; };
+		14154D4622CA95CC06E6F2A9 /* TextClarityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F800D695E4EFE7925806C992 /* TextClarityView.swift */; };
+		173A26CF6BAF12742EC7F3DC /* Patterns in Resources */ = {isa = PBXBuildFile; fileRef = B1E80FFE6D2558F486FEF657 /* Patterns */; };
+		179E510BF0D48BCDDFA145BB /* ResponseTimeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4EBFD2A2BC18AE5FE5E7DF /* ResponseTimeTestView.swift */; };
+		1F8DBCE70C646A7A3E39C4FF /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4CAE1EEA40AD58E829399A /* AudioManager.swift */; };
+		213B8C4C5136D2B99F546AFF /* ViewingAngleTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33C6B4BA65EC7EE440C7E7 /* ViewingAngleTestView.swift */; };
+		228092E72649F12AE7615B5D /* GammaTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50CD8BF3D4EFCCFC83FD481 /* GammaTestView.swift */; };
+		22855F8C0A77DC80D1893BD1 /* SpiralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DF7CACEC20A83E5DB49C8C /* SpiralView.swift */; };
+		22E155D438F49407FAFDBA4D /* MotionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 706F08F23F4F8B11A4AFD038 /* MotionTestView.swift */; };
+		2791419F7329E27EC1DD7186 /* GradientTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC379C045915CA58F19C464 /* GradientTestView.swift */; };
+		2A3738ADB369C605B65460D6 /* RingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD1F454BD6D3A76FA705597 /* RingView.swift */; };
+		35901A622EB382EAC6380B54 /* AuroraSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97CB54FF28756C14002775A /* AuroraSkyView.swift */; };
+		47C0E56292C2F9F0D772F796 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABCA9879C2EF0BE7208D3F4 /* SettingsManager.swift */; };
+		4AFC024E675422A0ED32B2B3 /* CloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222FD47DC9FDC3BC0ED5548 /* CloudView.swift */; };
+		4F00F1AAB4070543867693AD /* BurnInWiperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3521DAE2CE6582E882916BDA /* BurnInWiperView.swift */; };
+		4F64F2F683239C68B532DC5A /* DeviceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28F614BFD6245BE3526E23C /* DeviceMonitor.swift */; };
+		58C42B3C1E9FC5B98F311FDB /* LatticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D451E864BA2CE4E37F29C1 /* LatticeView.swift */; };
+		7342D71C4AA5F00D6CDD7147 /* RainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC49489B3DCD186A524228 /* RainView.swift */; };
+		81B7C32A7BC31F9423F23DBD /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA4FB501A6082943ECEFAFE /* SystemInfoView.swift */; };
+		8C3A57466E7E4BE7FB585185 /* StarfieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38115FDDA62AC4702F8413A1 /* StarfieldView.swift */; };
+		96DB425037819E62033EDB6F /* AudioTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDC90F3FBEDB200916B5846 /* AudioTestsView.swift */; };
+		9B7BCB430884A68CC1C0A9C4 /* CalibrationPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB45ECA5E40AEAD20EDCE192 /* CalibrationPatternsView.swift */; };
+		9D67EFC81770BA8BBB5D3EF5 /* RayMarchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13DA3EF403DD8CDD308AAC8 /* RayMarchingView.swift */; };
+		AD708BD9D29FFD0B57ABD67F /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26F7A30F8737AB6644C344B /* Glass.swift */; };
+		AE5B09CF5F77D23FE3C51474 /* TerrainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF32310E14CD4C8C809830D /* TerrainView.swift */; };
+		B6C4936DF334115DDA56930A /* TwistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD85B6819F5FAF18273DBD89 /* TwistView.swift */; };
+		B7E8E6B73606216FCA9EDE27 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = EFC60DD49CE00BF0D382C2B5 /* Shaders.metal */; };
+		BA2CF6BFA943E58EE8CF784A /* ColorGradientTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC48193E814085E55E2129 /* ColorGradientTestView.swift */; };
+		BA4373E7AC2FAAF8348912C8 /* TestPatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5BBCEE6F968A457FB4D620 /* TestPatternsView.swift */; };
+		BAFA022EB8957FAA7FB2283F /* ContrastTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B030BA5C14342DD0A2773CE /* ContrastTestView.swift */; };
+		C4CB68D882941A8682EFD683 /* ColorDistanceTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EAA68EED5E61D6428516ED /* ColorDistanceTestView.swift */; };
+		C740C516D17C474E88B160DF /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A370361642125290DFAC533 /* DesignSystem.swift */; };
+		C8A5934E7F62B23D52C58FC1 /* NoodlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C452DC185AB5DFBE73CA48 /* NoodlesView.swift */; };
+		D3E795CD1745A3E5C4EFFF6B /* AudioLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FA5E6CD14B790CE1887B07 /* AudioLabView.swift */; };
+		DC79A79EB5DFCBE94D6C498F /* DeadPixelTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06CF79255D5BB30985839B7 /* DeadPixelTestView.swift */; };
+		E4A30A791D151B7D0DDEDF24 /* FractalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C2ECB70C42C1D3BC3A4CD6 /* FractalView.swift */; };
+		E7DD292DFD1215F419203D45 /* MatrixTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4227B0B683130EF609765C49 /* MatrixTestView.swift */; };
+		E9D7451F937988D2AE289BAB /* TestYourTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFA4C5B0570DF665CA6B786 /* TestYourTVApp.swift */; };
+		EE43A08DCE606F7BEF0DC528 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D72B14C2383F908CE51FC51 /* ContentView.swift */; };
+		EEF6ADB9AD892F76A4628103 /* OverscanTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7787471A5E9D7E838E34FBB3 /* OverscanTestView.swift */; };
+		EF6F5E04B377859158386A7E /* VideoTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE23B5FF231C3677687920A /* VideoTestsView.swift */; };
+		EFAFA58D538B7609271DD239 /* InputTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BC21DDF5DDFF79ED508604 /* InputTestView.swift */; };
+		F2C5E29FD6CEF18AC464843E /* CloudingTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A610A115A3000791F3ADA262 /* CloudingTestView.swift */; };
+		F473F201F6ED72A5A897E012 /* BrightnessTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F53D9E22F1C79BD81E0A6FC /* BrightnessTestView.swift */; };
+		FE70CE1887780BA07B11B3DA /* UniformityTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06EB798C4AFE4276E59FB5 /* UniformityTestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		00D4FEC946C43F58D6994485 /* Patterns */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Patterns; sourceTree = "<group>"; };
-		0B9D86AEDD84584A98899017 /* CalibrationPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationPatternsView.swift; sourceTree = "<group>"; };
-		1FAF36D1967A1CBAE22E939F /* ColorGradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorGradientTestView.swift; sourceTree = "<group>"; };
-		20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTimeTestView.swift; sourceTree = "<group>"; };
-		35E3335DDDEC87021F92A814 /* CloudingTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudingTestView.swift; sourceTree = "<group>"; };
-		3D24177936A2E4262F756491 /* BrightnessTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessTestView.swift; sourceTree = "<group>"; };
-		49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestYourTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4A1ECE1AD03A4E737F5CA2E2 /* ColorDistanceTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorDistanceTestView.swift; sourceTree = "<group>"; };
-		4C31501CC2C3EB42328A1F58 /* BurnInWiperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurnInWiperView.swift; sourceTree = "<group>"; };
-		511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestYourTVApp.swift; sourceTree = "<group>"; };
-		5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingAngleTestView.swift; sourceTree = "<group>"; };
-		04159178297B4C078602E55B /* VideoTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTestsView.swift; sourceTree = "<group>"; };
-		04A56D546BFD4AA6B562DF47 /* InputTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTestView.swift; sourceTree = "<group>"; };
-		6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
-		638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientTestView.swift; sourceTree = "<group>"; };
-		6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMonitor.swift; sourceTree = "<group>"; };
-		6893513FEAF2CE0723F90054 /* AudioTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTestsView.swift; sourceTree = "<group>"; };
-		69B5195FAC5AB27C7C5534C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7271CD661F5C212316BEFF07 /* TestPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPatternsView.swift; sourceTree = "<group>"; };
-		7F73BF261448CD237EC97240 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		93D2013AA71F9282B7A12CE6 /* DeadPixelTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeadPixelTestView.swift; sourceTree = "<group>"; };
-		946BD4A2C716B0069061A2AD /* ContrastTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastTestView.swift; sourceTree = "<group>"; };
-		A33D31F027189CB994322F0D /* GammaTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GammaTestView.swift; sourceTree = "<group>"; };
-		B82C55F6A6FE88DB25ABEABF /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
-		B5F88429F951426B822E388E /* test-cards */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "test-cards"; sourceTree = SOURCE_ROOT; };
-		BB210F6A9542291E1447013D /* MotionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTestView.swift; sourceTree = "<group>"; };
-		EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverscanTestView.swift; sourceTree = "<group>"; };
-		BF1012AF4D9D47604908AA3C /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
-		CC539CFF3DCE46A6B9078040 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D69EA9C14F4AAB145014C594 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
-		E086EE0107D6147D8F3741FC /* TextClarityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextClarityView.swift; sourceTree = "<group>"; };
-		EEB44DAB78D0C66FF2710F26 /* MatrixTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixTestView.swift; sourceTree = "<group>"; };
-		F41607C8B5EDEBA1466B5222 /* UniformityTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformityTestView.swift; sourceTree = "<group>"; };
+		0EDC90F3FBEDB200916B5846 /* AudioTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTestsView.swift; sourceTree = "<group>"; };
+		17AC49489B3DCD186A524228 /* RainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainView.swift; sourceTree = "<group>"; };
+		1AFA4C5B0570DF665CA6B786 /* TestYourTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestYourTVApp.swift; sourceTree = "<group>"; };
+		1BD1F454BD6D3A76FA705597 /* RingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingView.swift; sourceTree = "<group>"; };
+		2EC379C045915CA58F19C464 /* GradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientTestView.swift; sourceTree = "<group>"; };
+		2EF32310E14CD4C8C809830D /* TerrainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainView.swift; sourceTree = "<group>"; };
+		32C2ECB70C42C1D3BC3A4CD6 /* FractalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractalView.swift; sourceTree = "<group>"; };
+		33FA5E6CD14B790CE1887B07 /* AudioLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLabView.swift; sourceTree = "<group>"; };
+		3521DAE2CE6582E882916BDA /* BurnInWiperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurnInWiperView.swift; sourceTree = "<group>"; };
+		38115FDDA62AC4702F8413A1 /* StarfieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarfieldView.swift; sourceTree = "<group>"; };
+		4227B0B683130EF609765C49 /* MatrixTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixTestView.swift; sourceTree = "<group>"; };
+		42EAA68EED5E61D6428516ED /* ColorDistanceTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorDistanceTestView.swift; sourceTree = "<group>"; };
+		4B5BBCEE6F968A457FB4D620 /* TestPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPatternsView.swift; sourceTree = "<group>"; };
+		5A370361642125290DFAC533 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		5ABCA9879C2EF0BE7208D3F4 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		5D72B14C2383F908CE51FC51 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5F53D9E22F1C79BD81E0A6FC /* BrightnessTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessTestView.swift; sourceTree = "<group>"; };
+		6A18FE0A7FED7E16ADA034DC /* TestYourTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TestYourTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F06EB798C4AFE4276E59FB5 /* UniformityTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformityTestView.swift; sourceTree = "<group>"; };
+		706F08F23F4F8B11A4AFD038 /* MotionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTestView.swift; sourceTree = "<group>"; };
+		7787471A5E9D7E838E34FBB3 /* OverscanTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverscanTestView.swift; sourceTree = "<group>"; };
+		79D451E864BA2CE4E37F29C1 /* LatticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatticeView.swift; sourceTree = "<group>"; };
+		7B030BA5C14342DD0A2773CE /* ContrastTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastTestView.swift; sourceTree = "<group>"; };
+		7B4CAE1EEA40AD58E829399A /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		7DA4FB501A6082943ECEFAFE /* SystemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemInfoView.swift; sourceTree = "<group>"; };
+		8222FD47DC9FDC3BC0ED5548 /* CloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudView.swift; sourceTree = "<group>"; };
+		98BC21DDF5DDFF79ED508604 /* InputTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTestView.swift; sourceTree = "<group>"; };
+		9A087CC94501CCDD2B091C1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A610A115A3000791F3ADA262 /* CloudingTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudingTestView.swift; sourceTree = "<group>"; };
+		A6EC0F1E093DD4A0B16CFBBA /* SpectralView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectralView.swift; sourceTree = "<group>"; };
+		AA4EBFD2A2BC18AE5FE5E7DF /* ResponseTimeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTimeTestView.swift; sourceTree = "<group>"; };
+		ADDC48193E814085E55E2129 /* ColorGradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorGradientTestView.swift; sourceTree = "<group>"; };
+		B13DA3EF403DD8CDD308AAC8 /* RayMarchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayMarchingView.swift; sourceTree = "<group>"; };
+		B1E80FFE6D2558F486FEF657 /* Patterns */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patterns; path = Resources/Patterns; sourceTree = SOURCE_ROOT; };
+		C26F7A30F8737AB6644C344B /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
+		C50CD8BF3D4EFCCFC83FD481 /* GammaTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GammaTestView.swift; sourceTree = "<group>"; };
+		D4C452DC185AB5DFBE73CA48 /* NoodlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoodlesView.swift; sourceTree = "<group>"; };
+		E06CF79255D5BB30985839B7 /* DeadPixelTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeadPixelTestView.swift; sourceTree = "<group>"; };
+		E97CB54FF28756C14002775A /* AuroraSkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuroraSkyView.swift; sourceTree = "<group>"; };
+		EF33C6B4BA65EC7EE440C7E7 /* ViewingAngleTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingAngleTestView.swift; sourceTree = "<group>"; };
+		EFC60DD49CE00BF0D382C2B5 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		F28F614BFD6245BE3526E23C /* DeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMonitor.swift; sourceTree = "<group>"; };
+		F6DF7CACEC20A83E5DB49C8C /* SpiralView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiralView.swift; sourceTree = "<group>"; };
+		F800D695E4EFE7925806C992 /* TextClarityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextClarityView.swift; sourceTree = "<group>"; };
+		FB45ECA5E40AEAD20EDCE192 /* CalibrationPatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationPatternsView.swift; sourceTree = "<group>"; };
+		FD85B6819F5FAF18273DBD89 /* TwistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwistView.swift; sourceTree = "<group>"; };
+		FFE23B5FF231C3677687920A /* VideoTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTestsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		4A664C7804FDF91D7A213BDD /* Design */ = {
+		14D1350CCCC03FD94414C482 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BF1012AF4D9D47604908AA3C /* Glass.swift */,
-			);
-			path = Design;
-			sourceTree = "<group>";
-		};
-		58C39F3CBE14BBEE48EFE4AE /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				B82C55F6A6FE88DB25ABEABF /* AudioManager.swift */,
-				6893513FEAF2CE0723F90054 /* AudioTestsView.swift */,
-				3D24177936A2E4262F756491 /* BrightnessTestView.swift */,
-				4C31501CC2C3EB42328A1F58 /* BurnInWiperView.swift */,
-				0B9D86AEDD84584A98899017 /* CalibrationPatternsView.swift */,
-				35E3335DDDEC87021F92A814 /* CloudingTestView.swift */,
-				4A1ECE1AD03A4E737F5CA2E2 /* ColorDistanceTestView.swift */,
-				1FAF36D1967A1CBAE22E939F /* ColorGradientTestView.swift */,
-				CC539CFF3DCE46A6B9078040 /* ContentView.swift */,
-				946BD4A2C716B0069061A2AD /* ContrastTestView.swift */,
-				93D2013AA71F9282B7A12CE6 /* DeadPixelTestView.swift */,
-				6664DF78A926675DBC1D4450 /* DeviceMonitor.swift */,
-				A33D31F027189CB994322F0D /* GammaTestView.swift */,
-				638D139D1C2A1DB5D1EA3B45 /* GradientTestView.swift */,
-				04A56D546BFD4AA6B562DF47 /* InputTestView.swift */,
-				EEB44DAB78D0C66FF2710F26 /* MatrixTestView.swift */,
-				BB210F6A9542291E1447013D /* MotionTestView.swift */,
-				EE0DEDBB5EA5491EB9CDB11C /* OverscanTestView.swift */,
-				511BF2EAB6243C1C2B34D45D /* TestYourTVApp.swift */,
-				20E598BA4FDA7810156F0F39 /* ResponseTimeTestView.swift */,
-				6FD3A31F51874B3EA10722CB /* SystemInfoView.swift */,
-				D69EA9C14F4AAB145014C594 /* SettingsManager.swift */,
-				7F73BF261448CD237EC97240 /* Shaders.metal */,
-				7271CD661F5C212316BEFF07 /* TestPatternsView.swift */,
-				E086EE0107D6147D8F3741FC /* TextClarityView.swift */,
-				F41607C8B5EDEBA1466B5222 /* UniformityTestView.swift */,
-				04159178297B4C078602E55B /* VideoTestsView.swift */,
-				5AC4AE01F7CAFBCF12AC66B3 /* ViewingAngleTestView.swift */,
-				4A664C7804FDF91D7A213BDD /* Design */,
+				33FA5E6CD14B790CE1887B07 /* AudioLabView.swift */,
+				7B4CAE1EEA40AD58E829399A /* AudioManager.swift */,
+				0EDC90F3FBEDB200916B5846 /* AudioTestsView.swift */,
+				E97CB54FF28756C14002775A /* AuroraSkyView.swift */,
+				5F53D9E22F1C79BD81E0A6FC /* BrightnessTestView.swift */,
+				3521DAE2CE6582E882916BDA /* BurnInWiperView.swift */,
+				FB45ECA5E40AEAD20EDCE192 /* CalibrationPatternsView.swift */,
+				A610A115A3000791F3ADA262 /* CloudingTestView.swift */,
+				8222FD47DC9FDC3BC0ED5548 /* CloudView.swift */,
+				42EAA68EED5E61D6428516ED /* ColorDistanceTestView.swift */,
+				ADDC48193E814085E55E2129 /* ColorGradientTestView.swift */,
+				5D72B14C2383F908CE51FC51 /* ContentView.swift */,
+				7B030BA5C14342DD0A2773CE /* ContrastTestView.swift */,
+				E06CF79255D5BB30985839B7 /* DeadPixelTestView.swift */,
+				5A370361642125290DFAC533 /* DesignSystem.swift */,
+				F28F614BFD6245BE3526E23C /* DeviceMonitor.swift */,
+				32C2ECB70C42C1D3BC3A4CD6 /* FractalView.swift */,
+				C50CD8BF3D4EFCCFC83FD481 /* GammaTestView.swift */,
+				2EC379C045915CA58F19C464 /* GradientTestView.swift */,
+				98BC21DDF5DDFF79ED508604 /* InputTestView.swift */,
+				79D451E864BA2CE4E37F29C1 /* LatticeView.swift */,
+				4227B0B683130EF609765C49 /* MatrixTestView.swift */,
+				706F08F23F4F8B11A4AFD038 /* MotionTestView.swift */,
+				D4C452DC185AB5DFBE73CA48 /* NoodlesView.swift */,
+				7787471A5E9D7E838E34FBB3 /* OverscanTestView.swift */,
+				17AC49489B3DCD186A524228 /* RainView.swift */,
+				B13DA3EF403DD8CDD308AAC8 /* RayMarchingView.swift */,
+				AA4EBFD2A2BC18AE5FE5E7DF /* ResponseTimeTestView.swift */,
+				1BD1F454BD6D3A76FA705597 /* RingView.swift */,
+				5ABCA9879C2EF0BE7208D3F4 /* SettingsManager.swift */,
+				EFC60DD49CE00BF0D382C2B5 /* Shaders.metal */,
+				A6EC0F1E093DD4A0B16CFBBA /* SpectralView.swift */,
+				F6DF7CACEC20A83E5DB49C8C /* SpiralView.swift */,
+				38115FDDA62AC4702F8413A1 /* StarfieldView.swift */,
+				7DA4FB501A6082943ECEFAFE /* SystemInfoView.swift */,
+				2EF32310E14CD4C8C809830D /* TerrainView.swift */,
+				4B5BBCEE6F968A457FB4D620 /* TestPatternsView.swift */,
+				1AFA4C5B0570DF665CA6B786 /* TestYourTVApp.swift */,
+				F800D695E4EFE7925806C992 /* TextClarityView.swift */,
+				FD85B6819F5FAF18273DBD89 /* TwistView.swift */,
+				6F06EB798C4AFE4276E59FB5 /* UniformityTestView.swift */,
+				FFE23B5FF231C3677687920A /* VideoTestsView.swift */,
+				EF33C6B4BA65EC7EE440C7E7 /* ViewingAngleTestView.swift */,
+				EB318C2C50A5AD0BCE573937 /* Design */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		7333E46C2B39FED8E8E1FEA0 /* Products */ = {
+		1A1003B0D78545DE96B31CBD = {
 			isa = PBXGroup;
 			children = (
-				49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */,
+				B1E80FFE6D2558F486FEF657 /* Patterns */,
+				5C94A54E788FBA16725EB765 /* Resources */,
+				14D1350CCCC03FD94414C482 /* Sources */,
+				2EC99AA6ADE422DB2BE0E438 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2EC99AA6ADE422DB2BE0E438 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6A18FE0A7FED7E16ADA034DC /* TestYourTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		93FDA8D588E1D4E5B047838F = {
+		5C94A54E788FBA16725EB765 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				58C39F3CBE14BBEE48EFE4AE /* Sources */,
-				BC79049C62A4FB883251C161 /* Resources */,
-				7333E46C2B39FED8E8E1FEA0 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		BC79049C62A4FB883251C161 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				69B5195FAC5AB27C7C5534C2 /* Assets.xcassets */,
-				00D4FEC946C43F58D6994485 /* Patterns */,
-				B5F88429F951426B822E388E /* test-cards */,
+				9A087CC94501CCDD2B091C1D /* Assets.xcassets */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		EB318C2C50A5AD0BCE573937 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				C26F7A30F8737AB6644C344B /* Glass.swift */,
+			);
+			path = Design;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E42BC414B7F5A36756198B8A /* TestYourTV */ = {
+		6AB1A89C008B35EE6D982BF6 /* TestYourTV */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "TestYourTV" */;
+			buildConfigurationList = 4B740060CCAF554A4ECBADAF /* Build configuration list for PBXNativeTarget "TestYourTV" */;
 			buildPhases = (
-				9E58327758D2006585F4A54F /* Sources */,
-				292A3B8CA5F37247A29165DB /* Resources */,
+				A3172C29D108FA3654120AB2 /* Sources */,
+				ACDEF4A5CA583F2B25070CF5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -167,25 +209,25 @@
 			packageProductDependencies = (
 			);
 			productName = TestYourTV;
-			productReference = 49FCBF8DF6ADF892BF0DC88C /* TestYourTV.app */;
+			productReference = 6A18FE0A7FED7E16ADA034DC /* TestYourTV.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		7A344BB573E6C2E52FC2338C /* Project object */ = {
+		B446097FED465BDBE1FB5F2A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					E42BC414B7F5A36756198B8A = {
+					6AB1A89C008B35EE6D982BF6 = {
 						DevelopmentTeam = VAW6FMKNP9;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "TestYourTV" */;
+			buildConfigurationList = 1B674C056DA5F677D1EBBF55 /* Build configuration list for PBXProject "TestYourTV" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -193,81 +235,95 @@
 				Base,
 				en,
 			);
-			mainGroup = 93FDA8D588E1D4E5B047838F;
+			mainGroup = 1A1003B0D78545DE96B31CBD;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E42BC414B7F5A36756198B8A /* TestYourTV */,
+				6AB1A89C008B35EE6D982BF6 /* TestYourTV */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		292A3B8CA5F37247A29165DB /* Resources */ = {
+		ACDEF4A5CA583F2B25070CF5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E50DC421524D3F163869FC5F /* Assets.xcassets in Resources */,
-				AEB16C895CE99069F9BA200D /* Patterns in Resources */,
-				9EDFAE8165D3426FBDDFBD2C /* test-cards in Resources */,
+				00D4BB7B71B9C0DAB6F2F507 /* Assets.xcassets in Resources */,
+				173A26CF6BAF12742EC7F3DC /* Patterns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9E58327758D2006585F4A54F /* Sources */ = {
+		A3172C29D108FA3654120AB2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2AE14C7F05E5BDE2EBB997FD /* AudioManager.swift in Sources */,
-				24F8A736DFD0D07973F02A16 /* AudioTestsView.swift in Sources */,
-				270A9059A4057922DEF73F24 /* BrightnessTestView.swift in Sources */,
-				69755E825D9371A804680BE9 /* BurnInWiperView.swift in Sources */,
-				92B1D20C056C95E1417A8D3F /* CalibrationPatternsView.swift in Sources */,
-				39626A07AB04B3B137B577C1 /* CloudingTestView.swift in Sources */,
-				CEECD0A30739B5935C21F371 /* ColorDistanceTestView.swift in Sources */,
-				FF8F216385C45DD9B6E267CD /* ColorGradientTestView.swift in Sources */,
-				71ADEF5F75226EE53D506F96 /* ContentView.swift in Sources */,
-				46CC9591896D7F17A6B8A889 /* ContrastTestView.swift in Sources */,
-				6102574567436BDA820E094C /* DeadPixelTestView.swift in Sources */,
-				722EE10F840B5A573A7A68A6 /* DeviceMonitor.swift in Sources */,
-				FBC20DC466132B7A35E80BBC /* GammaTestView.swift in Sources */,
-				652EDA088D5354B99C639890 /* Glass.swift in Sources */,
-				525655DC9FB4AC9250AE5709 /* GradientTestView.swift in Sources */,
-				924541BAFA1F4F2F9EEA11A9 /* InputTestView.swift in Sources */,
-				F6754304A31C0DBB96F9F1FD /* MatrixTestView.swift in Sources */,
-				502DEF1087F4833702A406D4 /* MotionTestView.swift in Sources */,
-				D69841E465554AC3B456FCF4 /* OverscanTestView.swift in Sources */,
-				07A366B9C805F5009A24E440 /* TestYourTVApp.swift in Sources */,
-				EAD0E12C307A8C4BFFF23F9C /* ResponseTimeTestView.swift in Sources */,
-				204E4AD4824B45F4B10DA5FD /* SystemInfoView.swift in Sources */,
-				B9AD9AF490F4830BAA65203E /* SettingsManager.swift in Sources */,
-				758486422CB72EAF91CB9B60 /* Shaders.metal in Sources */,
-				1F55C0581F1FB04759007F8E /* TestPatternsView.swift in Sources */,
-				A15D18E15D235997A73CCCF0 /* TextClarityView.swift in Sources */,
-				EB695C44C114A43DDE5D4AA5 /* UniformityTestView.swift in Sources */,
-				8BFB8E7648864A5B8837FEAF /* VideoTestsView.swift in Sources */,
-				2BE641B7B890255C6D398D46 /* ViewingAngleTestView.swift in Sources */,
+				D3E795CD1745A3E5C4EFFF6B /* AudioLabView.swift in Sources */,
+				1F8DBCE70C646A7A3E39C4FF /* AudioManager.swift in Sources */,
+				96DB425037819E62033EDB6F /* AudioTestsView.swift in Sources */,
+				35901A622EB382EAC6380B54 /* AuroraSkyView.swift in Sources */,
+				F473F201F6ED72A5A897E012 /* BrightnessTestView.swift in Sources */,
+				4F00F1AAB4070543867693AD /* BurnInWiperView.swift in Sources */,
+				9B7BCB430884A68CC1C0A9C4 /* CalibrationPatternsView.swift in Sources */,
+				4AFC024E675422A0ED32B2B3 /* CloudView.swift in Sources */,
+				F2C5E29FD6CEF18AC464843E /* CloudingTestView.swift in Sources */,
+				C4CB68D882941A8682EFD683 /* ColorDistanceTestView.swift in Sources */,
+				BA2CF6BFA943E58EE8CF784A /* ColorGradientTestView.swift in Sources */,
+				EE43A08DCE606F7BEF0DC528 /* ContentView.swift in Sources */,
+				BAFA022EB8957FAA7FB2283F /* ContrastTestView.swift in Sources */,
+				DC79A79EB5DFCBE94D6C498F /* DeadPixelTestView.swift in Sources */,
+				C740C516D17C474E88B160DF /* DesignSystem.swift in Sources */,
+				4F64F2F683239C68B532DC5A /* DeviceMonitor.swift in Sources */,
+				E4A30A791D151B7D0DDEDF24 /* FractalView.swift in Sources */,
+				228092E72649F12AE7615B5D /* GammaTestView.swift in Sources */,
+				AD708BD9D29FFD0B57ABD67F /* Glass.swift in Sources */,
+				2791419F7329E27EC1DD7186 /* GradientTestView.swift in Sources */,
+				EFAFA58D538B7609271DD239 /* InputTestView.swift in Sources */,
+				58C42B3C1E9FC5B98F311FDB /* LatticeView.swift in Sources */,
+				E7DD292DFD1215F419203D45 /* MatrixTestView.swift in Sources */,
+				22E155D438F49407FAFDBA4D /* MotionTestView.swift in Sources */,
+				C8A5934E7F62B23D52C58FC1 /* NoodlesView.swift in Sources */,
+				EEF6ADB9AD892F76A4628103 /* OverscanTestView.swift in Sources */,
+				7342D71C4AA5F00D6CDD7147 /* RainView.swift in Sources */,
+				9D67EFC81770BA8BBB5D3EF5 /* RayMarchingView.swift in Sources */,
+				179E510BF0D48BCDDFA145BB /* ResponseTimeTestView.swift in Sources */,
+				2A3738ADB369C605B65460D6 /* RingView.swift in Sources */,
+				47C0E56292C2F9F0D772F796 /* SettingsManager.swift in Sources */,
+				B7E8E6B73606216FCA9EDE27 /* Shaders.metal in Sources */,
+				0E4944EDBB719E509F34CB59 /* SpectralView.swift in Sources */,
+				22855F8C0A77DC80D1893BD1 /* SpiralView.swift in Sources */,
+				8C3A57466E7E4BE7FB585185 /* StarfieldView.swift in Sources */,
+				81B7C32A7BC31F9423F23DBD /* SystemInfoView.swift in Sources */,
+				AE5B09CF5F77D23FE3C51474 /* TerrainView.swift in Sources */,
+				BA4373E7AC2FAAF8348912C8 /* TestPatternsView.swift in Sources */,
+				E9D7451F937988D2AE289BAB /* TestYourTVApp.swift in Sources */,
+				14154D4622CA95CC06E6F2A9 /* TextClarityView.swift in Sources */,
+				B6C4936DF334115DDA56930A /* TwistView.swift in Sources */,
+				FE70CE1887780BA07B11B3DA /* UniformityTestView.swift in Sources */,
+				EF6F5E04B377859158386A7E /* VideoTestsView.swift in Sources */,
+				213B8C4C5136D2B99F546AFF /* ViewingAngleTestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		9C6BE011212FB7236DCC96BD /* Debug */ = {
+		082DFA2F688D8865AF6FA2B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = VAW6FMKNP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Test Your TV";
 				INFOPLIST_KEY_CFBundleName = "Test Your TV";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -278,73 +334,28 @@
 			};
 			name = Debug;
 		};
-		C342FC08CA56E699A32262E2 /* Debug */ = {
+		0839D8E16D2F1B0A72275795 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VAW6FMKNP9;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Test Your TV";
+				INFOPLIST_KEY_CFBundleName = "Test Your TV";
+				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"DEBUG=1",
+					"@executable_path/Frameworks",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
 				SDKROOT = appletvos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
+				TARGETED_DEVICE_FAMILY = 3;
 			};
-			name = Debug;
+			name = Release;
 		};
-		DA49B6C2542189290621982A /* Release */ = {
+		61FB9ECDE1D252D1902817C1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -379,10 +390,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = VAW6FMKNP9;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -395,7 +404,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -403,50 +411,91 @@
 			};
 			name = Release;
 		};
-		F36F467DDEA584DE94F7DCAE /* Release */ = {
+		EEA0B621703D7FCD0EF0F5BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_STYLE = Automatic;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Test Your TV";
-				INFOPLIST_KEY_CFBundleName = "Test Your TV";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				LD_RUNPATH_SEARCH_PATHS = (
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"DEBUG=1",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TARGETED_DEVICE_FAMILY = 3;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
-			name = Release;
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9DAD23F2DEA4BD92BA5F31D7 /* Build configuration list for PBXNativeTarget "TestYourTV" */ = {
+		1B674C056DA5F677D1EBBF55 /* Build configuration list for PBXProject "TestYourTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9C6BE011212FB7236DCC96BD /* Debug */,
-				F36F467DDEA584DE94F7DCAE /* Release */,
+				EEA0B621703D7FCD0EF0F5BC /* Debug */,
+				61FB9ECDE1D252D1902817C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C56D29A47EF73D2661BD997F /* Build configuration list for PBXProject "TestYourTV" */ = {
+		4B740060CCAF554A4ECBADAF /* Build configuration list for PBXNativeTarget "TestYourTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C342FC08CA56E699A32262E2 /* Debug */,
-				DA49B6C2542189290621982A /* Release */,
+				082DFA2F688D8865AF6FA2B8 /* Debug */,
+				0839D8E16D2F1B0A72275795 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 7A344BB573E6C2E52FC2338C /* Project object */;
+	rootObject = B446097FED465BDBE1FB5F2A /* Project object */;
 }
