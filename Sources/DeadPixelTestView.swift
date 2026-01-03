@@ -41,13 +41,18 @@ struct DeadPixelTestView: View {
                         .foregroundStyle(.secondary)
 
                     SectionHeader(title: "Background Color")
-                    LazyVGrid(columns: Array(repeating: GridItem(.fixed(40), spacing: 10), count: 5), spacing: 10) {
-                        ForEach(colors.indices, id: \.self) { index in
-                            ColorSwatch(color: colors[index].color, isSelected: selectedIndex == index) {
-                                selectedIndex = index
-                                autoCycle = false
+                    // Updated to single-row ScrollView
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(colors.indices, id: \.self) { index in
+                                ColorSwatch(color: colors[index].color, isSelected: selectedIndex == index) {
+                                    selectedIndex = index
+                                    autoCycle = false
+                                }
                             }
                         }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 2)
                     }
 
                     SectionHeader(title: "Auto Cycle")

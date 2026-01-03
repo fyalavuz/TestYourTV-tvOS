@@ -103,10 +103,8 @@ struct UniformityTestView: View {
                         }
 
                         SectionHeader(title: "Grid Overlay")
-                        Toggle(isOn: $showGridLines) {
-                            Text("Show grid lines")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
+                        ToggleRow(title: "Show grid lines", isOn: showGridLines) {
+                            showGridLines.toggle()
                         }
 
                         if showGridLines {
@@ -114,10 +112,8 @@ struct UniformityTestView: View {
                         }
 
                         SectionHeader(title: "Crosshair")
-                        Toggle(isOn: $showCrosshair) {
-                            Text("Show center crosshair")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
+                        ToggleRow(title: "Show center crosshair", isOn: showCrosshair) {
+                            showCrosshair.toggle()
                         }
 
                         Button {

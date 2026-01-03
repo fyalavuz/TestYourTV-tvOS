@@ -137,10 +137,8 @@ struct ColorGradientTestView: View {
                         }
                     }
 
-                    Toggle(isOn: $showSmoothing) {
-                        Text("Show comparison")
-                            .font(.callout.weight(.semibold))
-                            .foregroundStyle(.white)
+                    ToggleRow(title: "Show comparison", isOn: showSmoothing) {
+                        showSmoothing.toggle()
                     }
 
                     Button {

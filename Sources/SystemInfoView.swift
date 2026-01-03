@@ -14,75 +14,67 @@ struct SystemInfoView: View {
             AmbientBackground()
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("System Debug")
+                VStack(alignment: .leading, spacing: 40) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("System Information")
                             .font(.system(size: 52, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
 
                         Text("Device, display, network, and locale diagnostics.")
-                            .font(.headline)
+                            .font(.title3)
                             .foregroundStyle(.white.opacity(0.7))
                     }
+                    .padding(.top, 40)
+                    .padding(.horizontal, 80)
 
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 18)], spacing: 18) {
-                        SystemInfoTile(title: "Device", value: deviceMonitor.deviceModel)
-                        SystemInfoTile(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
-                        SystemInfoTile(title: "Resolution", value: deviceMonitor.resolution)
-                        SystemInfoTile(title: "HDR", value: deviceMonitor.hdrStatus)
-                        SystemInfoTile(title: "Network", value: networkMonitor.statusText)
-                        SystemInfoTile(title: "Locale", value: localeSummary)
-                        SystemInfoTile(title: "Time Zone", value: timeZoneSummary)
-                        SystemInfoTile(title: "Audio Route", value: audioMonitor.outputSummary)
+                    // Summary Grid
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 24)], spacing: 24) {
+                        SystemInfoTile(title: "Device", value: deviceMonitor.deviceModel, icon: "tv")
+                        SystemInfoTile(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)", icon: "applelogo")
+                        SystemInfoTile(title: "Resolution", value: deviceMonitor.resolution, icon: "display")
+                        SystemInfoTile(title: "HDR", value: deviceMonitor.hdrStatus, icon: "sun.max")
+                        SystemInfoTile(title: "Network", value: networkMonitor.statusText, icon: "network")
+                        SystemInfoTile(title: "Locale", value: localeSummary, icon: "globe")
+                        SystemInfoTile(title: "Time Zone", value: timeZoneSummary, icon: "clock")
+                        SystemInfoTile(title: "Audio Route", value: audioMonitor.outputSummary, icon: "hifispeaker")
                     }
+                    .padding(.horizontal, 80)
 
-                    VStack(alignment: .leading, spacing: 16) {
-                        Divider().overlay(Color.white.opacity(0.2))
+                    // Detailed Lists
+                    VStack(spacing: 40) {
+                        DetailSection(title: "Device", icon: "cpu") {
+                            InfoRow(title: "Name", value: deviceMonitor.deviceName)
+                            InfoRow(title: "Model", value: deviceMonitor.deviceModel)
+                            InfoRow(title: "tvOS Version", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
+                            InfoRow(title: "Screen Resolution", value: deviceMonitor.resolution)
+                            InfoRow(title: "Display Quality", value: deviceMonitor.displayQuality)
+                            InfoRow(title: "HDR Capability", value: deviceMonitor.hdrStatus)
+                        }
 
-                        Text("Device")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InfoRow(title: "Name", value: deviceMonitor.deviceName)
-                        InfoRow(title: "Model", value: deviceMonitor.deviceModel)
-                        InfoRow(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)")
-                        InfoRow(title: "Resolution", value: deviceMonitor.resolution)
-                        InfoRow(title: "Display", value: deviceMonitor.displayQuality)
-                        InfoRow(title: "HDR", value: deviceMonitor.hdrStatus)
+                        DetailSection(title: "Locale & Time", icon: "globe") {
+                            InfoRow(title: "Locale Identifier", value: localeSummary)
+                            InfoRow(title: "Language", value: preferredLanguage)
+                            InfoRow(title: "Time Zone", value: timeZoneSummary)
+                            InfoRow(title: "Local Time", value: localTimeString)
+                        }
 
-                        Divider().overlay(Color.white.opacity(0.2))
+                        DetailSection(title: "Network", icon: "network") {
+                            InfoRow(title: "Status", value: networkMonitor.statusText)
+                            InfoRow(title: "Interface Type", value: networkMonitor.interfaceText)
+                            InfoRow(title: "Low Data Mode", value: networkMonitor.isConstrained ? "Yes" : "No")
+                            InfoRow(title: "Expensive (Hotspot)", value: networkMonitor.isExpensive ? "Yes" : "No")
+                        }
 
-                        Text("Locale & Time")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InfoRow(title: "Locale", value: localeSummary)
-                        InfoRow(title: "Preferred Language", value: preferredLanguage)
-                        InfoRow(title: "Time Zone", value: timeZoneSummary)
-                        InfoRow(title: "Local Time", value: localTimeString)
-
-                        Divider().overlay(Color.white.opacity(0.2))
-
-                        Text("Network")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InfoRow(title: "Status", value: networkMonitor.statusText)
-                        InfoRow(title: "Interface", value: networkMonitor.interfaceText)
-                        InfoRow(title: "Constrained", value: networkMonitor.isConstrained ? "Yes" : "No")
-                        InfoRow(title: "Expensive", value: networkMonitor.isExpensive ? "Yes" : "No")
-
-                        Divider().overlay(Color.white.opacity(0.2))
-
-                        Text("Audio Route")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InfoRow(title: "Summary", value: audioMonitor.outputSummary)
-                        ForEach(audioMonitor.outputDetails.indices, id: \.self) { index in
-                            InfoRow(title: "Output \(index + 1)", value: audioMonitor.outputDetails[index])
+                        DetailSection(title: "Audio System", icon: "hifispeaker.2") {
+                            InfoRow(title: "Active Output", value: audioMonitor.outputSummary)
+                            ForEach(audioMonitor.outputDetails.indices, id: \.self) { index in
+                                InfoRow(title: "Output Device \(index + 1)", value: audioMonitor.outputDetails[index])
+                            }
                         }
                     }
+                    .padding(.horizontal, 80)
+                    .padding(.bottom, 80)
                 }
-                .padding(.top, 40)
-                .padding(.horizontal, 80)
-                .padding(.bottom, 80)
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -119,6 +111,9 @@ struct SystemInfoView: View {
         return formatter.string(from: Date())
     }
 }
+
+// Monitors remain same (omitted for brevity, assume they are available or I need to include them?) 
+// Since I overwrite the file, I MUST include them. I will copy them from previous read.
 
 final class NetworkMonitor: ObservableObject {
     @Published var statusText: String = "Unknown"
@@ -228,29 +223,62 @@ final class AudioRouteMonitor: ObservableObject {
 private struct SystemInfoTile: View {
     let title: String
     let value: String
+    let icon: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title.uppercased())
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                Text(title.uppercased())
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.secondary)
+            }
+            
             Text(value)
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.white)
-                .lineLimit(2)
+                .lineLimit(3)
                 .minimumScaleFactor(0.8)
                 .allowsTightening(true)
+                .fixedSize(horizontal: false, vertical: true) // Allow expansion
         }
-        .padding(16)
+        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.white.opacity(0.08))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-        )
+        .glassSurface(cornerRadius: 20, strokeOpacity: 0.12)
+    }
+}
+
+private struct DetailSection<Content: View>: View {
+    let title: String
+    let icon: String
+    let content: Content
+    
+    init(title: String, icon: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                Text(title)
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+            }
+            .padding(.bottom, 8)
+            
+            VStack(spacing: 12) {
+                content
+            }
+            .padding(24)
+            .glassSurface(cornerRadius: 24, strokeOpacity: 0.1)
+        }
     }
 }
 
@@ -261,19 +289,16 @@ private struct InfoRow: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Text(title)
-                .font(.caption)
+                .font(.callout.weight(.medium))
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
-
-            Spacer(minLength: 0)
+                .frame(width: 180, alignment: .leading)
 
             Text(value)
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(.white)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .minimumScaleFactor(0.8)
-                .allowsTightening(true)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
         }
     }
 }

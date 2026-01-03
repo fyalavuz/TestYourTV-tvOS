@@ -117,6 +117,7 @@ float matrix_glyph(float2 uv, float2 seed) {
     
     float t = time * speed * 2.0;
     float2 uv = position / size;
+    uv.y = 1.0 - uv.y; // Fix rain direction
     
     float2 oneOverCells = 1.0 / CELLS;
     float2 pix = uv - oneOverCells * floor(uv / oneOverCells);
@@ -143,7 +144,7 @@ float matrix_glyph(float2 uv, float2 seed) {
     return half4(half3(finalColor), 1.0);
 }
 
-// --- Ray Marching Shader ---
+// --- Infinite Cubes Shader ---
 
 float3x3 ray_rotateY(float theta) {
     float c = cos(theta);
@@ -226,8 +227,19 @@ float star_layer(float2 U, float t) {
     float2 iU = ceil(U);
     float2 P = 0.2 + 0.6 * star_hash(iU, 0.0);
     float r = 9.0 * star_hash(iU, 1.0).x;
-    if (r > 1.0) return 1.0;
-    return length(P - fract(U)) * 8.0 / (1.0 + 5.0 * r);
+    
+    // Proba of star: r < 1.0
+    if (r > 1.0) return 0.0;
+    
+    float dist = length(P - fract(U));
+    
+    // Sharp core
+    float intensity = 1.0 - smoothstep(0.0, 0.015, dist);
+    // Soft halo
+    intensity += (1.0 - smoothstep(0.0, 0.08, dist)) * 0.15;
+    
+    // Variation in brightness
+    return intensity * (1.0 - r * 0.5);
 }
 
 [[ stitchable ]] half4 starfield(float2 position, half4 color, float2 size, float time) {
@@ -238,12 +250,17 @@ float star_layer(float2 U, float t) {
     float3 t = fract(time / D + P + 0.5) - 0.5;
     float3 w = 0.5 + 0.5 * cos(6.28 * t);
     t = t * D + Z;
+    
     float3 T;
     T.x = star_layer(U, t.x);
     T.y = star_layer(-U, t.y);
     T.z = star_layer(float2(U.y, U.x), t.z);
-    T = 0.03 / (T * T + 0.0001);
+    
     float intensity = dot(w, T);
+    
+    // Ensure deep black background
+    intensity = clamp(intensity, 0.0, 1.0);
+    
     return half4(half3(intensity), 1.0);
 }
 
@@ -267,6 +284,7 @@ float star_layer(float2 U, float t) {
     float2 uv = (2.0 * position - size) / size.y;
     float t = time * 0.2;
     
+    // Adjusted camera path to avoid geometry clipping
     float3 ro = float3(0.0, 0.0, -1.5 + t * 4.0);
     float3 rd = normalize(float3(uv, 1.0));
     
@@ -277,32 +295,30 @@ float star_layer(float2 U, float t) {
     rd = rot * rd;
     
     float d = 0.0;
-    float min_d = 1000.0;
     float glow = 0.0;
     
     // Raymarching
     for(int i = 0; i < 64; i++) {
         float3 p = ro + rd * d;
         
-        // Repeat space
-        float3 q = glsl_mod(p, 2.0) - 1.0;
+        // Larger repetition grid
+        float3 q = glsl_mod(p, 3.0) - 1.5;
         
         float shape = 0.0;
         float s_scale = 1.0;
         
-        // Menger Sponge-like box folding
+        // Menger Sponge-like box folding with larger central void
         for(int j = 0; j < 3; j++) {
             q = abs(q);
             if (q.x < q.y) { float tmp = q.x; q.x = q.y; q.y = tmp; }
             if (q.x < q.z) { float tmp = q.x; q.x = q.z; q.z = tmp; }
             if (q.y < q.z) { float tmp = q.y; q.y = q.z; q.z = tmp; }
             
-            q = q * 3.0 - 2.0;
+            q = q * 3.0 - 2.5; // Adjusted offset for larger void
             s_scale *= 3.0;
-            q.z += sin(p.z * 0.5 + t) * 0.2; // slight warp
+            q.z += sin(p.z * 0.5 + t) * 0.2;
         }
         
-        // Box distance
         float3 d3 = abs(q) - float3(1.0);
         float d_box = min(max(d3.x, max(d3.y, d3.z)), 0.0) + length(max(d3, 0.0));
         
@@ -314,22 +330,13 @@ float star_layer(float2 U, float t) {
         if (d > 20.0 || abs(shape) < 0.005) break;
     }
     
-    // Color
     float3 col = float3(0.0);
-    
-    // Neon palette
-    float3 neon1 = float3(0.0, 1.0, 1.0); // Cyan
-    float3 neon2 = float3(1.0, 0.0, 1.0); // Magenta
-    
-    float pulse = 0.5 + 0.5 * sin(t * 5.0);
+    float3 neon1 = float3(0.0, 1.0, 1.0); 
+    float3 neon2 = float3(1.0, 0.0, 1.0); 
     float3 glowC = mix(neon1, neon2, sin(d * 0.2 + t) * 0.5 + 0.5);
     
     col += glowC * glow * 0.05;
-    
-    // Fog
     col = mix(col, float3(0.05, 0.0, 0.1), 1.0 - exp(-d * 0.15));
-    
-    // Gamma
     col = pow(col, float3(0.45));
     
     return half4(half3(col), 1.0);
@@ -364,9 +371,7 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float mod_move = move_term - 0.5 * floor(move_term / 0.5);
     float2 sphere_pos = float2(clamped_uv.x, (1.0 - 2.0 * mod_move)) * size;
     
-    // White tips
     col += float3(rain_sphere(position, sphere_pos, 0.9)) * 0.8;
-    
     float fade = exp(-pow(abs(uv.y - 0.5), 6.0) / pow(2.0 * 0.05, 2.0));
     col *= float3(fade);
     
@@ -381,7 +386,6 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float3 ro = float3(0.0, 0.0, time * 2.0);
     float3 rd = normalize(float3(p, 1.5));
     
-    // Rotate camera slowly
     float ang = time * 0.1;
     float c = cos(ang); float s = sin(ang);
     rd.xy = float2(rd.x * c - rd.y * s, rd.x * s + rd.y * c);
@@ -389,37 +393,25 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float d = 0.0;
     float3 pos = ro;
     
-    // Raymarching a simple grid of pipes
-    for (int i = 0; i < 40; i++) { // Reduced iterations
-        // Repetition grid
+    for (int i = 0; i < 40; i++) { 
         float3 q = glsl_mod(pos, 2.0) - 1.0;
-        
-        // Distance to pipe
         float d1 = length(q.xy) - 0.2;
         float d2 = length(q.xz) - 0.2;
         float d3 = length(q.yz) - 0.2;
-        
         float dist = min(d1, min(d2, d3));
-        
-        // Add some variation
         dist -= 0.05 * sin(pos.z * 5.0 + time);
-        
-        d += dist * 0.5; // Slower steps for accuracy
+        d += dist * 0.5; 
         pos = ro + rd * d;
-        
         if (dist < 0.01 || d > 30.0) break;
     }
     
-    // Color
     float3 col = float3(0.0);
     if (d < 30.0) {
         float3 q = floor(pos / 2.0);
         float tint = fract(sin(dot(q, float3(12.9898, 78.233, 45.164))) * 43758.5453);
         col = float3(0.8, 0.4, 0.1) * tint + float3(0.1, 0.2, 0.5);
-        // Lighting
-        col *= 1.0 / (1.0 + d * 0.1); // simple fog
+        col *= 1.0 / (1.0 + d * 0.1); 
     }
-    
     return half4(half3(col), 1.0);
 }
 
@@ -429,70 +421,50 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float2 uv = (position / size) * 2.0 - 1.0;
     uv.x *= size.x / size.y;
     
-    // Liquid light wave interference
     float v = 0.0;
     v += sin(uv.x * 10.0 + time);
     v += sin(uv.y * 10.0 + time * 0.5);
     v += sin((uv.x + uv.y) * 10.0 + time * 0.7);
     v += cos(length(uv) * 20.0 - time * 2.0);
-    
     v *= 0.5;
     
-    // Color mapping
     float3 col = 0.5 + 0.5 * cos(v + float3(0.0, 2.0, 4.0) + time * 0.2);
-    
-    // Add brightness crests
     col += smoothstep(0.8, 1.0, sin(v * 5.0)) * 0.5;
-    
     return half4(half3(col), 1.0);
 }
 
-// --- Synth Terrain (Optimized - Blueprint Style) Shader ---
+// --- Synth Terrain (Blueprint Style) Shader ---
 
 [[ stitchable ]] half4 synth_terrain(float2 position, half4 color, float2 size, float time) {
-    float2 uv = (position / size);
     float2 p = (position - 0.5 * size) / size.y;
     p.y = -p.y; // Fix upside down
     
-    // Perspective projection simulation in 2D
-    // y goes from bottom (near) to top (horizon)
-    float horizon = 0.2;
+    float horizon = 0.1;
     float fov = 0.5;
     
     if (p.y > horizon) {
-        // Sky
         return half4(0.0, 0.0, 0.1, 1.0);
     }
     
-    // 3D plane projection
     float z = fov / (horizon - p.y);
     float x = p.x * z;
     
-    // Move terrain
-    z += time * 5.0;
+    z += time * 3.0;
     
-    // Grid lines
-    float gridWidth = 0.05 * z; // Lines get thicker closer
     float gridX = abs(fract(x) - 0.5);
     float gridZ = abs(fract(z) - 0.5);
+    float line = smoothstep(0.45, 0.5, max(gridX, gridZ));
     
-    float line = smoothstep(0.48 - gridWidth, 0.5, max(gridX, gridZ));
+    float wave = sin(x * 0.2 + z * 0.1 + time) * 2.0;
+    if (p.y > horizon - (wave * 0.01 / z)) {
+        // Sky depth near horizon
+    }
     
-    // Wave displacement
-    float wave = sin(x * 0.5 + z * 0.2 + time) * 0.5 + sin(z * 0.5 - time) * 0.5;
-    
-    // "Blueprint" colors
-    float3 bg = float3(0.0, 0.05, 0.2); // Dark blue
-    float3 fg = float3(0.2, 0.6, 1.0); // Cyan/Blue line
-    
-    // Height fog
-    float fog = 1.0 / (z * z * 0.1 + 1.0);
+    float3 bg = float3(0.0, 0.05, 0.25); 
+    float3 fg = float3(0.4, 0.8, 1.0); 
+    float fog = 1.0 / (z * 0.1 + 1.0);
     
     float3 col = mix(bg, fg, line * fog);
-    
-    // Add glow
-    col += fg * wave * fog * 0.2;
-    
     return half4(half3(col), 1.0);
 }
 
@@ -500,27 +472,16 @@ float rain_sphere(float2 coord, float2 pos, float r) {
 
 [[ stitchable ]] half4 hyper_ring(float2 position, half4 color, float2 size, float time) {
     float2 p = (2.0 * position - size) / min(size.x, size.y);
-    
-    // Analytic Torus SDF approximation in 2D slice
     float r = length(p);
     float a = atan2(p.y, p.x);
     
-    // Radius of ring
-    float ringRadius = 0.6 + 0.1 * sin(time * 2.0 + a * 3.0);
-    float thickness = 0.05 + 0.02 * sin(time * 5.0 - a * 5.0);
-    
+    float ringRadius = 0.6 + 0.05 * sin(time * 2.0 + a * 4.0);
+    float thickness = 0.02 + 0.01 * sin(time * 3.0);
     float dist = abs(r - ringRadius) - thickness;
     
-    // Glow calculation (1 / dist)
-    float glow = 0.02 / (abs(dist) + 0.001);
-    
-    // Color cycling
+    float glow = 0.015 / (abs(dist) + 0.002);
     float3 col = 0.5 + 0.5 * cos(time + a + float3(0.0, 2.0, 4.0));
-    
-    // Apply glow
     col *= glow;
-    
-    // Add core brightness
     col += float3(1.0) * smoothstep(0.01, 0.0, abs(dist));
     
     return half4(half3(col), 1.0);
@@ -533,23 +494,17 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float r = length(uv);
     float a = atan2(uv.y, uv.x);
     float2 p = float2(log(r), a);
-    float zoomSpeed = 0.3;
-    float twistSpeed = 0.5;
-    p.x -= time * zoomSpeed;
+    p.x -= time * 0.3;
     float twistAmount = 3.0 + 2.0 * sin(time * 0.3);
     p.y += p.x * 0.5 + r * twistAmount; 
     float val = sin(p.y * 8.0 + sin(p.x * 8.0 + time));
-    val += sin(p.x * 12.0 - time * 1.5) * 0.5;
     float3 c1 = float3(1.0, 0.4, 0.1); 
     float3 c2 = float3(0.5, 0.0, 0.8); 
     float3 c3 = float3(0.0, 0.8, 0.9); 
-    float3 c4 = float3(0.1, 0.0, 0.2); 
     float t1 = sin(val + r * 3.0 + time) * 0.5 + 0.5;
     float t2 = cos(val * 0.5 - a * 2.0) * 0.5 + 0.5;
     float3 col = mix(c1, c2, t1);
     col = mix(col, c3, t2 * 0.8);
-    float vein = 1.0 / (abs(val) * 10.0 + 0.5);
-    col += c3 * vein * 0.5;
     col *= smoothstep(0.0, 0.15, r);
     col *= 1.0 - r * 0.3;
     return half4(half3(col), 1.0);
@@ -567,7 +522,6 @@ float rain_sphere(float2 coord, float2 pos, float r) {
     float angle_offset = time * 1.5 * rot_speed;
     float a = atan2(U.x, U.y) + angle_offset;
     float3 col = 0.6 + 0.4 * cos(floor(fract(a / T) * L) + float3(0.0, 2.0, 4.0) + time);
-    float pulse = 0.5 + 0.5 * sin(time);
     float pat = max(0.0, 9.0 * max(cos(T * l + time), cos(a * L)) - 8.0);
     col = col - pat;
     return half4(half3(col), 1.0);
@@ -605,7 +559,7 @@ float nebula_fbm(float2 st) {
 
 [[ stitchable ]] half4 noise_cloud(float2 position, half4 color, float2 size, float time) {
     float2 st = position / min(size.x, size.y) * 3.0;
-    st.y = 3.0 - st.y; // Fix coordinate system
+    st.y = 3.0 - st.y; 
     float t = time * 0.5; 
     float2 q = float2(0.0);
     q.x = nebula_fbm(st + 0.00 * t);
@@ -622,4 +576,154 @@ float nebula_fbm(float2 st) {
     float3 finalColor = mix(float3(0.0, 0.0, 0.05), color_mix, clamp((f * f) * 4.0, 0.0, 1.0));
     finalColor += float3(0.1) * length(q);
     return half4(half3(finalColor), 1.0);
+}
+
+// --- Neural Network Shader ---
+
+float neural_hash21(float2 p) {
+    float3 a = fract(float3(p.x, p.y, p.x) * float3(213.897, 653.453, 253.098));
+    a += dot(a, a.yzx + 79.76);
+    return fract((a.x + a.y) * a.z);
+}
+
+float2 neural_getPos(float2 id, float2 offs, float t) {
+    float n = neural_hash21(id + offs);
+    float n1 = fract(n * 10.0);
+    float n2 = fract(n * 100.0);
+    float a = t + n;
+    return offs + float2(sin(a * n1), cos(a * n2)) * 0.4;
+}
+
+float neural_df_line(float2 a, float2 b, float2 p) {
+    float2 pa = p - a, ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return length(pa - ba * h);
+}
+
+float neural_line(float2 a, float2 b, float2 uv) {
+    float r1 = 0.04;
+    float r2 = 0.01;
+    float d = neural_df_line(a, b, uv);
+    float d2 = length(a - b);
+    float fade = smoothstep(1.5, 0.5, d2);
+    fade += smoothstep(0.05, 0.02, abs(d2 - 0.75));
+    return smoothstep(r1, r2, d) * fade;
+}
+
+float neural_layer(float2 st, float n, float t) {
+    float2 id = floor(st) + n;
+    st = fract(st) - 0.5;
+    
+    float2 p[9];
+    int i = 0;
+    for(float y = -1.0; y <= 1.0; y++) {
+        for(float x = -1.0; x <= 1.0; x++) {
+            p[i++] = neural_getPos(id, float2(x, y), t);
+        }
+    }
+    
+    float m = 0.0;
+    float sparkle = 0.0;
+    
+    for(int j = 0; j < 9; j++) {
+        m += neural_line(p[4], p[j], st);
+        float d = length(st - p[j]);
+        float s = (0.005 / (d * d));
+        s *= smoothstep(1.0, 0.7, d);
+        float pulse = sin((fract(p[j].x) + fract(p[j].y) + t) * 5.0) * 0.4 + 0.6;
+        pulse = pow(pulse, 20.0);
+        s *= pulse;
+        sparkle += s;
+    }
+    
+    m += neural_line(p[1], p[3], st);
+    m += neural_line(p[1], p[5], st);
+    m += neural_line(p[7], p[5], st);
+    m += neural_line(p[7], p[3], st);
+    
+    float sPhase = (sin(t + n) + sin(t * 0.1)) * 0.25 + 0.5;
+    sPhase += pow(sin(t * 0.1) * 0.5 + 0.5, 50.0) * 5.0;
+    m += sparkle * sPhase;
+    
+    return m;
+}
+
+[[ stitchable ]] half4 neural_network(float2 position, half4 color, float2 size, float time) {
+    float2 uv = (position - 0.5 * size) / size.y;
+    float t = time * 0.1;
+    
+    float s = sin(t);
+    float c = cos(t);
+    float2x2 rot = float2x2(c, -s, s, c);
+    float2 st = rot * uv; // Metal matrix mult: M * v
+    
+    float m = 0.0;
+    for(float i = 0.0; i < 1.0; i += 0.25) {
+        float z = fract(t + i);
+        float layerSize = mix(15.0, 1.0, z);
+        float fade = smoothstep(0.0, 0.6, z) * smoothstep(1.0, 0.8, z);
+        m += fade * neural_layer(st * layerSize - z, i, time);
+    }
+    
+    float3 baseCol = float3(s, cos(t * 0.4), -sin(t * 0.24)) * 0.4 + 0.6;
+    float3 col = baseCol * m;
+    
+    return half4(half3(col), 1.0);
+}
+
+// --- Fractal Pyramid Shader ---
+
+float3 pyramid_palette(float d) {
+    return mix(float3(0.2, 0.7, 0.9), float3(1.0, 0.0, 1.0), d);
+}
+
+float2 pyramid_rotate(float2 p, float a) {
+    float c = cos(a);
+    float s = sin(a);
+    return float2(p.x * c - p.y * s, p.x * s + p.y * c);
+}
+
+float pyramid_map(float3 p, float time) {
+    for(int i = 0; i < 8; ++i) {
+        float t = time * 0.2;
+        float2 xz = pyramid_rotate(p.xz, t);
+        p.x = xz.x; p.z = xz.y;
+        
+        float2 xy = pyramid_rotate(p.xy, t * 1.89);
+        p.x = xy.x; p.y = xy.y;
+        
+        p.xz = abs(p.xz);
+        p.xz -= 0.5;
+    }
+    return dot(sign(p), p) / 5.0;
+}
+
+[[ stitchable ]] half4 fractal_pyramid(float2 position, half4 color, float2 size, float time) {
+    float2 uv = (position - 0.5 * size) / size.x;
+    float3 ro = float3(0.0, 0.0, -50.0);
+    
+    // Rotate camera
+    float2 xz = pyramid_rotate(ro.xz, time);
+    ro.x = xz.x; ro.z = xz.y;
+    
+    float3 cf = normalize(-ro);
+    float3 cs = normalize(cross(cf, float3(0.0, 1.0, 0.0)));
+    float3 cu = normalize(cross(cf, cs));
+    
+    float3 uuv = ro + cf * 3.0 + uv.x * cs + uv.y * cu;
+    float3 rd = normalize(uuv - ro);
+    
+    float t = 0.0;
+    float3 col = float3(0.0);
+    float d = 0.0;
+    
+    for(float i = 0.0; i < 64.0; i++) {
+        float3 p = ro + rd * t;
+        d = pyramid_map(p, time) * 0.5;
+        if (d < 0.02 || d > 100.0) break;
+        col += pyramid_palette(length(p) * 0.1) / (400.0 * d);
+        t += d;
+    }
+    
+    return half4(half3(col), 1.0);
 }

@@ -27,9 +27,6 @@ struct MotionTestView: View {
                 let totalWidth = barWidth + spacing
                 let count = Int(size.width / totalWidth) + 2
                 
-                // We shift the whole group by 'offset'
-                // We wrap around using modulo logic manually or just draw enough
-                
                 let phase = offset.remainder(dividingBy: totalWidth)
                 
                 for i in -1...count {
@@ -37,9 +34,6 @@ struct MotionTestView: View {
                     let rect = CGRect(x: x, y: 0, width: barWidth, height: size.height)
                     context.fill(Path(rect), with: .color(.white))
                 }
-                
-                // Add FPS Counter or Stats if needed
-                // For now, clean professional look
             }
         }
         .ignoresSafeArea()
@@ -60,14 +54,14 @@ struct MotionTestView: View {
                                 HStack {
                                     Text(item.name)
                                         .font(.callout.weight(.semibold))
+                                        .padding(.vertical, 8) // Added vertical padding
                                     Spacer()
                                     if speedPPS == item.val {
                                         Image(systemName: "checkmark")
                                     }
                                 }
                                 .foregroundStyle(.white)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, 16) // Added horizontal padding
                                 .background(Color.white.opacity(speedPPS == item.val ? 0.2 : 0.08))
                                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             }

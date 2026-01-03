@@ -111,17 +111,8 @@ struct HomeHubView: View {
     // Netflix-style Navigation Data
     let menuSections: [MenuSection] = [
         MenuSection(
-            id: "video-tests",
-            title: "Video Tests",
-            subtitle: "Reference samples and instrumented technical clips.",
-            items: [
-                MenuOption(title: "Provider Samples", icon: "film.stack", color: .purple, destination: .videoTests),
-                MenuOption(title: "Technical Tests", icon: "waveform.path.ecg", color: .teal, destination: .technicalTests)
-            ]
-        ),
-        MenuSection(
-            id: "display-analysis",
-            title: "Display Analysis",
+            id: "picture-quality",
+            title: "Picture Quality",
             subtitle: "Pixel defects, uniformity, gradients, and contrast checks.",
             items: [
                 MenuOption(title: "Dead Pixel", icon: "dot.squareshape.split.2x2", color: .red, destination: .deadPixel),
@@ -133,38 +124,45 @@ struct HomeHubView: View {
             ]
         ),
         MenuSection(
-            id: "calibration",
-            title: "Calibration & Geometry",
-            subtitle: "Gamma, sharpness, overscan and reference patterns.",
+            id: "geometry",
+            title: "Geometry & Sharpness",
+            subtitle: "Gamma, text clarity, overscan and alignment.",
             items: [
                 MenuOption(title: "Test Patterns", icon: "square.grid.3x3.square", color: .orange, destination: .testPatterns),
-                MenuOption(title: "Gamma", icon: "circle.righthalf.filled", color: .purple, destination: .gamma),
-                MenuOption(title: "Calibration", icon: "slider.horizontal.3", color: .teal, destination: .calibration),
                 MenuOption(title: "Text Clarity", icon: "textformat.size", color: .indigo, destination: .textClarity),
-                MenuOption(title: "Overscan", icon: "rectangle.inset.filled", color: .teal, destination: .overscan)
+                MenuOption(title: "Gamma", icon: "circle.righthalf.filled", color: .purple, destination: .gamma),
+                MenuOption(title: "Overscan", icon: "rectangle.inset.filled", color: .teal, destination: .overscan),
+                MenuOption(title: "Calibration", icon: "slider.horizontal.3", color: .teal, destination: .calibration)
             ]
         ),
         MenuSection(
-            id: "motion-processing",
-            title: "Motion & Processing",
-            subtitle: "Response time, frame rate, and real-time rendering stress tests.",
+            id: "motion",
+            title: "Motion Performance",
+            subtitle: "Response time, refresh rate, and viewing angles.",
             items: [
                 MenuOption(title: "Motion Test", icon: "wind", color: .orange, destination: .motion),
                 MenuOption(title: "Response Time", icon: "move.3d", color: .pink, destination: .responseTime),
-                MenuOption(title: "Viewing Angle", icon: "eye.fill", color: .green, destination: .viewingAngle),
-                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .white, destination: .matrix),
+                MenuOption(title: "Viewing Angle", icon: "eye.fill", color: .green, destination: .viewingAngle)
+            ]
+        ),
+        MenuSection(
+            id: "visualizers",
+            title: "Visualizers",
+            subtitle: "Real-time procedural shaders for stress testing and aesthetics.",
+            items: [
                 MenuOption(title: "Infinite Cubes", icon: "cube.transparent", color: .indigo, destination: .rayMarching),
-                MenuOption(title: "Starfield", icon: "sparkles", color: .yellow, destination: .starfield),
-                MenuOption(title: "Spiral", icon: "tornado", color: .red, destination: .spiral),
                 MenuOption(title: "Fractal Stress", icon: "hexagon.fill", color: .cyan, destination: .fractal),
+                MenuOption(title: "Synth Terrain", icon: "mountain.2.fill", color: .green, destination: .terrain),
+                MenuOption(title: "Hyper Ring", icon: "circle.circle.fill", color: .blue, destination: .ring),
+                MenuOption(title: "Spectral Flow", icon: "rainbow", color: .pink, destination: .spectral),
+                MenuOption(title: "Nebula Flow", icon: "smoke.fill", color: .purple, destination: .cloud),
+                MenuOption(title: "Matrix", icon: "text.and.command.macwindow", color: .green, destination: .matrix),
                 MenuOption(title: "Neon Rain", icon: "cloud.rain.fill", color: .blue, destination: .rain),
                 MenuOption(title: "Infinite Pipes", icon: "infinity.circle", color: .orange, destination: .noodles),
-                MenuOption(title: "Spectral Flow", icon: "rainbow", color: .pink, destination: .spectral),
-                MenuOption(title: "Synth Terrain", icon: "mountain.2.fill", color: .green, destination: .terrain),
-                MenuOption(title: "Hyper Ring", icon: "circle.circle.fill", color: .cyan, destination: .ring),
-                MenuOption(title: "Color Twist", icon: "tornado.circle.fill", color: .orange, destination: .twist),
-                MenuOption(title: "Polar Lattice", icon: "snowflake", color: .indigo, destination: .lattice),
-                MenuOption(title: "Nebula Flow", icon: "smoke.fill", color: .gray, destination: .cloud)
+                MenuOption(title: "Color Twist", icon: "tornado.circle.fill", color: .red, destination: .twist),
+                MenuOption(title: "Polar Lattice", icon: "snowflake", color: .mint, destination: .lattice),
+                MenuOption(title: "Starfield", icon: "sparkles", color: .yellow, destination: .starfield),
+                MenuOption(title: "Spiral", icon: "tornado", color: .orange, destination: .spiral)
             ]
         ),
         MenuSection(
@@ -172,25 +170,26 @@ struct HomeHubView: View {
             title: "Audio Suite",
             subtitle: "Speaker configuration checks and signal generation.",
             items: [
-                MenuOption(title: "Speaker Check", icon: "hifispeaker.2.fill", color: .green, destination: .audio),
-                MenuOption(title: "Signal Generator", icon: "waveform.circle", color: .orange, destination: .audioLab)
+                MenuOption(title: "Audio Lab", icon: "waveform.circle.fill", color: .orange, destination: .audioLab)
             ]
         ),
         MenuSection(
-            id: "maintenance",
-            title: "Maintenance & Input",
-            subtitle: "OLED care utilities and controller testing.",
+            id: "video-tests",
+            title: "Reference Videos",
+            subtitle: "High-quality samples for display and motion testing.",
             items: [
-                MenuOption(title: "OLED Wiper", icon: "wand.and.stars", color: .purple, destination: .wiper),
-                MenuOption(title: "Input Test", icon: "gamecontroller.fill", color: .teal, destination: .inputTest)
+                MenuOption(title: "Big Buck Bunny", icon: "play.tv.fill", color: .green, destination: .videoBunny, thumbnailURL: VideoData.bunny.thumbnailURL),
+                MenuOption(title: "Tears of Steel", icon: "film.fill", color: .purple, destination: .videoTears, thumbnailURL: VideoData.tears.thumbnailURL)
             ]
         ),
         MenuSection(
-            id: "system",
-            title: "System",
-            subtitle: "Device specifications and capabilities.",
+            id: "utilities",
+            title: "System & Utilities",
+            subtitle: "Diagnostics, input testing, and panel maintenance.",
             items: [
-                MenuOption(title: "System Info", icon: "gearshape.2.fill", color: .cyan, destination: .systemInfo)
+                MenuOption(title: "System Info", icon: "cpu", color: .cyan, destination: .systemInfo),
+                MenuOption(title: "Input Test", icon: "gamecontroller.fill", color: .teal, destination: .inputTest),
+                MenuOption(title: "OLED Wiper", icon: "wand.and.stars", color: .purple, destination: .wiper)
             ]
         )
     ]
@@ -240,21 +239,29 @@ struct HomeHubView: View {
                                 // Horizontal Scroll Row (The Shelf)
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 40) {
-                                        // Leading spacer for content offset
                                         Spacer().frame(width: 40)
                                         
                                         ForEach(section.items) { item in
-                                            NavigationLink(destination: destinationView(for: item.destination)) {
-                                                ShelfCard(item: item)
+                                            VStack(alignment: .leading, spacing: 16) {
+                                                NavigationLink(destination: destinationView(for: item.destination)) {
+                                                    ShelfCardVisual(item: item)
+                                                }
+                                                .buttonStyle(.card)
+                                                
+                                                Text(item.title)
+                                                    .font(.headline.weight(.semibold))
+                                                    .foregroundStyle(.white.opacity(0.9))
+                                                    .lineLimit(1)
+                                                    .minimumScaleFactor(0.8)
+                                                    .padding(.horizontal, 8)
+                                                    .allowsHitTesting(false)
                                             }
-                                            .buttonStyle(.card) // tvOS scaling effect
+                                            .frame(width: 380)
                                         }
                                         
-                                        // Trailing spacer
                                         Spacer().frame(width: 80)
                                     }
                                 }
-                                // Ensure focus clips correctly or extends
                                 .scrollClipDisabled() 
                             }
                         }
@@ -265,7 +272,6 @@ struct HomeHubView: View {
         }
     }
     
-    // Yönlendirme Mantığı
     @ViewBuilder
     func destinationView(for destination: DestinationType) -> some View {
         switch destination {
@@ -287,7 +293,9 @@ struct HomeHubView: View {
         case .matrix: MatrixTestView()
         case .overscan: OverscanTestView()
         case .videoTests: VideoTestsView()
-        case .technicalTests: VideoTestsView(mode: .technical)
+        case .videoBunny: VideoClipDetailView(clip: VideoData.bunny)
+        case .videoTears: VideoClipDetailView(clip: VideoData.tears)
+        case .technicalTests: VideoTestsView()
         case .inputTest: InputTestView()
         case .systemInfo: SystemInfoView()
         case .audioLab: AudioLabView()
@@ -307,12 +315,51 @@ struct HomeHubView: View {
     }
 }
 
+// --- Visual Part Only for the Card ---
+struct ShelfCardVisual: View {
+    let item: MenuOption
+    
+    var body: some View {
+        ZStack {
+            if let url = item.thumbnailURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    default:
+                        ZStack {
+                            item.color.opacity(0.2)
+                            Image(systemName: item.icon)
+                                .font(.system(size: 80))
+                                .foregroundStyle(item.color.gradient)
+                        }
+                    }
+                }
+                .frame(width: 380, height: 214) // 16:9 ratio
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            } else {
+                ZStack {
+                    Color.white.opacity(0.05)
+                    Image(systemName: item.icon)
+                        .font(.system(size: 80))
+                        .foregroundStyle(item.color.gradient)
+                        .shadow(color: item.color.opacity(0.5), radius: 10)
+                }
+                .frame(width: 380, height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }
+        }
+    }
+}
+
 // --- YARDIMCI YAPILAR ---
 
 enum DestinationType: Hashable {
     case calibration, deadPixel, uniformity, colorGradient, colorDistance
     case textClarity, gamma, testPatterns, responseTime, viewingAngle
-    case brightness, contrast, matrix, audio, motion, wiper, overscan, videoTests, technicalTests, inputTest, systemInfo, audioLab, rayMarching, starfield, spiral, fractal, rain, noodles, spectral, terrain, ring, twist, lattice, cloud
+    case brightness, contrast, matrix, audio, motion, wiper, overscan, videoTests, videoBunny, videoTears, technicalTests, inputTest, systemInfo, audioLab, rayMarching, starfield, spiral, fractal, rain, noodles, spectral, terrain, ring, twist, lattice, cloud
 }
 
 struct MenuOption: Identifiable {
@@ -320,30 +367,15 @@ struct MenuOption: Identifiable {
     let icon: String
     let color: Color
     let destination: DestinationType
+    let thumbnailURL: URL?
     var id: DestinationType { destination }
-}
-
-struct ShelfCard: View {
-    let item: MenuOption
     
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: item.icon)
-                .font(.system(size: 80)) // Larger icon
-                .foregroundStyle(item.color.gradient)
-                .shadow(color: item.color.opacity(0.5), radius: 10)
-
-            Text(item.title)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.85)
-                .frame(maxWidth: .infinity)
-        }
-        .frame(width: 380, height: 260)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        // No explicit frame here, NavigationLink buttonStyle handles scale
+    init(title: String, icon: String, color: Color, destination: DestinationType, thumbnailURL: URL? = nil) {
+        self.title = title
+        self.icon = icon
+        self.color = color
+        self.destination = destination
+        self.thumbnailURL = thumbnailURL
     }
 }
 

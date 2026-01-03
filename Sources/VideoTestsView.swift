@@ -71,7 +71,8 @@ struct VideoTestsView: View {
 
                                         ForEach(category.clips) { clip in
                                             VStack(alignment: .leading, spacing: 10) {
-                                                NavigationLink(destination: VideoPlayerQuickView(clip: clip)) {
+                                                // Navigate to Detail View to select quality
+                                                NavigationLink(destination: VideoClipDetailView(clip: clip)) {
                                                     VideoClipThumbnail(clip: clip)
                                                 }
                                                 .buttonStyle(.card)
@@ -100,27 +101,122 @@ struct VideoTestsView: View {
     }
 }
 
-struct VideoPlayerQuickView: View {
+// Cinematic Detail View
+struct VideoClipDetailView: View {
     let clip: VideoClip
-    @StateObject private var playerModel = VideoQueuePlayerModel()
     @State private var selectedVariant: VideoVariant?
 
     var body: some View {
         ZStack {
-            if let variant = selectedVariant {
-                NativeVideoPlayer(player: playerModel.player, appliesDisplayCriteriaAutomatically: true)
-                    .ignoresSafeArea()
-                    .onAppear {
-                        playerModel.play(variants: [variant], applyDisplayCriteria: true)
+            // Immersive Backdrop
+            GeometryReader { proxy in
+                AsyncImage(url: clip.thumbnailURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                            .blur(radius: 60)
+                            .overlay(Color.black.opacity(0.6))
+                    } else {
+                        AmbientBackground()
                     }
-            } else {
-                ProgressView()
+                }
             }
+            .ignoresSafeArea()
+            
+            HStack(alignment: .top, spacing: 80) {
+                // Left: Hero Poster
+                AsyncImage(url: clip.thumbnailURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(16/9, contentMode: .fit)
+                    } else {
+                        ZStack {
+                            Color.white.opacity(0.1)
+                            ProgressView()
+                        }
+                        .aspectRatio(16/9, contentMode: .fit)
+                    }
+                }
+                .frame(width: 600)
+                .cornerRadius(24)
+                .shadow(color: .black.opacity(0.5), radius: 30, y: 15)
+                
+                // Right: Content & Actions
+                VStack(alignment: .leading, spacing: 32) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(clip.displayName)
+                            .font(.system(size: 56, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.5), radius: 2, y: 2)
+                        
+                        Text(clip.subtitle)
+                            .font(.title3.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+                    
+                    Text(clip.summary)
+                        .font(.body)
+                        .lineSpacing(6)
+                        .foregroundStyle(.white.opacity(0.9))
+                        .lineLimit(6)
+                        .frame(maxWidth: 600, alignment: .leading)
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("PLAYBACK QUALITY")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white.opacity(0.5))
+                            .tracking(1)
+                        
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: 16) {
+                                ForEach(clip.variants) { variant in
+                                    NavigationLink(destination: VideoPlayerQuickView(variant: variant)) {
+                                        HStack {
+                                            Image(systemName: "play.fill")
+                                                .font(.headline)
+                                            Text(variant.id)
+                                                .font(.headline.weight(.semibold))
+                                            Spacer()
+                                            if variant.isPrimary {
+                                                Image(systemName: "star.fill")
+                                                    .font(.caption)
+                                                    .foregroundStyle(.yellow)
+                                            }
+                                        }
+                                        .padding(.vertical, 18)
+                                        .padding(.horizontal, 24)
+                                        .background(Color.white.opacity(0.1))
+                                        .cornerRadius(14)
+                                    }
+                                    .buttonStyle(.card)
+                                }
+                            }
+                            .padding(20) // Focus expansion room
+                        }
+                        .frame(maxHeight: 300)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(80)
+        }
+    }
+}
+
+struct VideoPlayerQuickView: View {
+    let variant: VideoVariant
+    @StateObject private var playerModel = VideoQueuePlayerModel()
+
+    var body: some View {
+        ZStack {
+            NativeVideoPlayer(player: playerModel.player, appliesDisplayCriteriaAutomatically: true)
+                .ignoresSafeArea()
         }
         .onAppear {
-            if selectedVariant == nil {
-                selectedVariant = clip.variants.first
-            }
+            playerModel.play(variant: variant, applyDisplayCriteria: true)
         }
         .onDisappear {
             playerModel.stop()
@@ -149,8 +245,7 @@ private struct VideoClipThumbnail: View {
                 }
             }
             .frame(width: 440, height: 240)
-            .clipped()
-            .cornerRadius(24)
+            .cornerRadius(24) 
         }
     }
 }
@@ -197,10 +292,9 @@ private struct NativeVideoPlayer: UIViewControllerRepresentable {
 final class VideoQueuePlayerModel: ObservableObject {
     let player = AVQueuePlayer()
 
-    func play(variants: [VideoVariant], applyDisplayCriteria: Bool) {
+    func play(variant: VideoVariant, applyDisplayCriteria: Bool) {
         player.removeAllItems()
-        guard let first = variants.first else { return }
-        let item = AVPlayerItem(url: first.url)
+        let item = AVPlayerItem(url: variant.url)
         player.insert(item, after: nil)
         player.play()
     }
@@ -217,70 +311,57 @@ final class VideoCatalogLoader: ObservableObject {
 
     func load(mode: VideoCatalogMode) {
         isLoading = true
-        let allVideos = [
-            (
-                "Big Buck Bunny (Trailer)",
-                "Blender Open Movie",
-                "Short-form animation with dense texture detail and fast motion.",
-                "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg",
-                "https://download.blender.org/peach/trailer/trailer_720p.mov"
-            ),
-            (
-                "Sintel (Trailer)",
-                "Blender Open Movie",
-                "Cinematic lighting, skin tones, and smoke-heavy grading.",
-                "https://durian.blender.org/wp-content/uploads/2011/02/4-DVD-verti-feb2011.jpg",
-                "https://download.blender.org/durian/trailer/sintel_trailer-720p.mp4"
-            ),
-            (
-                "Elephants Dream",
-                "Blender Open Movie",
-                "High-contrast scenes for shadow and color separation checks.",
-                "https://download.blender.org/ED/cover.jpg",
-                "https://download.blender.org/ED/elephantsdream-720-h264-st-aac.mov"
-            ),
-            (
-                "Tears of Steel",
-                "Blender Open Movie",
-                "Live-action + CG blend for sharpness and mixed lighting.",
-                "https://mango.blender.org/wp-content/uploads/2013/06/12_scients_header.jpg",
-                "https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov"
-            )
+        
+        let tosBase = "https://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/"
+        let tosVariants = [
+            VideoVariant(id: "4K (3840x2160)", url: URL(string: tosBase + "ToS-4k-1920.mov")!, isPrimary: true),
+            VideoVariant(id: "1080p", url: URL(string: tosBase + "tears_of_steel_1080p.mov")!),
+            VideoVariant(id: "720p", url: URL(string: tosBase + "tears_of_steel_720p.mov")!)
         ]
         
-        let clips = allVideos.map { title, subtitle, desc, thumb, file in
-            VideoClip(
-                id: file,
-                displayName: title,
-                subtitle: subtitle,
-                summary: desc,
-                thumbnailURL: URL(string: thumb)!,
-                variants: [VideoVariant(id: file, url: URL(string: file)!)]
-            )
-        }
+        let tosClip = VideoClip(
+            id: "tears_of_steel",
+            displayName: "Tears of Steel",
+            subtitle: "By Blender Foundation",
+            summary: "Tears of Steel was realized with crowd-funding by users of the open source 3D creation tool Blender. A sci-fi short film about a group of warriors and scientists who gather at the Oude Kerk in Amsterdam to save the world from destructive robots.",
+            thumbnailURL: URL(string: "https://mango.blender.org/wp-content/uploads/2013/06/12_scients_header.jpg")!,
+            variants: tosVariants
+        )
+
+        let bunnyBase = "https://download.blender.org/peach/bigbuckbunny_movies/"
+        let bunnyVariants = [
+            VideoVariant(id: "1080p 60fps (HEVC)", url: URL(string: "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/bigbuck_bunny_8bit_7500kbps_1080p_60.0fps_hevc.mp4")!, isPrimary: true),
+            VideoVariant(id: "1080p 30fps (H.264)", url: URL(string: bunnyBase + "big_buck_bunny_1080p_h264.mov")!),
+            VideoVariant(id: "720p 30fps (H.264)", url: URL(string: bunnyBase + "big_buck_bunny_720p_h264.mov")!),
+            VideoVariant(id: "480p", url: URL(string: bunnyBase + "big_buck_bunny_480p_h264.mov")!)
+        ]
+        
+        let bunnyClip = VideoClip(
+            id: "big_buck_bunny",
+            displayName: "Big Buck Bunny",
+            subtitle: "By Blender Foundation",
+            summary: "A giant rabbit with a heart bigger than himself. When three rodents rudely harass him, something snaps... and the rabbit ain't no bunny anymore! A classic open movie project.",
+            thumbnailURL: URL(string: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg")!,
+            variants: bunnyVariants
+        )
+        
+        var clips: [VideoClip] = []
+        clips.append(bunnyClip)
+        clips.append(tosClip)
         
         switch mode {
         case .reference:
-            // Group by provider (subtitle)
             let grouped = Dictionary(grouping: clips, by: { $0.subtitle })
-            
-            // Create categories from groups, sorted by provider name
             let providerCategories = grouped.map { provider, clips in
                 let providerName = provider.hasPrefix("By ") ? String(provider.dropFirst(3)) : provider
                 return VideoCategory(id: provider, title: providerName, clips: clips.sorted { $0.displayName < $1.displayName })
             }.sorted { $0.title < $1.title }
-            
             self.categories = providerCategories
+            
         case .technical:
             let techVideos = [
-                ("Big Buck Bunny (H.264)", "1080p 60fps", "High frame rate test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/bigbuck_bunny_8bit_7500kbps_1080p_60.0fps_hevc.mp4"),
-                ("Water Netflix", "1080p 59.94fps", "Fluid motion test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/water_netflix_7500kbps_1080p_59.94fps_hevc.mp4"),
-                ("Dancers", "1080p 60fps", "Complex motion test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_2/segments/Dancers_8s_10244kbps_1080p_60.0fps_hevc.mp4"),
-                ("Daydreamer (SDR)", "1440p 60fps", "Resolution test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_4/segments/Daydreamer_SDR_8s_3840x2160_8_6000kbps_1440p_60.0fps_hevc.mp4"),
-                ("Giftmord (SDR)", "1440p 60fps", "Dark scene test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_4/segments/Giftmord-SDR_8s_11_3840x2160_6000kbps_1440p_60.0fps_hevc.mp4"),
-                ("Sparks", "1440p 59.94fps", "Particle effect test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_4/segments/Sparks_cut_13_6000kbps_1440p_59.94fps_hevc.mp4")
+                ("Water Netflix", "1080p 59.94fps", "Fluid motion test.", "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/water_netflix_7500kbps_1080p_59.94fps_hevc.mp4")
             ]
-            
             let techClips = techVideos.map { title, subtitle, desc, url in
                 VideoClip(
                     id: url,
@@ -288,14 +369,38 @@ final class VideoCatalogLoader: ObservableObject {
                     subtitle: subtitle,
                     summary: desc,
                     thumbnailURL: URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg")!,
-                    variants: [VideoVariant(id: url, url: URL(string: url)!)]
+                    variants: [VideoVariant(id: "Default", url: URL(string: url)!, isPrimary: true)]
                 )
             }
-            
             self.categories = [VideoCategory(id: "technical", title: "Technical Tests", clips: techClips)]
         }
         self.isLoading = false
     }
+}
+
+// Global static data for direct access
+struct VideoData {
+    static let bunny = VideoClip(
+        id: "big_buck_bunny",
+        displayName: "Big Buck Bunny",
+        subtitle: "By Blender Foundation",
+        summary: "Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself.",
+        thumbnailURL: URL(string: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg")!,
+        variants: [
+            VideoVariant(id: "1080p 60fps", url: URL(string: "https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/bigbuck_bunny_8bit_7500kbps_1080p_60.0fps_hevc.mp4")!, isPrimary: true)
+        ]
+    )
+    
+    static let tears = VideoClip(
+        id: "tears_of_steel",
+        displayName: "Tears of Steel",
+        subtitle: "By Blender Foundation",
+        summary: "Tears of Steel was realized with crowd-funding by users of the open source 3D creation tool Blender.",
+        thumbnailURL: URL(string: "https://mango.blender.org/wp-content/uploads/2013/06/12_scients_header.jpg")!,
+        variants: [
+            VideoVariant(id: "4K (3840x2160)", url: URL(string: "https://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/ToS-4k-1920.mov")!, isPrimary: true)
+        ]
+    )
 }
 
 struct VideoCategory: Identifiable {
@@ -304,7 +409,7 @@ struct VideoCategory: Identifiable {
     let clips: [VideoClip]
 }
 
-struct VideoClip: Identifiable {
+struct VideoClip: Identifiable, Hashable {
     let id: String
     let displayName: String
     let subtitle: String
@@ -315,11 +420,20 @@ struct VideoClip: Identifiable {
     var palette: [Color] {
         [.blue, .purple]
     }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: VideoClip, rhs: VideoClip) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
-struct VideoVariant: Identifiable {
+struct VideoVariant: Identifiable, Hashable {
     let id: String
     let url: URL
+    var isPrimary: Bool = false
 }
 
 private extension AVAsset {

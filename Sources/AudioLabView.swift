@@ -2,7 +2,7 @@ import SwiftUI
 import AVFoundation
 
 struct AudioLabView: View {
-    enum AudioMode {
+    enum AudioMode: Hashable {
         case menu
         case channels
         case tones
@@ -11,9 +11,19 @@ struct AudioLabView: View {
     }
 
     @State private var currentMode: AudioMode = .menu
+    @State private var lastMode: AudioMode? = nil 
     @StateObject private var audioManager = AudioManager()
     @StateObject private var toneEngine = ToneEngine()
     @Environment(\.dismiss) private var dismiss
+    
+    // Focus Management for Content
+    @FocusState private var focusedField: FocusField?
+    // Focus Management for Main Menu
+    @FocusState private var focusedMenuItem: AudioMode?
+    
+    enum FocusField {
+        case content
+    }
 
     var body: some View {
         ZStack {
@@ -34,6 +44,27 @@ struct AudioLabView: View {
             #if os(iOS) || os(tvOS)
             UIApplication.shared.isIdleTimerDisabled = true
             #endif
+            // Initial focus logic
+            if currentMode != .menu {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    focusedField = .content
+                }
+            } else {
+                // If starting in menu, default to channels or last used
+                focusedMenuItem = .channels
+            }
+        }
+        .onChange(of: currentMode) { newMode in
+            if newMode != .menu {
+                lastMode = newMode 
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    focusedField = .content
+                }
+            } else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    focusedMenuItem = lastMode ?? .channels
+                }
+            }
         }
         .onDisappear {
             #if os(iOS) || os(tvOS)
@@ -57,55 +88,66 @@ struct AudioLabView: View {
                 MenuButton(title: "Speaker Layout", icon: "hifispeaker.2.fill", color: .green) {
                     currentMode = .channels
                 }
+                .focused($focusedMenuItem, equals: .channels)
+                
                 MenuButton(title: "Sine Generator", icon: "waveform.path.ecg", color: .blue) {
                     currentMode = .tones
                 }
+                .focused($focusedMenuItem, equals: .tones)
+                
                 MenuButton(title: "Frequency Sweep", icon: "chart.xyaxis.line", color: .orange) {
                     currentMode = .sweep
                 }
+                .focused($focusedMenuItem, equals: .sweep)
+                
                 MenuButton(title: "Noise Generator", icon: "aqi.medium", color: .purple) {
                     currentMode = .noise
                 }
+                .focused($focusedMenuItem, equals: .noise)
             }
-            .frame(width: 500)
+            .frame(width: 800)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onExitCommand {
+            dismiss()
         }
     }
 
     @ViewBuilder
     private var activeView: some View {
-        ZStack(alignment: .topLeading) {
-            // Back Button
-            Button(action: {
-                stopAll()
-                currentMode = .menu
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "chevron.left")
-                    Text("Back")
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                // Content Area
+                ZStack {
+                    switch currentMode {
+                    case .channels:
+                        ChannelsLayoutView(audioManager: audioManager)
+                            .onExitCommand { goBack() }
+                    case .tones:
+                        TonesView(toneEngine: toneEngine)
+                            .onExitCommand { goBack() }
+                    case .sweep:
+                        SweepView(toneEngine: toneEngine)
+                            .onExitCommand { goBack() }
+                    case .noise:
+                        NoiseView(toneEngine: toneEngine)
+                            .onExitCommand { goBack() }
+                    case .menu:
+                        EmptyView()
+                    }
                 }
-                .font(.headline)
-                .foregroundStyle(.white.opacity(0.8))
-                .padding(.vertical, 12)
-                .padding(.horizontal, 20)
-                .background(.ultraThinMaterial)
-                .clipShape(Capsule())
+                .frame(maxWidth: .infinity)
+                .padding(.top, 60)
+                .padding(.bottom, 100)
+                .focused($focusedField, equals: .content)
             }
-            .buttonStyle(.plain)
-            .padding(40)
-            .zIndex(100)
-
-            switch currentMode {
-            case .channels:
-                ChannelsLayoutView(audioManager: audioManager)
-            case .tones:
-                TonesView(toneEngine: toneEngine)
-            case .sweep:
-                SweepView(toneEngine: toneEngine)
-            case .noise:
-                NoiseView(toneEngine: toneEngine)
-            case .menu:
-                EmptyView()
-            }
+        }
+    }
+    
+    private func goBack() {
+        stopAll()
+        withAnimation {
+            currentMode = .menu
         }
     }
 
@@ -164,8 +206,6 @@ struct ChannelsLayoutView: View {
                 .padding(.bottom, 60)
 
             // Spatial Grid
-            // L   C   R
-            // LS Sub RS
             Grid(horizontalSpacing: 80, verticalSpacing: 80) {
                 GridRow {
                     SpeakerButton(name: "Left Front", icon: "hifispeaker.fill", activeSpeaker: $activeSpeaker, action: play)
@@ -179,19 +219,21 @@ struct ChannelsLayoutView: View {
                 }
             }
             
-            Spacer()
+            Spacer().frame(height: 60) 
             
-            if let active = activeSpeaker {
-                Text("Playing: \(active)")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(.green)
-                    .padding(.bottom, 40)
-            } else {
-                Text("Select a speaker to test")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding(.bottom, 40)
+            VStack {
+                if let active = activeSpeaker {
+                    Text("Playing: \(active)")
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.green)
+                } else {
+                    Text("Select a speaker to test")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .frame(height: 80)
+            .padding(.bottom, 40)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -223,19 +265,21 @@ struct SpeakerButton: View {
                     .shadow(color: activeSpeaker == name ? .green.opacity(0.5) : .clear, radius: 10)
                 
                 Text(name)
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.95))
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
             }
-            .frame(width: 160, height: 160)
+            .frame(width: 320, height: 200)
             .background(Color.white.opacity(activeSpeaker == name ? 0.15 : 0.05))
-            .clipShape(Circle())
+            .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
             .overlay(
-                Circle()
+                RoundedRectangle(cornerRadius: 32, style: .continuous)
                     .stroke(activeSpeaker == name ? Color.green.opacity(0.6) : Color.white.opacity(0.1), lineWidth: 2)
             )
         }
-        .buttonStyle(.glassFocus(cornerRadius: 80))
+        .buttonStyle(.glassFocus(cornerRadius: 32))
     }
 }
 
@@ -256,31 +300,50 @@ struct TonesView: View {
                     .foregroundStyle(.blue)
             }
 
-            VStack(spacing: 20) {
-                LabeledSlider(value: $frequency, range: 20...20000, step: 10, suffix: " Hz")
-                    .frame(width: 600)
-                
-                HStack(spacing: 20) {
-                    Button("Low (100Hz)") { frequency = 100; if isPlaying { toneEngine.playSine(frequency: frequency) } }
-                    Button("Mid (1kHz)") { frequency = 1000; if isPlaying { toneEngine.playSine(frequency: frequency) } }
-                    Button("High (10kHz)") { frequency = 10000; if isPlaying { toneEngine.playSine(frequency: frequency) } }
-                }
+            LabeledSlider(value: $frequency, range: 20...20000, step: 10, suffix: " Hz")
+                .frame(width: 600)
+            
+            HStack(spacing: 20) {
+                PresetButton(title: "Low (100Hz)") { frequency = 100; if isPlaying { toneEngine.playSine(frequency: frequency) } }
+                PresetButton(title: "Mid (1kHz)") { frequency = 1000; if isPlaying { toneEngine.playSine(frequency: frequency) } }
+                PresetButton(title: "High (10kHz)") { frequency = 10000; if isPlaying { toneEngine.playSine(frequency: frequency) } }
             }
 
             Button(action: {
                 if isPlaying { toneEngine.stop() } else { toneEngine.playSine(frequency: frequency) }
                 isPlaying.toggle()
             }) {
-                Image(systemName: isPlaying ? "stop.fill" : "play.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(.white)
-                    .frame(width: 100, height: 100)
-                    .background(isPlaying ? Color.red : Color.green)
-                    .clipShape(Circle())
+                HStack(spacing: 16) {
+                    Image(systemName: isPlaying ? "stop.fill" : "play.fill")
+                        .font(.system(size: 32))
+                    Text(isPlaying ? "Stop Tone" : "Play Tone")
+                        .font(.headline)
+                }
+                .padding(.horizontal, 40)
+                .padding(.vertical, 20)
+                .background(isPlaying ? Color.red : Color.green)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glassFocus(cornerRadius: 24))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct PresetButton: View {
+    let title: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.callout.weight(.medium))
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+                .background(Color.white.opacity(0.1))
+                .cornerRadius(12)
+        }
+        .buttonStyle(.glassFocus(cornerRadius: 12))
     }
 }
 
@@ -292,6 +355,8 @@ struct SweepView: View {
     @State private var isRunning = false
 
     var body: some View {
+        // Use a FocusSection to group controls, helping the focus engine
+        // understand they are related and navigable.
         VStack(spacing: 40) {
             Text("Frequency Sweep")
                 .font(.title2.weight(.bold))
@@ -299,20 +364,29 @@ struct SweepView: View {
 
             VStack(spacing: 30) {
                 LabeledSlider(value: $start, range: 20...1000, step: 10, suffix: " Hz Start")
+                    .frame(width: 600)
                 LabeledSlider(value: $end, range: 1000...20000, step: 100, suffix: " Hz End")
+                    .frame(width: 600)
                 LabeledSlider(value: $duration, range: 5...60, step: 5, suffix: " s Duration")
+                    .frame(width: 600)
             }
-            .frame(width: 600)
+            .focusSection() // Helps group the sliders
 
             Button(action: {
                 if isRunning { toneEngine.stop() } else { toneEngine.playSweep(start: start, end: end, duration: duration) }
                 isRunning.toggle()
             }) {
-                Text(isRunning ? "Stop Sweep" : "Start Sweep")
-                    .font(.headline)
-                    .frame(width: 200, height: 60)
+                HStack(spacing: 16) {
+                    Image(systemName: isRunning ? "stop.fill" : "chart.xyaxis.line")
+                        .font(.system(size: 32))
+                    Text(isRunning ? "Stop Sweep" : "Start Sweep")
+                        .font(.headline)
+                }
+                .frame(width: 300, height: 80)
+                .background(isRunning ? Color.red : Color.orange)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.glassFocus(cornerRadius: 24))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -338,14 +412,17 @@ struct NoiseView: View {
                 if isPlaying { toneEngine.stop() } else { toneEngine.playNoise(type: type) }
                 isPlaying.toggle()
             }) {
-                Image(systemName: isPlaying ? "stop.fill" : "play.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(.white)
-                    .frame(width: 100, height: 100)
-                    .background(isPlaying ? Color.red : Color.green)
-                    .clipShape(Circle())
+                HStack(spacing: 16) {
+                    Image(systemName: isPlaying ? "stop.fill" : "play.fill")
+                        .font(.system(size: 32))
+                    Text(isPlaying ? "Stop Noise" : "Play Noise")
+                        .font(.headline)
+                }
+                .frame(width: 300, height: 80)
+                .background(isPlaying ? Color.red : Color.purple)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glassFocus(cornerRadius: 24))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -362,7 +439,7 @@ struct NoiseButton: View {
             Text(title)
                 .font(.headline)
                 .foregroundStyle(.white)
-                .frame(width: 200, height: 100)
+                .frame(width: 240, height: 120)
                 .background(current == type ? Color.white.opacity(0.2) : Color.white.opacity(0.05))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay(
@@ -370,11 +447,11 @@ struct NoiseButton: View {
                         .stroke(current == type ? Color.white : Color.clear, lineWidth: 2)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.glassFocus(cornerRadius: 20))
     }
 }
 
-// ToneEngine stays the same as before
+// ToneEngine remains the same
 final class ToneEngine: ObservableObject {
     enum NoiseType { case white, pink }
 

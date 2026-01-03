@@ -4,6 +4,9 @@ struct GammaTestView: View {
     private let gammaValues: [Double] = [1.8, 2.0, 2.2, 2.4]
     private let brightnessLevels: [Double] = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
+    @Environment(\.dismiss) private var dismiss
+    @State private var isMinimized = false
+    @State private var controlsHidden = false
     @State private var boxSize: Double = 100
     @State private var background: BackgroundOption = .gray
     @State private var showValues = true
@@ -48,62 +51,49 @@ struct GammaTestView: View {
                 .padding(.vertical, 80)
             }
             .scrollDisabled(true)
-            .overlay {
-                VStack {
-                    Spacer()
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Gamma")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
+            
+            ControlPanelDock(title: "Gamma Calibration", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Verify correct gamma tracking (2.2 is standard for TV). Squares should blend smoothly.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
 
-                        // Box Size
-                        SectionHeader(title: "Box Size")
-                        LabeledSlider(value: $boxSize, range: 50...200, step: 5, suffix: "px")
+                    SectionHeader(title: "Box Size")
+                    LabeledSlider(value: $boxSize, range: 50...200, step: 5, suffix: "px")
 
-                        // Background Picker (native)
-                        SectionHeader(title: "Background")
-                        Picker("Background", selection: $background) {
-                            ForEach(BackgroundOption.allCases) { option in
-                                Text(option.rawValue).tag(option)
+                    SectionHeader(title: "Background")
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 10)], spacing: 10) {
+                        ForEach(BackgroundOption.allCases) { option in
+                            ColorOptionChip(title: option.rawValue, color: option.color, isSelected: background == option) {
+                                background = option
                             }
                         }
-                        .pickerStyle(.segmented)
-
-                        // Show Values Toggle (native)
-                        Toggle(isOn: $showValues) {
-                            Text("Show values")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
-                        }
-
-                        Button {
-                            boxSize = 100
-                            background = .gray
-                            showValues = true
-                        } label: {
-                            Text("Reset Settings")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        }
-                        .buttonStyle(.glassFocus(cornerRadius: 12))
                     }
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.white.opacity(0.18), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 40)
+
+                    SectionHeader(title: "Options")
+                    ToggleRow(title: "Show Values", isOn: showValues) {
+                        showValues.toggle()
+                    }
+
+                    Button {
+                        boxSize = 100
+                        background = .gray
+                        showValues = true
+                    } label: {
+                        Text("Reset Settings")
+                            .font(.callout.weight(.semibold))
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+                    .buttonStyle(.glassFocus(cornerRadius: 12))
                 }
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
     }
 }
 

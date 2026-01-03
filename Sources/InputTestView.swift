@@ -10,146 +10,310 @@ struct InputTestView: View {
             AmbientBackground()
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 28) {
-                    statusRow
-
-                    HStack(spacing: 32) {
-                        InputCard(title: "D-pad / Touch") {
-                            DpadVisualizer(
-                                x: monitor.dpadX,
-                                y: monitor.dpadY,
-                                up: monitor.dpadUp,
-                                down: monitor.dpadDown,
-                                left: monitor.dpadLeft,
-                                right: monitor.dpadRight
-                            )
+                VStack(spacing: 40) {
+                    // Header & Status
+                    VStack(spacing: 20) {
+                        Text("Input Test")
+                            .font(.system(size: 52, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                        
+                        HStack(spacing: 20) {
+                            StatusBadge(icon: "gamecontroller.fill", title: "Device", value: monitor.isConnected ? monitor.controllerName : "None")
+                            StatusBadge(icon: "cable.connector", title: "Profile", value: monitor.profile.rawValue)
+                            StatusBadge(icon: "hand.tap.fill", title: "Last Input", value: monitor.lastEvent)
                         }
+                    }
+                    .padding(.top, 40)
 
-                        InputCard(title: "Buttons") {
-                            ButtonsGrid(
-                                profile: monitor.profile,
-                                buttonA: monitor.buttonA,
-                                buttonB: monitor.buttonB,
-                                buttonX: monitor.buttonX,
-                                buttonY: monitor.buttonY,
-                                buttonMenu: monitor.buttonMenu,
-                                buttonOptions: monitor.buttonOptions,
-                                buttonHome: monitor.buttonHome
-                            )
-                        }
-
-                        if monitor.profile == .extended {
-                            InputCard(title: "Sticks & Triggers") {
-                                ExtendedInputsView(
-                                    leftStick: CGPoint(x: CGFloat(monitor.leftStickX), y: CGFloat(monitor.leftStickY)),
-                                    rightStick: CGPoint(x: CGFloat(monitor.rightStickX), y: CGFloat(monitor.rightStickY)),
-                                    leftStickPressed: monitor.leftStickPressed,
-                                    rightStickPressed: monitor.rightStickPressed,
-                                    leftTrigger: monitor.leftTriggerValue,
-                                    rightTrigger: monitor.rightTriggerValue,
-                                    leftShoulder: monitor.leftShoulderValue,
-                                    rightShoulder: monitor.rightShoulderValue
-                                )
+                    if monitor.isConnected {
+                        // Main Visualization Grid
+                        Grid(horizontalSpacing: 40, verticalSpacing: 40) {
+                            GridRow {
+                                // Left: D-pad / Left Stick
+                                InputPanel(title: "Directional") {
+                                    HStack(spacing: 40) {
+                                        DpadVisualizer(
+                                            x: monitor.dpadX, y: monitor.dpadY,
+                                            up: monitor.dpadUp, down: monitor.dpadDown,
+                                            left: monitor.dpadLeft, right: monitor.dpadRight
+                                        )
+                                        
+                                        if monitor.profile == .extended {
+                                            StickVisualizer(
+                                                title: "L-Stick",
+                                                x: monitor.leftStickX, y: monitor.leftStickY,
+                                                isPressed: monitor.leftStickPressed
+                                            )
+                                        }
+                                    }
+                                }
+                                .gridCellColumns(monitor.profile == .extended ? 2 : 1)
+                                
+                                // Right: Buttons / Right Stick
+                                InputPanel(title: "Action Buttons") {
+                                    HStack(spacing: 40) {
+                                        ButtonsVisualizer(
+                                            a: monitor.buttonA, b: monitor.buttonB,
+                                            x: monitor.buttonX, y: monitor.buttonY,
+                                            menu: monitor.buttonMenu, options: monitor.buttonOptions,
+                                            home: monitor.buttonHome
+                                        )
+                                        
+                                        if monitor.profile == .extended {
+                                            StickVisualizer(
+                                                title: "R-Stick",
+                                                x: monitor.rightStickX, y: monitor.rightStickY,
+                                                isPressed: monitor.rightStickPressed
+                                            )
+                                        }
+                                    }
+                                }
+                                .gridCellColumns(monitor.profile == .extended ? 2 : 1)
+                            }
+                            
+                            if monitor.profile == .extended {
+                                GridRow {
+                                    // Triggers
+                                    InputPanel(title: "Triggers & Shoulders") {
+                                        HStack(spacing: 60) {
+                                            TriggerBar(title: "L1", value: monitor.leftShoulderValue)
+                                            TriggerBar(title: "L2", value: monitor.leftTriggerValue)
+                                            TriggerBar(title: "R2", value: monitor.rightTriggerValue)
+                                            TriggerBar(title: "R1", value: monitor.rightShoulderValue)
+                                        }
+                                    }
+                                    .gridCellColumns(4)
+                                }
                             }
                         }
-                    }
-
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Input Test")
-                            .font(.title.weight(.bold))
-                            .foregroundStyle(.white)
-
-                        Text("Use Siri Remote or a game controller to verify input events.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-
-                        Divider().overlay(Color.white.opacity(0.2))
-
-                        Text("Controller")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InputValueRow(title: "Status", value: monitor.isConnected ? "Connected" : "Waiting")
-                        InputValueRow(title: "Count", value: "\(monitor.controllerCount)")
-                        InputValueRow(title: "Profile", value: monitor.profile.rawValue)
-                        InputValueRow(title: "Name", value: monitor.controllerName)
-                        if monitor.isConnected {
-                            InputValueRow(title: "Vendor", value: monitor.vendorName)
+                    } else {
+                        // Connection Prompt
+                        VStack(spacing: 20) {
+                            Image(systemName: "gamecontroller.fill")
+                                .font(.system(size: 100))
+                                .foregroundStyle(.white.opacity(0.2))
+                            Text("Connect a Game Controller or use the Siri Remote")
+                                .font(.title3)
+                                .foregroundStyle(.secondary)
                         }
-
-                        Divider().overlay(Color.white.opacity(0.2))
-
-                        Text("Last Input")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        Text(lastInputSummary)
-                            .font(.callout.weight(.semibold))
-                            .foregroundStyle(.white)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color.white.opacity(0.08))
-                            )
-
-                        Divider().overlay(Color.white.opacity(0.2))
-
-                        Text("D-pad")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        InputValueRow(title: "X", value: formatAxis(monitor.dpadX))
-                        InputValueRow(title: "Y", value: formatAxis(monitor.dpadY))
+                        .frame(maxWidth: .infinity, minHeight: 400)
+                        .glassSurface()
                     }
+                    
+                    // Log
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Input Log")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        
+                        Text(lastInputSummary)
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 80)
+                    .padding(.bottom, 80)
                 }
-                .padding(.top, 40)
-                .padding(.horizontal, 80)
-                .padding(.bottom, 80)
             }
         }
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    private var statusRow: some View {
-        HStack(spacing: 20) {
-            InfoBadge(title: "Controller", value: monitor.isConnected ? monitor.controllerName : "Not Connected")
-            InfoBadge(title: "Profile", value: monitor.profile.rawValue)
-            InfoBadge(title: "Last Input", value: monitor.lastEvent)
-        }
-    }
-
     private var lastInputSummary: String {
-        guard let time = monitor.lastEventTime else {
-            return "Waiting for input"
-        }
-        return "\(monitor.lastEvent) (\(formatRelativeTime(time)))"
-    }
-
-    private func formatAxis(_ value: Float) -> String {
-        String(format: "%.2f", value)
-    }
-
-    private func formatRelativeTime(_ date: Date) -> String {
-        let interval = max(0, Int(Date().timeIntervalSince(date)))
-        if interval < 1 {
-            return "just now"
-        }
-        if interval < 60 {
-            return "\(interval)s ago"
-        }
-        let minutes = interval / 60
-        if minutes < 60 {
-            return "\(minutes)m ago"
-        }
-        let hours = minutes / 60
-        if hours < 24 {
-            return "\(hours)h ago"
-        }
-        let days = hours / 24
-        return "\(days)d ago"
+        guard let time = monitor.lastEventTime else { return "No input detected" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return "[\(formatter.string(from: time))] \(monitor.lastEvent)"
     }
 }
 
+// MARK: - Components
+
+struct InputPanel<Content: View>: View {
+    let title: String
+    let content: Content
+    
+    init(title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(.white.opacity(0.8))
+            
+            content
+        }
+        .padding(30)
+        .glassSurface(cornerRadius: 24, strokeOpacity: 0.1)
+    }
+}
+
+struct StatusBadge: View {
+    let icon: String
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundStyle(.cyan)
+            
+            VStack(alignment: .leading) {
+                Text(title.uppercased())
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.white)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial)
+        .clipShape(Capsule())
+    }
+}
+
+struct DpadVisualizer: View {
+    let x, y: Float
+    let up, down, left, right: Bool
+    
+    var body: some View {
+        ZStack {
+            // Cross
+            RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.1)).frame(width: 40, height: 120)
+            RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.1)).frame(width: 120, height: 40)
+            
+            // Active Indicators
+            if up { Arrow(angle: -90) }
+            if down { Arrow(angle: 90) }
+            if left { Arrow(angle: 180) }
+            if right { Arrow(angle: 0) }
+            
+            // Analog Dot
+            Circle()
+                .fill(Color.cyan)
+                .frame(width: 16, height: 16)
+                .offset(x: CGFloat(x) * 40, y: CGFloat(-y) * 40)
+        }
+        .frame(width: 140, height: 140)
+    }
+    
+    func Arrow(angle: Double) -> some View {
+        Image(systemName: "arrowtriangle.right.fill")
+            .rotationEffect(.degrees(angle))
+            .offset(x: angle == 0 ? 40 : (angle == 180 ? -40 : 0),
+                    y: angle == 90 ? 40 : (angle == -90 ? -40 : 0))
+            .foregroundStyle(.white)
+    }
+}
+
+struct ButtonsVisualizer: View {
+    let a, b, x, y, menu, options, home: Bool
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                ButtonCircle(label: "X", pressed: x, color: .blue)
+                VStack(spacing: 30) {
+                    ButtonCircle(label: "Y", pressed: y, color: .yellow)
+                    ButtonCircle(label: "A", pressed: a, color: .green)
+                }
+                ButtonCircle(label: "B", pressed: b, color: .red)
+            }
+            
+            HStack(spacing: 20) {
+                SmallButton(label: "Menu", pressed: menu)
+                SmallButton(label: "Opt", pressed: options)
+                SmallButton(label: "Home", pressed: home)
+            }
+        }
+    }
+}
+
+struct ButtonCircle: View {
+    let label: String
+    let pressed: Bool
+    let color: Color
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(pressed ? color : Color.white.opacity(0.1))
+                .frame(width: 50, height: 50)
+            Text(label)
+                .font(.headline.weight(.bold))
+                .foregroundStyle(pressed ? .black : .white)
+        }
+        .scaleEffect(pressed ? 0.9 : 1.0)
+        .animation(.spring(duration: 0.1), value: pressed)
+    }
+}
+
+struct SmallButton: View {
+    let label: String
+    let pressed: Bool
+    
+    var body: some View {
+        Text(label)
+            .font(.caption2.weight(.bold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(pressed ? Color.white : Color.white.opacity(0.1))
+            .foregroundStyle(pressed ? .black : .white)
+            .clipShape(Capsule())
+    }
+}
+
+struct StickVisualizer: View {
+    let title: String
+    let x, y: Float
+    let isPressed: Bool
+    
+    var body: some View {
+        VStack {
+            ZStack {
+                Circle().stroke(Color.white.opacity(0.2), lineWidth: 2)
+                    .frame(width: 100, height: 100)
+                    .background(isPressed ? Color.white.opacity(0.1) : Color.clear)
+                    .clipShape(Circle())
+                
+                Circle().fill(Color.cyan)
+                    .frame(width: 20, height: 20)
+                    .offset(x: CGFloat(x) * 40, y: CGFloat(-y) * 40)
+            }
+            Text(title).font(.caption).foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct TriggerBar: View {
+    let title: String
+    let value: Float
+    
+    var body: some View {
+        VStack {
+            ZStack(alignment: .bottom) {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.white.opacity(0.1))
+                    .frame(width: 20, height: 100)
+                
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.cyan)
+                    .frame(width: 20, height: 100 * CGFloat(value))
+            }
+            Text(title).font(.caption.weight(.bold)).foregroundStyle(.white)
+        }
+    }
+}
+
+// ControllerMonitor logic
 final class ControllerMonitor: ObservableObject {
     enum Profile: String {
         case none = "No Controller"
@@ -437,290 +601,6 @@ final class ControllerMonitor: ObservableObject {
         rightStickY = 0
         leftStickPressed = false
         rightStickPressed = false
-    }
-}
-
-private struct InputCard<Content: View>: View {
-    let title: String
-    let content: Content
-
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(title)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.white)
-            content
-        }
-        .frame(width: 340)
-        .glassSurface(cornerRadius: 22, strokeOpacity: 0.16)
-    }
-}
-
-private struct DpadVisualizer: View {
-    let x: Float
-    let y: Float
-    let up: Bool
-    let down: Bool
-    let left: Bool
-    let right: Bool
-
-    var body: some View {
-        VStack(spacing: 16) {
-            AxisPad(x: x, y: y, highlight: up || down || left || right)
-                .frame(width: 200, height: 200)
-
-            HStack(spacing: 12) {
-                AxisValue(title: "X", value: x)
-                AxisValue(title: "Y", value: y)
-            }
-
-            HStack(spacing: 10) {
-                DirectionIndicator(symbol: "arrow.up", isActive: up)
-                DirectionIndicator(symbol: "arrow.left", isActive: left)
-                DirectionIndicator(symbol: "arrow.right", isActive: right)
-                DirectionIndicator(symbol: "arrow.down", isActive: down)
-            }
-        }
-    }
-}
-
-private struct AxisPad: View {
-    let x: Float
-    let y: Float
-    let highlight: Bool
-
-    var body: some View {
-        GeometryReader { proxy in
-            let size = min(proxy.size.width, proxy.size.height)
-            let range = size * 0.32
-            let knobSize = size * 0.12
-            let accent = Color(red: 0.18, green: 0.90, blue: 0.95)
-
-            ZStack {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(Color.white.opacity(highlight ? 0.5 : 0.2), lineWidth: highlight ? 2 : 1)
-
-                Rectangle()
-                    .fill(Color.white.opacity(0.2))
-                    .frame(width: 2, height: size * 0.7)
-                Rectangle()
-                    .fill(Color.white.opacity(0.2))
-                    .frame(width: size * 0.7, height: 2)
-
-                Circle()
-                    .fill(accent)
-                    .frame(width: knobSize, height: knobSize)
-                    .offset(
-                        x: CGFloat(max(-1, min(1, x))) * range,
-                        y: CGFloat(max(-1, min(1, -y))) * range
-                    )
-                    .shadow(color: accent.opacity(0.6), radius: 10)
-            }
-        }
-    }
-}
-
-private struct AxisValue: View {
-    let title: String
-    let value: Float
-
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(String(format: "%.2f", value))
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(.white)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(0.08))
-        )
-    }
-}
-
-private struct DirectionIndicator: View {
-    let symbol: String
-    let isActive: Bool
-
-    var body: some View {
-        let accent = Color(red: 0.18, green: 0.90, blue: 0.95)
-        Image(systemName: symbol)
-            .font(.headline.weight(.bold))
-            .foregroundStyle(isActive ? .black : .white)
-            .frame(width: 36, height: 36)
-            .background(
-                Circle()
-                    .fill(isActive ? accent : Color.white.opacity(0.12))
-            )
-            .overlay(
-                Circle()
-                    .stroke(Color.white.opacity(isActive ? 0.9 : 0.2), lineWidth: 1)
-            )
-    }
-}
-
-private struct ButtonsGrid: View {
-    let profile: ControllerMonitor.Profile
-    let buttonA: Bool
-    let buttonB: Bool
-    let buttonX: Bool
-    let buttonY: Bool
-    let buttonMenu: Bool
-    let buttonOptions: Bool
-    let buttonHome: Bool
-
-    var body: some View {
-        let buttons: [(String, Bool)] = profile == .extended
-            ? [
-                ("A", buttonA),
-                ("B", buttonB),
-                ("X", buttonX),
-                ("Y", buttonY),
-                ("Menu", buttonMenu),
-                ("Options", buttonOptions),
-                ("Home", buttonHome)
-            ]
-            : [
-                ("A", buttonA),
-                ("X", buttonX),
-                ("Menu", buttonMenu)
-            ]
-
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            ForEach(buttons.indices, id: \.self) { index in
-                let button = buttons[index]
-                ButtonIndicator(label: button.0, isPressed: button.1)
-            }
-        }
-    }
-}
-
-private struct ButtonIndicator: View {
-    let label: String
-    let isPressed: Bool
-
-    var body: some View {
-        let accent = Color(red: 0.18, green: 0.90, blue: 0.95)
-        HStack(spacing: 10) {
-            Circle()
-                .fill(isPressed ? accent : Color.white.opacity(0.2))
-                .frame(width: 14, height: 14)
-                .shadow(color: accent.opacity(isPressed ? 0.6 : 0), radius: 6)
-
-            Text(label)
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(.white)
-
-            Spacer(minLength: 0)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(isPressed ? 0.18 : 0.08))
-        )
-    }
-}
-
-private struct ExtendedInputsView: View {
-    let leftStick: CGPoint
-    let rightStick: CGPoint
-    let leftStickPressed: Bool
-    let rightStickPressed: Bool
-    let leftTrigger: Float
-    let rightTrigger: Float
-    let leftShoulder: Float
-    let rightShoulder: Float
-
-    var body: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                StickVisualizer(title: "Left Stick", x: Float(leftStick.x), y: Float(leftStick.y), isPressed: leftStickPressed)
-                StickVisualizer(title: "Right Stick", x: Float(rightStick.x), y: Float(rightStick.y), isPressed: rightStickPressed)
-            }
-
-            AnalogMeterRow(title: "L1", value: leftShoulder)
-            AnalogMeterRow(title: "R1", value: rightShoulder)
-            AnalogMeterRow(title: "L2", value: leftTrigger)
-            AnalogMeterRow(title: "R2", value: rightTrigger)
-        }
-    }
-}
-
-private struct StickVisualizer: View {
-    let title: String
-    let x: Float
-    let y: Float
-    let isPressed: Bool
-
-    var body: some View {
-        VStack(spacing: 8) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-
-            AxisPad(x: x, y: y, highlight: isPressed)
-                .frame(width: 120, height: 120)
-        }
-    }
-}
-
-private struct AnalogMeterRow: View {
-    let title: String
-    let value: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(title)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-
-                Spacer(minLength: 0)
-
-                Text(String(format: "%.2f", value))
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
-            }
-
-            ProgressTrack(progress: Double(max(0, min(1, value))))
-                .frame(height: 6)
-        }
-    }
-}
-
-private struct InputValueRow: View {
-    let title: String
-    let value: String
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-
-            Spacer(minLength: 0)
-
-            Text(value)
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .minimumScaleFactor(0.8)
-                .allowsTightening(true)
-        }
     }
 }
 

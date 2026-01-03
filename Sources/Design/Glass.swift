@@ -212,7 +212,7 @@ struct StepButton: View {
     let action: () -> Void
 
     var body: some View {
-        GlassIconButton(symbol: symbol, size: 40, action: action)
+        GlassIconButton(symbol: symbol, size: 60, action: action)
     }
 }
 
@@ -540,7 +540,7 @@ struct TestControlsModifier: ViewModifier {
     let dismiss: DismissAction
 
     func body(content: Content) -> some View {
-        let base = content
+        content
             .onPlayPauseCommand {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     controlsHidden.toggle()
@@ -555,22 +555,20 @@ struct TestControlsModifier: ViewModifier {
                     }
                 }
             }
-
-        Group {
-            if controlsHidden {
-                base
-                    .contentShape(Rectangle())
-                    .highPriorityGesture(
-                        TapGesture().onEnded {
+            .overlay {
+                if controlsHidden {
+                    // Focusable area to catch "Select" button without visual artifacts
+                    Color.clear
+                        .focusable()
+                        .focusEffectDisabled()
+                        .onLongPressGesture(minimumDuration: 0) {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 controlsHidden = false
                             }
                         }
-                    )
-            } else {
-                base
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
-        }
     }
 }
 
@@ -611,5 +609,22 @@ struct GlassCheckboxToggleStyle: ToggleStyle {
         }
         .buttonStyle(.glassFocus(cornerRadius: 12))
         .accessibilityValue(configuration.isOn ? "On" : "Off")
+    }
+}
+
+struct InstructionRow: View {
+    let icon: String
+    let text: String
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.title2)
+                .frame(width: 40)
+                .foregroundStyle(.white)
+            Text(text)
+                .font(.headline)
+                .foregroundStyle(.white.opacity(0.9))
+        }
     }
 }

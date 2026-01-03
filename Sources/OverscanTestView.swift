@@ -67,22 +67,16 @@ struct OverscanTestView: View {
                         MetricRow(title: "Insets (pt)", value: formatEdgeInsets(safeInsets))
 
                         SectionHeader(title: "Guides")
-                        Toggle(isOn: $showGrid) {
-                            Text("Show grid")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
+                        ToggleRow(title: "Show grid", isOn: showGrid) {
+                            showGrid.toggle()
                         }
 
-                        Toggle(isOn: $showOverscanGuide) {
-                            Text("Show overscan insets")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
+                        ToggleRow(title: "Show overscan insets", isOn: showOverscanGuide) {
+                            showOverscanGuide.toggle()
                         }
 
-                        Toggle(isOn: $showSafeAreaGuide) {
-                            Text("Show safe area")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.white)
+                        ToggleRow(title: "Show safe area", isOn: showSafeAreaGuide) {
+                            showSafeAreaGuide.toggle()
                         }
                     }
                 }

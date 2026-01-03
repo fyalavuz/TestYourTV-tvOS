@@ -2,8 +2,8 @@ import SwiftUI
 
 struct ResponseTimeTestView: View {
     enum TestType: String, CaseIterable, Identifiable {
-        case movingBlock = "Display"
-        case pursuitText = "Pursuit Text"
+        case movingBlock = "Block"
+        case pursuitBar = "Moving Bar" // Renamed from Pursuit Text
         var id: String { rawValue }
     }
 
@@ -16,50 +16,44 @@ struct ResponseTimeTestView: View {
     enum MotionColor: String, CaseIterable, Identifiable {
         case black = "Dark"
         case white = "Light"
+        case cyan = "Cyan"
         var id: String { rawValue }
 
-        var color: Color { self == .black ? .black : .white }
+        var color: Color {
+            switch self {
+            case .black: return .black
+            case .white: return .white
+            case .cyan: return .cyan
+            }
+        }
     }
 
     enum BackgroundColor: String, CaseIterable, Identifiable {
-        case white = "White"
-        case lightGray = "Light Gray"
         case gray = "Gray"
-        case darkGray = "Dark Gray"
+        case darkGray = "Dark"
         case black = "Black"
-        case navy = "Navy"
-        case royalBlue = "Royal Blue"
-        case teal = "Teal"
-        case forestGreen = "Forest Green"
-        case burgundy = "Burgundy"
+        case white = "White"
 
         var id: String { rawValue }
 
         var color: Color {
             switch self {
-            case .white: return .white
-            case .lightGray: return Color(white: 0.88)
             case .gray: return Color(white: 0.5)
             case .darkGray: return Color(white: 0.25)
             case .black: return .black
-            case .navy: return Color(red: 0.0, green: 0.0, blue: 0.5)
-            case .royalBlue: return Color(red: 0.25, green: 0.41, blue: 0.88)
-            case .teal: return Color(red: 0.0, green: 0.5, blue: 0.5)
-            case .forestGreen: return Color(red: 0.13, green: 0.55, blue: 0.13)
-            case .burgundy: return Color(red: 0.5, green: 0.0, blue: 0.13)
+            case .white: return .white
             }
         }
     }
 
     @Environment(\.dismiss) private var dismiss
     @State private var isMinimized = false
-    @State private var testType: TestType = .movingBlock
-    @State private var speed: Double = 35
+    @State private var testType: TestType = .pursuitBar // Default to the better test
+    @State private var speed: Double = 960 // Faster default for modern TVs
     @State private var blockSize: Double = 100
     @State private var backgroundColor: BackgroundColor = .gray
-    @State private var objectColor: MotionColor = .black
+    @State private var objectColor: MotionColor = .cyan
     @State private var direction: Direction = .horizontal
-    @State private var objectCount: Int = 1
     @State private var controlsHidden = false
 
     var body: some View {
@@ -74,23 +68,18 @@ struct ResponseTimeTestView: View {
                     let height = proxy.size.height
 
                     if testType == .movingBlock {
-                        ForEach(0..<objectCount, id: \.self) { index in
-                            MovingBlock(
-                                time: time,
-                                index: index,
-                                count: objectCount,
-                                size: CGFloat(blockSize),
-                                speed: speed,
-                                direction: direction,
-                                objectColor: objectColor,
-                                width: width,
-                                height: height
-                            )
-                        }
-                    } else {
-                        PursuitText(
+                        MovingBlock(
                             time: time,
-                            count: objectCount,
+                            size: CGFloat(blockSize),
+                            speed: speed,
+                            direction: direction,
+                            objectColor: objectColor,
+                            width: width,
+                            height: height
+                        )
+                    } else {
+                        MovingBarPattern(
+                            time: time,
                             size: CGFloat(blockSize),
                             speed: speed,
                             direction: direction,
@@ -103,11 +92,11 @@ struct ResponseTimeTestView: View {
 
                 ControlPanelDock(title: "Response Time", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Follow the moving object to detect blur and ghosting.")
+                        Text("Track the moving object. Look for trailing shadows (ghosting) or color fringes.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
 
-                        SectionHeader(title: "Test Type")
+                        SectionHeader(title: "Test Pattern")
                         HStack(spacing: 10) {
                             ForEach(TestType.allCases) { option in
                                 ToggleChip(title: option.rawValue, isSelected: testType == option) {
@@ -125,17 +114,8 @@ struct ResponseTimeTestView: View {
                             }
                         }
 
-                        SectionHeader(title: "Speed")
-                        LabeledSlider(value: $speed, range: 5...200, step: 5, suffix: "px/s")
-
-                        SectionHeader(title: "Size")
-                        LabeledSlider(value: $blockSize, range: 50...200, step: 10, suffix: "px")
-
-                        SectionHeader(title: "Object Count")
-                        LabeledSlider(value: Binding(
-                            get: { Double(objectCount) },
-                            set: { objectCount = Int($0) }
-                        ), range: 1...5, step: 1, suffix: "")
+                        SectionHeader(title: "Speed (PPS)")
+                        LabeledSlider(value: $speed, range: 100...2000, step: 100, suffix: "px/s")
 
                         SectionHeader(title: "Object Color")
                         HStack(spacing: 10) {
@@ -147,7 +127,7 @@ struct ResponseTimeTestView: View {
                         }
 
                         SectionHeader(title: "Background")
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 10)], spacing: 10) {
+                        HStack(spacing: 10) {
                             ForEach(BackgroundColor.allCases) { option in
                                 ColorOptionChip(title: option.rawValue, color: option.color, isSelected: backgroundColor == option) {
                                     backgroundColor = option
@@ -156,13 +136,12 @@ struct ResponseTimeTestView: View {
                         }
 
                         Button {
-                            testType = .movingBlock
-                            speed = 35
+                            testType = .pursuitBar
+                            speed = 960
                             blockSize = 100
                             backgroundColor = .gray
-                            objectColor = .black
+                            objectColor = .cyan
                             direction = .horizontal
-                            objectCount = 1
                         } label: {
                             Text("Reset Settings")
                                 .font(.callout.weight(.semibold))
@@ -184,8 +163,6 @@ struct ResponseTimeTestView: View {
 
 struct MovingBlock: View {
     let time: TimeInterval
-    let index: Int
-    let count: Int
     let size: CGFloat
     let speed: Double
     let direction: ResponseTimeTestView.Direction
@@ -194,9 +171,6 @@ struct MovingBlock: View {
     let height: CGFloat
 
     var body: some View {
-        let crossSize = direction == .horizontal ? height : width
-        let laneSize = crossSize / CGFloat(max(count, 1))
-        let laneCenter = laneSize * (CGFloat(index) + 0.5)
         let travelDimension = direction == .horizontal ? width : height
         let span = travelDimension + size
         let offset = CGFloat((time * speed).truncatingRemainder(dividingBy: span)) - size / 2
@@ -205,16 +179,15 @@ struct MovingBlock: View {
             .fill(objectColor.color)
             .frame(width: size, height: size)
             .position(
-                x: direction == .horizontal ? offset : laneCenter,
-                y: direction == .horizontal ? laneCenter : offset
+                x: direction == .horizontal ? offset : width / 2,
+                y: direction == .horizontal ? height / 2 : offset
             )
-            .shadow(color: objectColor.color.opacity(0.2), radius: 8)
+            .shadow(color: objectColor.color.opacity(0.3), radius: 10)
     }
 }
 
-struct PursuitText: View {
+struct MovingBarPattern: View {
     let time: TimeInterval
-    let count: Int
     let size: CGFloat
     let speed: Double
     let direction: ResponseTimeTestView.Direction
@@ -223,33 +196,31 @@ struct PursuitText: View {
     let height: CGFloat
 
     var body: some View {
-        let textSize = size * 0.5
         let travelDimension = direction == .horizontal ? width : height
-        let span = travelDimension + size * 8
-        let offset = CGFloat((time * speed).truncatingRemainder(dividingBy: span)) - size * 4
+        let barWidth = size * 0.2 // Thin vertical bar
+        let span = travelDimension + barWidth * 2
+        let offset = CGFloat((time * speed).truncatingRemainder(dividingBy: span)) - barWidth
 
-        Group {
-            if direction == .horizontal {
-                VStack(spacing: size / 2) {
-                    ForEach(0..<count, id: \.self) { _ in
-                        Text("PURSUIT TEST")
-                            .font(.system(size: textSize, weight: .bold, design: .monospaced))
-                            .foregroundStyle(objectColor.color)
-                    }
-                }
-                .offset(x: offset)
-            } else {
-                HStack(spacing: size / 2) {
-                    ForEach(0..<count, id: \.self) { _ in
-                        Text("PURSUIT TEST")
-                            .font(.system(size: textSize, weight: .bold, design: .monospaced))
-                            .foregroundStyle(objectColor.color)
-                            .rotationEffect(.degrees(90))
-                    }
-                }
-                .offset(y: offset)
+        // Draw a group of 3 bars for ghosting check
+        // Central one is objectColor, side ones are dimmed
+        ZStack {
+            ForEach(-1...1, id: \.self) { i in
+                Rectangle()
+                    .fill(i == 0 ? objectColor.color : objectColor.color.opacity(0.3))
+                    .frame(
+                        width: direction == .horizontal ? barWidth : size * 2,
+                        height: direction == .horizontal ? size * 2 : barWidth
+                    )
+                    .offset(
+                        x: direction == .horizontal ? CGFloat(i) * barWidth * 2 : 0,
+                        y: direction == .horizontal ? 0 : CGFloat(i) * barWidth * 2
+                    )
             }
         }
+        .position(
+            x: direction == .horizontal ? offset : width / 2,
+            y: direction == .horizontal ? height / 2 : offset
+        )
     }
 }
 

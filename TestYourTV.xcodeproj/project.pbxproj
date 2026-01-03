@@ -10,6 +10,7 @@
 		00D4BB7B71B9C0DAB6F2F507 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A087CC94501CCDD2B091C1D /* Assets.xcassets */; };
 		0E4944EDBB719E509F34CB59 /* SpectralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EC0F1E093DD4A0B16CFBBA /* SpectralView.swift */; };
 		14154D4622CA95CC06E6F2A9 /* TextClarityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F800D695E4EFE7925806C992 /* TextClarityView.swift */; };
+		15CCC41FCB5C972AFFA9981B /* NeuralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B550F381A39E0A4CD55A1F08 /* NeuralView.swift */; };
 		173A26CF6BAF12742EC7F3DC /* Patterns in Resources */ = {isa = PBXBuildFile; fileRef = B1E80FFE6D2558F486FEF657 /* Patterns */; };
 		179E510BF0D48BCDDFA145BB /* ResponseTimeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4EBFD2A2BC18AE5FE5E7DF /* ResponseTimeTestView.swift */; };
 		1F8DBCE70C646A7A3E39C4FF /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4CAE1EEA40AD58E829399A /* AudioManager.swift */; };
@@ -90,6 +91,7 @@
 		ADDC48193E814085E55E2129 /* ColorGradientTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorGradientTestView.swift; sourceTree = "<group>"; };
 		B13DA3EF403DD8CDD308AAC8 /* RayMarchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayMarchingView.swift; sourceTree = "<group>"; };
 		B1E80FFE6D2558F486FEF657 /* Patterns */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patterns; path = Resources/Patterns; sourceTree = SOURCE_ROOT; };
+		B550F381A39E0A4CD55A1F08 /* NeuralView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuralView.swift; sourceTree = "<group>"; };
 		C26F7A30F8737AB6644C344B /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		C50CD8BF3D4EFCCFC83FD481 /* GammaTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GammaTestView.swift; sourceTree = "<group>"; };
 		D4C452DC185AB5DFBE73CA48 /* NoodlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoodlesView.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				79D451E864BA2CE4E37F29C1 /* LatticeView.swift */,
 				4227B0B683130EF609765C49 /* MatrixTestView.swift */,
 				706F08F23F4F8B11A4AFD038 /* MotionTestView.swift */,
+				B550F381A39E0A4CD55A1F08 /* NeuralView.swift */,
 				D4C452DC185AB5DFBE73CA48 /* NoodlesView.swift */,
 				7787471A5E9D7E838E34FBB3 /* OverscanTestView.swift */,
 				17AC49489B3DCD186A524228 /* RainView.swift */,
@@ -287,6 +290,7 @@
 				58C42B3C1E9FC5B98F311FDB /* LatticeView.swift in Sources */,
 				E7DD292DFD1215F419203D45 /* MatrixTestView.swift in Sources */,
 				22E155D438F49407FAFDBA4D /* MotionTestView.swift in Sources */,
+				15CCC41FCB5C972AFFA9981B /* NeuralView.swift in Sources */,
 				C8A5934E7F62B23D52C58FC1 /* NoodlesView.swift in Sources */,
 				EEF6ADB9AD892F76A4628103 /* OverscanTestView.swift in Sources */,
 				7342D71C4AA5F00D6CDD7147 /* RainView.swift in Sources */,
