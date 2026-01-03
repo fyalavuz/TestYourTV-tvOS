@@ -100,19 +100,6 @@ struct BrightnessTestView: View {
                         Text("If you can't see strip 20, raise Brightness.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
-                        
-                        Button {
-                            withAnimation { hasStarted = false }
-                        } label: {
-                            Text("Show Intro Again")
-                                .font(.callout.weight(.semibold))
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        }
-                        .buttonStyle(.glassFocus(cornerRadius: 12))
                     }
                 }
             }

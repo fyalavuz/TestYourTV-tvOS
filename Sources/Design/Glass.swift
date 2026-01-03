@@ -617,7 +617,7 @@ struct InstructionRow: View {
     let text: String
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 32) {
             Image(systemName: icon)
                 .font(.title2)
                 .frame(width: 40)
