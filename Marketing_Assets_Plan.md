@@ -1,42 +1,53 @@
-# TestYourTV - App Store Marketing Asset Plan
+APP NAME
+Test Your TV
 
-## 🎨 Asset Generation Strategy
-I have generated 4 high-quality background mockups in the `nanobanana-output/` folder.
-- **Style:** 2 Photorealistic Living Room scenes & 2 Abstract Tech scenes.
-- **Usage:** These images feature a **Green Screen** on the TV. 
-    1. Open the mockup in an image editor (Photoshop, Canva, etc.).
-    2. Use the "Magic Wand" or "Color Range" tool to select and delete the Green area.
-    3. Place your App Screenshot layer *behind* the mockup frame.
+SUBTITLE
+Professional Display & Audio Lab
 
-## 📸 Screenshot List & Marketing Copy
+KEYWORDS
+calibration,dead pixel,oled,4k,hdr,audio test,surround,motion,screen test,display,tvos,diagnostic
 
-Use these pairs for your App Store preview slides.
+PROMOTIONAL TEXT
+The ultimate calibration and diagnostic suite for your Apple TV and Home Theater.
 
-### 1. The Command Center (Main Menu)
-*Show the `HomeHubView` with the high-quality dashboard.*
-- **Title:** ULTIMATE TV BENCHMARK
-- **Subtitle:** Analyze, Calibrate, and Optimize Your Home Theater.
+DESCRIPTION
+Transform your Apple TV into a professional-grade pattern generator and diagnostic tool. "Test Your TV" provides a comprehensive suite of tests to evaluate, calibrate, and verify the performance of your television and audio system.
 
-### 2. Professional Calibration (Test Patterns)
-*Show the `TestPatternsView` or `CalibrationPatternsView` (e.g., Color Bars or Grid).*
-- **Title:** REFERENCE STANDARDS
-- **Subtitle:** Verify Gamma, Contrast, and Color Accuracy.
+Whether you are a home theater enthusiast, a professional calibrator, or just want to ensure your new TV is perfect, this app has everything you need.
 
-### 3. Panel Health Check (Dead Pixel / Uniformity)
-*Show the `DeadPixelTestView` (Red/Green/Blue cycle) or `UniformityTestView` (Grey screen).*
-- **Title:** PIXEL PERFECT
-- **Subtitle:** Detect Dead Pixels, Clouding, and Screen Bleed.
+KEY FEATURES
 
-### 4. Audio Diagnostics (Audio Test)
-*Show the `AudioTestsView` showing speaker configuration.*
-- **Title:** SURROUND SOUND CHECK
-- **Subtitle:** Test 5.1 & 7.1 Channel Configurations Instantly.
+Picture Quality Diagnostics:
+- Dead Pixel Locator: Identify stuck or dead pixels with full-screen solid colors.
+- Uniformity Check: Reveal "dirty screen effect" (DSE) and banding with gray slides.
+- Color Gradient: Test 10-bit/12-bit panel performance and banding issues.
+- Text Clarity: Verify Chroma 4:4:4 capability and PC mode sharpness.
 
-### 5. OLED Protection (Burn-In Wiper)
-*Show the `BurnInWiperView` (Noise/Wiper animation).*
-- **Title:** OLED CARE
-- **Subtitle:** Reduce Burn-In Risk with Smart Pixel Refreshing.
+Calibration Tools:
+- Brightness (Black Level): Precisely set your black levels using PLUGE patterns.
+- Contrast (White Level): Avoid clipping whites with dynamic contrast patterns.
+- Overscan: Ensure you are seeing the entire picture pixel-for-pixel.
+- Gamma: Verify luminance distribution.
 
-## 📐 Export Settings
-- **Resolution:** Export final marketing images at **3840 x 2160 (4K)** or **1920 x 1080 (1080p)**.
-- **Format:** JPG (High Quality) or PNG (No Transparency).
+Motion & Performance:
+- Motion Clarity: Test for blur, ghosting, and judder with variable speed scrolls.
+- Response Time: Visualize pixel transition speeds.
+- Input Test: Check controller latency and button mapping (Supports Siri Remote & Game Controllers).
+
+Audio Lab:
+- Speaker Layout: Verify 2.0, 5.1, and 7.1 channel mapping/wiring.
+- Frequency Sweep: Test subwoofer crossover and speaker range (20Hz - 20kHz).
+- Tone Generator: Generate precise sine waves for room correction.
+- Noise Generator: White and Pink noise for system leveling.
+
+Real-Time Visualizers:
+- Stress Tests: GPU-accelerated Metal shaders (Raymarching, Fluid Dynamics).
+- Burn-In Wiper: Cycling patterns to help clear temporary image retention.
+- Ambient Mode: Beautiful procedural art including Starfield, Matrix, and Neon Rain.
+
+System & Utilities:
+- System Info: Detailed readout of your device model, resolution, HDR status, and network.
+- Native tvOS Design: Smooth 60fps interface designed exclusively for the big screen.
+- No Ads, No Subscriptions: Professional tools, one-time purchase.
+
+Optimize your viewing experience today with Test Your TV.
