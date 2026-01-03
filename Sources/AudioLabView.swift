@@ -300,6 +300,7 @@ struct TonesView: View {
                     .foregroundStyle(.blue)
             }
 
+            // Flattened hierarchy: Removed grouping VStacks
             LabeledSlider(value: $frequency, range: 20...20000, step: 10, suffix: " Hz")
                 .frame(width: 600)
             
@@ -355,22 +356,21 @@ struct SweepView: View {
     @State private var isRunning = false
 
     var body: some View {
-        // Use a FocusSection to group controls, helping the focus engine
-        // understand they are related and navigable.
         VStack(spacing: 40) {
             Text("Frequency Sweep")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
 
-            VStack(spacing: 30) {
-                LabeledSlider(value: $start, range: 20...1000, step: 10, suffix: " Hz Start")
-                    .frame(width: 600)
-                LabeledSlider(value: $end, range: 1000...20000, step: 100, suffix: " Hz End")
-                    .frame(width: 600)
-                LabeledSlider(value: $duration, range: 5...60, step: 5, suffix: " s Duration")
-                    .frame(width: 600)
-            }
-            .focusSection() // Helps group the sliders
+            // Layout match: TonesView style but with 3 sliders
+            
+            LabeledSlider(value: $start, range: 20...1000, step: 10, suffix: " Hz Start")
+                .frame(width: 600)
+            
+            LabeledSlider(value: $end, range: 1000...20000, step: 100, suffix: " Hz End")
+                .frame(width: 600)
+            
+            LabeledSlider(value: $duration, range: 5...60, step: 5, suffix: " s Duration")
+                .frame(width: 600)
 
             Button(action: {
                 if isRunning { toneEngine.stop() } else { toneEngine.playSweep(start: start, end: end, duration: duration) }
@@ -382,7 +382,7 @@ struct SweepView: View {
                     Text(isRunning ? "Stop Sweep" : "Start Sweep")
                         .font(.headline)
                 }
-                .frame(width: 300, height: 80)
+                .frame(width: 600, height: 80) // Width match Sliders (600)
                 .background(isRunning ? Color.red : Color.orange)
                 .clipShape(RoundedRectangle(cornerRadius: 24))
             }

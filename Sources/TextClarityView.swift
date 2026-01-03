@@ -26,50 +26,81 @@ struct TextClarityView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isMinimized = false
     @State private var controlsHidden = false
-    @State private var fontSize: Double = 18
+    @State private var fontSize: Double = 24
     @State private var lineHeight: Double = 1.5
     @State private var letterSpacing: Double = 0
     @State private var fontOption: FontOption = .monospaced
     @State private var useDarkMode = true
-    @State private var showSmoothing = false
+    @State private var showComparison = false
 
     var body: some View {
         GeometryReader { proxy in
-            let background = useDarkMode ? Color.black : Color.white
-            let foreground = useDarkMode ? Color.white : Color.black
-            let sampleText = repeatingText(in: proxy.size)
-
             ZStack {
-                background.ignoresSafeArea()
-
-                ScrollView(.vertical, showsIndicators: false) {
-                    Text(sampleText)
-                        .font(fontOption.font(size: CGFloat(fontSize)))
-                        .foregroundStyle(foreground)
-                        .lineSpacing(CGFloat(fontSize * (lineHeight - 1)))
-                        .kerning(CGFloat(letterSpacing))
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                }
-                .scrollDisabled(true)
-                .ignoresSafeArea()
-
-                if showSmoothing {
-                    HStack(spacing: 12) {
-                        SmoothingBox(title: "Sharp", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0)
-                        SmoothingBox(title: "Soft", text: "Quick brown fox\nABCDEFGHIJKLM\n1234567890", foreground: foreground, background: background, blur: 0.8)
+                if showComparison {
+                    HStack(spacing: 0) {
+                        // Left: Current Settings
+                        TextPatternView(
+                            size: proxy.size,
+                            fontSize: fontSize,
+                            lineHeight: lineHeight,
+                            letterSpacing: letterSpacing,
+                            fontOption: fontOption,
+                            foreground: useDarkMode ? .white : .black,
+                            background: useDarkMode ? .black : .white
+                        )
+                        .frame(width: proxy.size.width / 2)
+                        .clipped()
+                        
+                        // Right: Chroma Stress (Red on Blue)
+                        // This combination is hardest for TVs to render clearly (4:2:0 compression artifacting)
+                        TextPatternView(
+                            size: proxy.size,
+                            fontSize: fontSize,
+                            lineHeight: lineHeight,
+                            letterSpacing: letterSpacing,
+                            fontOption: fontOption,
+                            foreground: .red,
+                            background: .blue
+                        )
+                        .frame(width: proxy.size.width / 2)
+                        .clipped()
                     }
-                    .padding(.trailing, 40)
-                    .padding(.bottom, 40)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    
+                    // Divider
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 2, height: proxy.size.height)
+                } else {
+                    // Full Screen Current Settings
+                    TextPatternView(
+                        size: proxy.size,
+                        fontSize: fontSize,
+                        lineHeight: lineHeight,
+                        letterSpacing: letterSpacing,
+                        fontOption: fontOption,
+                        foreground: useDarkMode ? .white : .black,
+                        background: useDarkMode ? .black : .white
+                    )
                 }
 
                 ControlPanelDock(title: "Text Clarity", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                     VStack(alignment: .leading, spacing: 16) {
+                        SectionHeader(title: "Comparison Mode")
+                        ToggleRow(title: "Split Screen (Chroma Check)", isOn: showComparison) {
+                            showComparison.toggle()
+                        }
+                        
+                        if showComparison {
+                            Text("Left: Standard | Right: Red on Blue (Tests 4:4:4 capability)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+
                         SectionHeader(title: "Font Family")
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 12) {
-                                ForEach(FontOption.allCases) { option in
+                                ForEach(FontOption.allCases) {
+                                    option in
                                     Button {
                                         fontOption = option
                                     } label: {
@@ -105,17 +136,13 @@ struct TextClarityView: View {
                         }
                         .pickerStyle(.segmented)
 
-                        SectionHeader(title: "Smoothing Preview")
-                        CheckboxRow(title: "Show comparison", isOn: showSmoothing) {
-                            showSmoothing.toggle()
-                        }
-
                         Button {
-                            fontSize = 18
+                            fontSize = 24
                             lineHeight = 1.5
                             letterSpacing = 0
                             fontOption = .monospaced
                             useDarkMode = true
+                            showComparison = false
                         } label: {
                             Text("Reset Settings")
                                 .font(.callout.weight(.semibold))
@@ -133,37 +160,39 @@ struct TextClarityView: View {
             .testControls(controlsHidden: $controlsHidden, dismiss: dismiss)
         }
     }
-
-    private func repeatingText(in size: CGSize) -> String {
-        let base = "The quick brown fox jumps over the lazy dog. "
-        let line = String(repeating: base, count: 12)
-        let linesNeeded = Int(size.height / CGFloat(fontSize * lineHeight)) + 4
-        return Array(repeating: line, count: linesNeeded).joined(separator: "\n")
-    }
 }
 
-struct SmoothingBox: View {
-    let title: String
-    let text: String
+struct TextPatternView: View {
+    let size: CGSize
+    let fontSize: Double
+    let lineHeight: Double
+    let letterSpacing: Double
+    let fontOption: TextClarityView.FontOption
     let foreground: Color
     let background: Color
-    let blur: CGFloat
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(text)
-                .font(.system(size: 14, design: .monospaced))
+        ZStack(alignment: .topLeading) {
+            background.ignoresSafeArea()
+            
+            Text(repeatingText(in: size))
+                .font(fontOption.font(size: CGFloat(fontSize)))
                 .foregroundStyle(foreground)
-                .lineSpacing(3)
-                .blur(radius: blur)
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(background.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .lineSpacing(CGFloat(fontSize * (lineHeight - 1)))
+                .kerning(CGFloat(letterSpacing))
+                .multilineTextAlignment(.leading)
+                .padding(40)
         }
+    }
+    
+    private func repeatingText(in size: CGSize) -> String {
+        // High density text pattern
+        let base = "The quick brown fox jumps over the lazy dog. 0123456789. !@#$%^&*()_+ "
+        let line = String(repeating: base, count: 2)
+        // Estimate lines
+        let estimatedLineHeight = fontSize * lineHeight
+        let linesNeeded = Int(size.height / estimatedLineHeight) + 2
+        return Array(repeating: line, count: linesNeeded).joined(separator: "\n")
     }
 }
 

@@ -5,177 +5,193 @@ struct InputTestView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var monitor = ControllerMonitor()
 
+    private var headerSection: some View {
+        VStack(spacing: 12) {
+            Text("Input Diagnostics")
+                .font(.system(size: 60, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            
+            HStack(spacing: 24) {
+                StatusPill(icon: "gamecontroller", title: "Device", value: monitor.isConnected ? monitor.controllerName : "Scanning...")
+                StatusPill(icon: "cable.connector", title: "Profile", value: monitor.profile.rawValue)
+            }
+        }
+        .padding(.top, 40)
+    }
+
+    private var mainVisualizerSection: some View {
+        Group {
+            if monitor.isConnected {
+                connectedVisualizer
+            } else {
+                disconnectedPlaceholder
+            }
+        }
+    }
+
+    private var connectedVisualizer: some View {
+        HStack(alignment: .top, spacing: 60) {
+            // Left Section: Directional
+            VStack(spacing: 30) {
+                Text("DIRECTIONAL")
+                    .font(.caption.weight(.bold))
+                    .tracking(2)
+                    .foregroundStyle(.secondary)
+                DpadVisualizer(
+                    x: monitor.dpadX, y: monitor.dpadY,
+                    up: monitor.dpadUp, down: monitor.dpadDown,
+                    left: monitor.dpadLeft, right: monitor.dpadRight
+                )
+                if monitor.profile == .extended {
+                    StickVisualizer(
+                        title: "L-STICK",
+                        x: monitor.leftStickX, y: monitor.leftStickY,
+                        isPressed: monitor.leftStickPressed
+                    )
+                }
+            }
+            .frame(width: 250)
+            // Center Section: Buttons & Triggers
+            VStack(spacing: 30) {
+                Text("ACTIONS")
+                    .font(.caption.weight(.bold))
+                    .tracking(2)
+                    .foregroundStyle(.secondary)
+                ButtonsVisualizer(
+                    a: monitor.buttonA, b: monitor.buttonB,
+                    x: monitor.buttonX, y: monitor.buttonY,
+                    menu: monitor.buttonMenu, options: monitor.buttonOptions,
+                    home: monitor.buttonHome
+                )
+                if monitor.profile == .extended {
+                    Divider().background(Color.white.opacity(0.1))
+                    HStack(spacing: 40) {
+                        TriggerVisualizer(title: "L1", value: monitor.leftShoulderValue > 0.1 ? 1.0 : 0.0)
+                        TriggerVisualizer(title: "L2", value: monitor.leftTriggerValue)
+                        TriggerVisualizer(title: "R2", value: monitor.rightTriggerValue)
+                        TriggerVisualizer(title: "R1", value: monitor.rightShoulderValue > 0.1 ? 1.0 : 0.0)
+                    }
+                }
+            }
+            .frame(maxWidth: 500)
+            // Right Section: Right Stick (if extended)
+            Group {
+                if monitor.profile == .extended {
+                    VStack(spacing: 30) {
+                        Text("CAMERA / R-STICK")
+                            .font(.caption.weight(.bold))
+                            .tracking(2)
+                            .foregroundStyle(.secondary)
+                        StickVisualizer(
+                            title: "R-STICK",
+                            x: monitor.rightStickX, y: monitor.rightStickY,
+                            isPressed: monitor.rightStickPressed
+                        )
+                    }
+                    .frame(width: 250)
+                }
+            }
+        }
+        .padding(40)
+        .background(Color.black.opacity(0.3))
+        .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 32, style: .continuous)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
+    }
+
+    private var disconnectedPlaceholder: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "gamecontroller.fill")
+                .font(.system(size: 100))
+                .foregroundStyle(.white.opacity(0.2))
+            Text("Connect a controller or use the Siri Remote")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, minHeight: 400)
+        .background(Color.clear)
+    }
+
+    private var eventLogSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("INPUT HISTORY")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 20)
+            ZStack {
+                if monitor.eventLog.isEmpty {
+                    emptyEventPlaceholder
+                } else {
+                    EventLogList(eventLog: monitor.eventLog)
+                }
+            }
+            .frame(height: 220)
+            .background(Color.black.opacity(0.4))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+        }
+        .padding(.horizontal, 80)
+        .padding(.bottom, 40)
+    }
+
+    private var emptyEventPlaceholder: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "antenna.radiowaves.left.and.right")
+                .font(.title)
+                .symbolEffect(.pulse, options: .repeating)
+            Text("Waiting for input signal...")
+                .font(.headline)
+        }
+        .foregroundStyle(.secondary.opacity(0.5))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     var body: some View {
         ZStack {
             AmbientBackground()
 
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 40) {
-                    // Header & Status
-                    VStack(spacing: 20) {
-                        Text("Input Test")
-                            .font(.system(size: 52, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        
-                        HStack(spacing: 20) {
-                            StatusBadge(icon: "gamecontroller.fill", title: "Device", value: monitor.isConnected ? monitor.controllerName : "None")
-                            StatusBadge(icon: "cable.connector", title: "Profile", value: monitor.profile.rawValue)
-                            StatusBadge(icon: "hand.tap.fill", title: "Last Input", value: monitor.lastEvent)
-                        }
-                    }
-                    .padding(.top, 40)
-
-                    if monitor.isConnected {
-                        // Main Visualization Grid
-                        Grid(horizontalSpacing: 40, verticalSpacing: 40) {
-                            GridRow {
-                                // Left: D-pad / Left Stick
-                                InputPanel(title: "Directional") {
-                                    HStack(spacing: 40) {
-                                        DpadVisualizer(
-                                            x: monitor.dpadX, y: monitor.dpadY,
-                                            up: monitor.dpadUp, down: monitor.dpadDown,
-                                            left: monitor.dpadLeft, right: monitor.dpadRight
-                                        )
-                                        
-                                        if monitor.profile == .extended {
-                                            StickVisualizer(
-                                                title: "L-Stick",
-                                                x: monitor.leftStickX, y: monitor.leftStickY,
-                                                isPressed: monitor.leftStickPressed
-                                            )
-                                        }
-                                    }
-                                }
-                                .gridCellColumns(monitor.profile == .extended ? 2 : 1)
-                                
-                                // Right: Buttons / Right Stick
-                                InputPanel(title: "Action Buttons") {
-                                    HStack(spacing: 40) {
-                                        ButtonsVisualizer(
-                                            a: monitor.buttonA, b: monitor.buttonB,
-                                            x: monitor.buttonX, y: monitor.buttonY,
-                                            menu: monitor.buttonMenu, options: monitor.buttonOptions,
-                                            home: monitor.buttonHome
-                                        )
-                                        
-                                        if monitor.profile == .extended {
-                                            StickVisualizer(
-                                                title: "R-Stick",
-                                                x: monitor.rightStickX, y: monitor.rightStickY,
-                                                isPressed: monitor.rightStickPressed
-                                            )
-                                        }
-                                    }
-                                }
-                                .gridCellColumns(monitor.profile == .extended ? 2 : 1)
-                            }
-                            
-                            if monitor.profile == .extended {
-                                GridRow {
-                                    // Triggers
-                                    InputPanel(title: "Triggers & Shoulders") {
-                                        HStack(spacing: 60) {
-                                            TriggerBar(title: "L1", value: monitor.leftShoulderValue)
-                                            TriggerBar(title: "L2", value: monitor.leftTriggerValue)
-                                            TriggerBar(title: "R2", value: monitor.rightTriggerValue)
-                                            TriggerBar(title: "R1", value: monitor.rightShoulderValue)
-                                        }
-                                    }
-                                    .gridCellColumns(4)
-                                }
-                            }
-                        }
-                    } else {
-                        // Connection Prompt
-                        VStack(spacing: 20) {
-                            Image(systemName: "gamecontroller.fill")
-                                .font(.system(size: 100))
-                                .foregroundStyle(.white.opacity(0.2))
-                            Text("Connect a Game Controller or use the Siri Remote")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 400)
-                        .glassSurface()
-                    }
-                    
-                    // Log
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Input Log")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        
-                        Text(lastInputSummary)
-                            .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.black.opacity(0.3))
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal, 80)
-                    .padding(.bottom, 80)
-                }
+            VStack(spacing: 40) {
+                headerSection
+                mainVisualizerSection
+                eventLogSection
             }
         }
         .toolbar(.hidden, for: .navigationBar)
     }
-
-    private var lastInputSummary: String {
-        guard let time = monitor.lastEventTime else { return "No input detected" }
+    
+    func timeString(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss.SSS"
-        return "[\(formatter.string(from: time))] \(monitor.lastEvent)"
+        return formatter.string(from: date)
     }
 }
 
 // MARK: - Components
 
-struct InputPanel<Content: View>: View {
-    let title: String
-    let content: Content
-    
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.white.opacity(0.8))
-            
-            content
-        }
-        .padding(30)
-        .glassSurface(cornerRadius: 24, strokeOpacity: 0.1)
-    }
-}
-
-struct StatusBadge: View {
+struct StatusPill: View {
     let icon: String
     let title: String
     let value: String
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundStyle(.cyan)
-            
-            VStack(alignment: .leading) {
-                Text(title.uppercased())
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.secondary)
-                Text(value)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(.white)
-            }
+                .foregroundStyle(.secondary)
+            Text(title + ":")
+                .foregroundStyle(.secondary)
+            Text(value)
+                .fontWeight(.bold)
+                .foregroundStyle(.white)
         }
+        .font(.callout)
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(.ultraThinMaterial)
+        .padding(.vertical, 8)
+        .background(Color.white.opacity(0.08))
         .clipShape(Capsule())
     }
 }
@@ -186,88 +202,31 @@ struct DpadVisualizer: View {
     
     var body: some View {
         ZStack {
-            // Cross
-            RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.1)).frame(width: 40, height: 120)
-            RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.1)).frame(width: 120, height: 40)
-            
-            // Active Indicators
+            Circle()
+                .fill(Color.white.opacity(0.05))
+                .frame(width: 160, height: 160)
+            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 40, height: 140)
+            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 140, height: 40)
             if up { Arrow(angle: -90) }
             if down { Arrow(angle: 90) }
             if left { Arrow(angle: 180) }
             if right { Arrow(angle: 0) }
-            
-            // Analog Dot
             Circle()
                 .fill(Color.cyan)
-                .frame(width: 16, height: 16)
-                .offset(x: CGFloat(x) * 40, y: CGFloat(-y) * 40)
+                .frame(width: 20, height: 20)
+                .offset(x: CGFloat(x) * 60, y: CGFloat(-y) * 60)
+                .shadow(color: .cyan, radius: 5)
         }
-        .frame(width: 140, height: 140)
     }
     
     func Arrow(angle: Double) -> some View {
         Image(systemName: "arrowtriangle.right.fill")
+            .font(.title)
             .rotationEffect(.degrees(angle))
-            .offset(x: angle == 0 ? 40 : (angle == 180 ? -40 : 0),
-                    y: angle == 90 ? 40 : (angle == -90 ? -40 : 0))
+            .offset(x: angle == 0 ? 50 : (angle == 180 ? -50 : 0),
+                    y: angle == 90 ? 50 : (angle == -90 ? -50 : 0))
             .foregroundStyle(.white)
-    }
-}
-
-struct ButtonsVisualizer: View {
-    let a, b, x, y, menu, options, home: Bool
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                ButtonCircle(label: "X", pressed: x, color: .blue)
-                VStack(spacing: 30) {
-                    ButtonCircle(label: "Y", pressed: y, color: .yellow)
-                    ButtonCircle(label: "A", pressed: a, color: .green)
-                }
-                ButtonCircle(label: "B", pressed: b, color: .red)
-            }
-            
-            HStack(spacing: 20) {
-                SmallButton(label: "Menu", pressed: menu)
-                SmallButton(label: "Opt", pressed: options)
-                SmallButton(label: "Home", pressed: home)
-            }
-        }
-    }
-}
-
-struct ButtonCircle: View {
-    let label: String
-    let pressed: Bool
-    let color: Color
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(pressed ? color : Color.white.opacity(0.1))
-                .frame(width: 50, height: 50)
-            Text(label)
-                .font(.headline.weight(.bold))
-                .foregroundStyle(pressed ? .black : .white)
-        }
-        .scaleEffect(pressed ? 0.9 : 1.0)
-        .animation(.spring(duration: 0.1), value: pressed)
-    }
-}
-
-struct SmallButton: View {
-    let label: String
-    let pressed: Bool
-    
-    var body: some View {
-        Text(label)
-            .font(.caption2.weight(.bold))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(pressed ? Color.white : Color.white.opacity(0.1))
-            .foregroundStyle(pressed ? .black : .white)
-            .clipShape(Capsule())
+            .shadow(color: .white, radius: 5)
     }
 }
 
@@ -277,43 +236,144 @@ struct StickVisualizer: View {
     let isPressed: Bool
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             ZStack {
-                Circle().stroke(Color.white.opacity(0.2), lineWidth: 2)
-                    .frame(width: 100, height: 100)
+                Circle()
+                    .stroke(Color.white.opacity(0.2), lineWidth: 2)
                     .background(isPressed ? Color.white.opacity(0.1) : Color.clear)
+                    .frame(width: 120, height: 120)
                     .clipShape(Circle())
                 
-                Circle().fill(Color.cyan)
-                    .frame(width: 20, height: 20)
-                    .offset(x: CGFloat(x) * 40, y: CGFloat(-y) * 40)
+                Path { path in
+                    path.move(to: CGPoint(x: 60, y: 10))
+                    path.addLine(to: CGPoint(x: 60, y: 110))
+                    path.move(to: CGPoint(x: 10, y: 60))
+                    path.addLine(to: CGPoint(x: 110, y: 60))
+                }
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                
+                Circle()
+                    .fill(Color.cyan)
+                    .frame(width: 24, height: 24)
+                    .offset(x: CGFloat(x) * 50, y: CGFloat(-y) * 50)
+                    .shadow(color: .cyan, radius: 8)
             }
-            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(title)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.secondary)
         }
     }
 }
 
-struct TriggerBar: View {
-    let title: String
-    let value: Float
+struct ButtonsVisualizer: View {
+    let a, b, x, y, menu, options, home: Bool
     
     var body: some View {
-        VStack {
-            ZStack(alignment: .bottom) {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.white.opacity(0.1))
-                    .frame(width: 20, height: 100)
-                
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.cyan)
-                    .frame(width: 20, height: 100 * CGFloat(value))
+        VStack(spacing: 30) {
+            HStack(spacing: 20) {
+                ButtonCircle(label: "X", pressed: x, color: .blue).offset(y: 20)
+                VStack(spacing: 60) {
+                    ButtonCircle(label: "Y", pressed: y, color: .yellow)
+                    ButtonCircle(label: "A", pressed: a, color: .green)
+                }
+                ButtonCircle(label: "B", pressed: b, color: .red).offset(y: 20)
             }
-            Text(title).font(.caption.weight(.bold)).foregroundStyle(.white)
+            HStack(spacing: 30) {
+                SystemButton(label: "MENU", pressed: menu)
+                SystemButton(label: "HOME", pressed: home)
+                SystemButton(label: "OPT", pressed: options)
+            }
         }
     }
 }
 
-// ControllerMonitor logic
+struct ButtonCircle: View {
+    let label: String
+    let pressed: Bool
+    let color: Color
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(pressed ? color : Color.white.opacity(0.08))
+                .frame(width: 64, height: 64)
+                .overlay(Circle().stroke(pressed ? color.opacity(0.8) : Color.white.opacity(0.2), lineWidth: 2))
+                .shadow(color: pressed ? color : .clear, radius: 10)
+            Text(label).font(.title2.weight(.black)).foregroundStyle(pressed ? .black : .white)
+        }
+        .scaleEffect(pressed ? 0.95 : 1.0)
+        .animation(.spring(duration: 0.1), value: pressed)
+    }
+}
+
+struct SystemButton: View {
+    let label: String
+    let pressed: Bool
+    var body: some View {
+        Text(label).font(.caption.weight(.bold)).foregroundStyle(pressed ? .black : .white.opacity(0.6)).padding(.horizontal, 12).padding(.vertical, 6).background(pressed ? Color.white : Color.white.opacity(0.1)).clipShape(Capsule())
+    }
+}
+
+struct TriggerVisualizer: View {
+    let title: String
+    let value: Float
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack(alignment: .bottom) {
+                RoundedRectangle(cornerRadius: 6).fill(Color.white.opacity(0.1)).frame(width: 24, height: 80)
+                RoundedRectangle(cornerRadius: 6).fill(Color.cyan).frame(width: 24, height: 80 * CGFloat(value)).shadow(color: .cyan, radius: value > 0 ? 5 : 0)
+            }
+            Text(title).font(.caption2.weight(.bold)).foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct EventLogList: View {
+    let eventLog: [InputEvent]
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(eventLog.indices, id: \.self) { index in
+                        let event = eventLog[index]
+                        HStack {
+                            Text(timeStringStatic(event.date))
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                            Text(event.name)
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(index == 0 ? .cyan : .white)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(index == 0 ? Color.cyan.opacity(0.1) : Color.white.opacity(0.02))
+                        .cornerRadius(8)
+                        .id(index)
+                    }
+                }
+                .padding()
+            }
+            .onChange(of: eventLog.count) { _ in
+                withAnimation {
+                    proxy.scrollTo(0, anchor: .top)
+                }
+            }
+        }
+    }
+}
+
+private func timeStringStatic(_ date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH:mm:ss.SSS"
+    return formatter.string(from: date)
+}
+
+struct InputEvent: Identifiable {
+    let id = UUID()
+    let date: Date
+    let name: String
+}
+
 final class ControllerMonitor: ObservableObject {
     enum Profile: String {
         case none = "No Controller"
@@ -326,8 +386,7 @@ final class ControllerMonitor: ObservableObject {
     @Published var vendorName: String = "Not Connected"
     @Published var controllerCount: Int = 0
     @Published var isConnected: Bool = false
-    @Published var lastEvent: String = "Waiting for input"
-    @Published var lastEventTime: Date?
+    @Published var eventLog: [InputEvent] = []
 
     @Published var dpadX: Float = 0
     @Published var dpadY: Float = 0
@@ -362,245 +421,116 @@ final class ControllerMonitor: ObservableObject {
     private var currentObserver: NSObjectProtocol?
 
     init() {
-        connectObserver = NotificationCenter.default.addObserver(
-            forName: .GCControllerDidConnect,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let self else { return }
-            if let controller = notification.object as? GCController {
-                self.setActiveController(controller)
-            } else {
-                self.refreshControllers()
-            }
-        }
-
-        disconnectObserver = NotificationCenter.default.addObserver(
-            forName: .GCControllerDidDisconnect,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.refreshControllers()
-        }
-
-        currentObserver = NotificationCenter.default.addObserver(
-            forName: .GCControllerDidBecomeCurrent,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let controller = notification.object as? GCController else { return }
-            self?.setActiveController(controller)
-        }
-
+        connectObserver = NotificationCenter.default.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] n in self?.refreshControllers() }
+        disconnectObserver = NotificationCenter.default.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { [weak self] _ in self?.refreshControllers() }
+        currentObserver = NotificationCenter.default.addObserver(forName: .GCControllerDidBecomeCurrent, object: nil, queue: .main) { [weak self] n in if let c = n.object as? GCController { self?.setActiveController(c) } }
         refreshControllers()
         GCController.startWirelessControllerDiscovery { }
     }
 
     deinit {
-        if let connectObserver {
-            NotificationCenter.default.removeObserver(connectObserver)
-        }
-        if let disconnectObserver {
-            NotificationCenter.default.removeObserver(disconnectObserver)
-        }
-        if let currentObserver {
-            NotificationCenter.default.removeObserver(currentObserver)
-        }
+        [connectObserver, disconnectObserver, currentObserver].compactMap { $0 }.forEach { NotificationCenter.default.removeObserver($0) }
         GCController.stopWirelessControllerDiscovery()
     }
 
     private func refreshControllers() {
         let controllers = GCController.controllers()
         controllerCount = controllers.count
-        if let current = GCController.current ?? controllers.first {
-            setActiveController(current)
-        } else {
-            clearState()
-        }
+        if let current = GCController.current ?? controllers.first { setActiveController(current) } else { clearState() }
     }
 
     private func setActiveController(_ controller: GCController) {
         clearHandlers()
-
         activeController = controller
-        controllerCount = GCController.controllers().count
-        let vendor = controller.vendorName
-        controllerName = vendor ?? (controller.microGamepad != nil ? "Siri Remote" : "Controller")
-        vendorName = vendor ?? "Unknown"
+        controllerName = controller.vendorName ?? (controller.microGamepad != nil ? "Siri Remote" : "Controller")
         isConnected = true
-
-        if let micro = controller.microGamepad {
-            profile = .micro
-            configureMicroGamepad(micro)
-        } else if let extended = controller.extendedGamepad {
-            profile = .extended
-            configureExtendedGamepad(extended)
-        } else {
-            profile = .none
-        }
+        if let micro = controller.microGamepad { profile = .micro; configureMicroGamepad(micro) }
+        else if let extended = controller.extendedGamepad { profile = .extended; configureExtendedGamepad(extended) }
+        else { profile = .none }
     }
 
     private func configureMicroGamepad(_ gamepad: GCMicroGamepad) {
-        gamepad.valueChangedHandler = { [weak self] gamepad, element in
-            self?.updateMicro(gamepad, element: element)
-        }
+        gamepad.valueChangedHandler = { [weak self] g, e in self?.updateMicro(g, element: e) }
         updateMicro(gamepad, element: nil)
     }
 
     private func updateMicro(_ gamepad: GCMicroGamepad, element: GCControllerElement?) {
         DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.dpadX = gamepad.dpad.xAxis.value
-            self.dpadY = gamepad.dpad.yAxis.value
-            self.dpadUp = gamepad.dpad.up.isPressed
-            self.dpadDown = gamepad.dpad.down.isPressed
-            self.dpadLeft = gamepad.dpad.left.isPressed
-            self.dpadRight = gamepad.dpad.right.isPressed
-            self.buttonA = gamepad.buttonA.isPressed
-            self.buttonX = gamepad.buttonX.isPressed
+            guard let self = self else { return }
+            self.dpadX = gamepad.dpad.xAxis.value; self.dpadY = gamepad.dpad.yAxis.value
+            self.dpadUp = gamepad.dpad.up.isPressed; self.dpadDown = gamepad.dpad.down.isPressed
+            self.dpadLeft = gamepad.dpad.left.isPressed; self.dpadRight = gamepad.dpad.right.isPressed
+            self.buttonA = gamepad.buttonA.isPressed; self.buttonX = gamepad.buttonX.isPressed
             self.buttonMenu = gamepad.buttonMenu.isPressed
-            self.buttonB = false
-            self.buttonY = false
-            self.buttonOptions = false
-            self.buttonHome = false
-            self.leftShoulderValue = 0
-            self.rightShoulderValue = 0
-            self.leftTriggerValue = 0
-            self.rightTriggerValue = 0
-            self.leftStickX = 0
-            self.leftStickY = 0
-            self.rightStickX = 0
-            self.rightStickY = 0
-            self.leftStickPressed = false
-            self.rightStickPressed = false
-
-            self.setLastEvent(name: self.eventName(for: element, micro: gamepad, extended: nil))
+            if let e = element { self.logEvent(name: self.eventName(for: e, micro: gamepad, extended: nil)) }
         }
     }
 
     private func configureExtendedGamepad(_ gamepad: GCExtendedGamepad) {
-        gamepad.valueChangedHandler = { [weak self] gamepad, element in
-            self?.updateExtended(gamepad, element: element)
-        }
+        gamepad.valueChangedHandler = { [weak self] g, e in self?.updateExtended(g, element: e) }
         updateExtended(gamepad, element: nil)
     }
 
     private func updateExtended(_ gamepad: GCExtendedGamepad, element: GCControllerElement?) {
         DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.dpadX = gamepad.dpad.xAxis.value
-            self.dpadY = gamepad.dpad.yAxis.value
-            self.dpadUp = gamepad.dpad.up.isPressed
-            self.dpadDown = gamepad.dpad.down.isPressed
-            self.dpadLeft = gamepad.dpad.left.isPressed
-            self.dpadRight = gamepad.dpad.right.isPressed
-
-            self.buttonA = gamepad.buttonA.isPressed
-            self.buttonB = gamepad.buttonB.isPressed
-            self.buttonX = gamepad.buttonX.isPressed
-            self.buttonY = gamepad.buttonY.isPressed
+            guard let self = self else { return }
+            self.dpadX = gamepad.dpad.xAxis.value; self.dpadY = gamepad.dpad.yAxis.value
+            self.dpadUp = gamepad.dpad.up.isPressed; self.dpadDown = gamepad.dpad.down.isPressed
+            self.dpadLeft = gamepad.dpad.left.isPressed; self.dpadRight = gamepad.dpad.right.isPressed
+            self.buttonA = gamepad.buttonA.isPressed; self.buttonB = gamepad.buttonB.isPressed
+            self.buttonX = gamepad.buttonX.isPressed; self.buttonY = gamepad.buttonY.isPressed
             self.buttonMenu = gamepad.buttonMenu.isPressed
             self.buttonOptions = gamepad.buttonOptions?.isPressed ?? false
             self.buttonHome = gamepad.buttonHome?.isPressed ?? false
-
-            self.leftShoulderValue = gamepad.leftShoulder.value
-            self.rightShoulderValue = gamepad.rightShoulder.value
-            self.leftTriggerValue = gamepad.leftTrigger.value
-            self.rightTriggerValue = gamepad.rightTrigger.value
-
-            self.leftStickX = gamepad.leftThumbstick.xAxis.value
-            self.leftStickY = gamepad.leftThumbstick.yAxis.value
-            self.rightStickX = gamepad.rightThumbstick.xAxis.value
-            self.rightStickY = gamepad.rightThumbstick.yAxis.value
+            self.leftShoulderValue = gamepad.leftShoulder.value; self.rightShoulderValue = gamepad.rightShoulder.value
+            self.leftTriggerValue = gamepad.leftTrigger.value; self.rightTriggerValue = gamepad.rightTrigger.value
+            self.leftStickX = gamepad.leftThumbstick.xAxis.value; self.leftStickY = gamepad.leftThumbstick.yAxis.value
+            self.rightStickX = gamepad.rightThumbstick.xAxis.value; self.rightStickY = gamepad.rightThumbstick.yAxis.value
             self.leftStickPressed = gamepad.leftThumbstickButton?.isPressed ?? false
             self.rightStickPressed = gamepad.rightThumbstickButton?.isPressed ?? false
-
-            self.setLastEvent(name: self.eventName(for: element, micro: nil, extended: gamepad))
+            if let e = element { self.logEvent(name: self.eventName(for: e, micro: nil, extended: gamepad)) }
         }
     }
 
-    private func eventName(for element: GCControllerElement?, micro: GCMicroGamepad?, extended: GCExtendedGamepad?) -> String {
-        guard let element else { return "Waiting for input" }
-        if let micro {
-            if element == micro.dpad { return "D-pad" }
-            if element == micro.buttonA { return "Button A" }
-            if element == micro.buttonX { return "Button X" }
-            if element == micro.buttonMenu { return "Menu" }
+    private func eventName(for element: GCControllerElement, micro: GCMicroGamepad?, extended: GCExtendedGamepad?) -> String {
+        if let m = micro {
+            if element == m.dpad { return "D-pad Move" }
+            if element == m.buttonA { return "Select" }
+            if element == m.buttonX { return "Play/Pause" }
+            if element == m.buttonMenu { return "Menu" }
         }
-        if let extended {
-            if element == extended.dpad { return "D-pad" }
-            if element == extended.buttonA { return "Button A" }
-            if element == extended.buttonB { return "Button B" }
-            if element == extended.buttonX { return "Button X" }
-            if element == extended.buttonY { return "Button Y" }
-            if element == extended.buttonMenu { return "Menu" }
-            if let options = extended.buttonOptions, element == options { return "Options" }
-            if let home = extended.buttonHome, element == home { return "Home" }
-            if element == extended.leftShoulder { return "Left Shoulder" }
-            if element == extended.rightShoulder { return "Right Shoulder" }
-            if element == extended.leftTrigger { return "Left Trigger" }
-            if element == extended.rightTrigger { return "Right Trigger" }
-            if element == extended.leftThumbstick { return "Left Stick" }
-            if element == extended.rightThumbstick { return "Right Stick" }
-            if let leftButton = extended.leftThumbstickButton, element == leftButton { return "Left Stick Button" }
-            if let rightButton = extended.rightThumbstickButton, element == rightButton { return "Right Stick Button" }
+        if let x = extended {
+            if element == x.dpad { return "D-pad" }
+            if element == x.buttonA { return "Button A" }
+            if element == x.buttonB { return "Button B" }
+            if element == x.buttonX { return "Button X" }
+            if element == x.buttonY { return "Button Y" }
+            if element == x.buttonMenu { return "Menu" }
+            if let o = x.buttonOptions, element == o { return "Options" }
+            if let h = x.buttonHome, element == h { return "Home" }
+            if element == x.leftShoulder { return "L1" }
+            if element == x.rightShoulder { return "R1" }
+            if element == x.leftTrigger { return "L2" }
+            if element == x.rightTrigger { return "R2" }
+            if element == x.leftThumbstick { return "L-Stick" }
+            if element == x.rightThumbstick { return "R-Stick" }
         }
         return "Input"
     }
 
-    private func setLastEvent(name: String) {
-        if name == "Waiting for input" {
-            return
-        }
-        lastEvent = name
-        lastEventTime = Date()
+    private func logEvent(name: String) {
+        let event = InputEvent(date: Date(), name: name)
+        eventLog.insert(event, at: 0)
+        if eventLog.count > 20 { eventLog.removeLast() }
     }
 
     private func clearHandlers() {
-        if let micro = activeController?.microGamepad {
-            micro.valueChangedHandler = nil
-        }
-        if let extended = activeController?.extendedGamepad {
-            extended.valueChangedHandler = nil
-        }
+        activeController?.microGamepad?.valueChangedHandler = nil
+        activeController?.extendedGamepad?.valueChangedHandler = nil
     }
 
     private func clearState() {
-        activeController = nil
-        profile = .none
-        controllerName = "No Controller"
-        vendorName = "Not Connected"
-        isConnected = false
-        lastEvent = "Waiting for input"
-        lastEventTime = nil
-        controllerCount = 0
-
-        dpadX = 0
-        dpadY = 0
-        dpadUp = false
-        dpadDown = false
-        dpadLeft = false
-        dpadRight = false
-
-        buttonA = false
-        buttonB = false
-        buttonX = false
-        buttonY = false
-        buttonMenu = false
-        buttonOptions = false
-        buttonHome = false
-
-        leftShoulderValue = 0
-        rightShoulderValue = 0
-        leftTriggerValue = 0
-        rightTriggerValue = 0
-
-        leftStickX = 0
-        leftStickY = 0
-        rightStickX = 0
-        rightStickY = 0
-        leftStickPressed = false
-        rightStickPressed = false
+        activeController = nil; profile = .none; isConnected = false; eventLog = []
     }
 }
 

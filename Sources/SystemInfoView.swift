@@ -14,7 +14,7 @@ struct SystemInfoView: View {
             AmbientBackground()
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 40) {
+                VStack(alignment: .leading, spacing: 60) {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("System Information")
                             .font(.system(size: 52, weight: .bold, design: .rounded))
@@ -27,8 +27,9 @@ struct SystemInfoView: View {
                     .padding(.top, 40)
                     .padding(.horizontal, 80)
 
-                    // Summary Grid
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 24)], spacing: 24) {
+                    // Summary Grid - Increased Size
+                    // Using 2 flexible columns for larger cards
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 40), GridItem(.flexible(), spacing: 40)], spacing: 40) {
                         SystemInfoTile(title: "Device", value: deviceMonitor.deviceModel, icon: "tv")
                         SystemInfoTile(title: "tvOS", value: "\(deviceMonitor.systemName) \(deviceMonitor.systemVersion)", icon: "applelogo")
                         SystemInfoTile(title: "Resolution", value: deviceMonitor.resolution, icon: "display")
@@ -112,9 +113,7 @@ struct SystemInfoView: View {
     }
 }
 
-// Monitors remain same (omitted for brevity, assume they are available or I need to include them?) 
-// Since I overwrite the file, I MUST include them. I will copy them from previous read.
-
+// Monitors... (Keep same)
 final class NetworkMonitor: ObservableObject {
     @Published var statusText: String = "Unknown"
     @Published var interfaceText: String = "Unknown"
@@ -220,33 +219,38 @@ final class AudioRouteMonitor: ObservableObject {
     }
 }
 
+// Updated Tile to be a Button for focusability
 private struct SystemInfoTile: View {
     let title: String
     let value: String
     let icon: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-                Text(title.uppercased())
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.secondary)
+        Button(action: {}) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                    Text(title.uppercased())
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.secondary)
+                }
+                
+                Text(value)
+                    .font(.title3.weight(.bold)) // Larger font
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .allowsTightening(true)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            
-            Text(value)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.white)
-                .lineLimit(3)
-                .minimumScaleFactor(0.8)
-                .allowsTightening(true)
-                .fixedSize(horizontal: false, vertical: true) // Allow expansion
+            .padding(24) // Increased padding
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white.opacity(0.08)) // Background inside button content
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassSurface(cornerRadius: 20, strokeOpacity: 0.12)
+        .buttonStyle(.glassFocus(cornerRadius: 24)) // Standard focus style
     }
 }
 
@@ -262,23 +266,28 @@ private struct DetailSection<Content: View>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(.white)
-                Text(title)
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.white)
+        Button(action: {}) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 12) {
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                    Text(title)
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                }
+                .padding(.bottom, 8)
+                
+                VStack(spacing: 12) {
+                    content
+                }
+                .padding(24)
+                .background(Color.white.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             }
-            .padding(.bottom, 8)
-            
-            VStack(spacing: 12) {
-                content
-            }
-            .padding(24)
-            .glassSurface(cornerRadius: 24, strokeOpacity: 0.1)
+            .padding(20)
         }
+        .buttonStyle(.glassFocus(cornerRadius: 32))
     }
 }
 
