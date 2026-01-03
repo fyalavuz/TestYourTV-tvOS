@@ -86,12 +86,12 @@ struct TextClarityView: View {
                 ControlPanelDock(title: "Text Clarity", isMinimized: $isMinimized, controlsHidden: controlsHidden) {
                     VStack(alignment: .leading, spacing: 16) {
                         SectionHeader(title: "Comparison Mode")
-                        ToggleRow(title: "Split Screen (Chroma Check)", isOn: showComparison) {
+                        ToggleRow(title: "Split Screen View", isOn: showComparison) {
                             showComparison.toggle()
                         }
                         
                         if showComparison {
-                            Text("Left: Standard | Right: Red on Blue (Tests 4:4:4 capability)")
+                            Text("Side-by-side pattern comparison.")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }

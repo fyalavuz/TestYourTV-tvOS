@@ -174,15 +174,6 @@ struct HomeHubView: View {
             ]
         ),
         MenuSection(
-            id: "video-tests",
-            title: "Reference Videos",
-            subtitle: "High-quality samples for display and motion testing.",
-            items: [
-                MenuOption(title: "Big Buck Bunny", icon: "play.tv.fill", color: .green, destination: .videoBunny, thumbnailURL: VideoData.bunny.thumbnailURL),
-                MenuOption(title: "Tears of Steel", icon: "film.fill", color: .purple, destination: .videoTears, thumbnailURL: VideoData.tears.thumbnailURL)
-            ]
-        ),
-        MenuSection(
             id: "utilities",
             title: "System & Utilities",
             subtitle: "Diagnostics, input testing, and panel maintenance.",
