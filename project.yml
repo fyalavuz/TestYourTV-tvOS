@@ -23,3 +23,9 @@ targets:
       GENERATE_INFOPLIST_FILE: YES
       INFOPLIST_KEY_CFBundleDisplayName: "Test Your TV"
       INFOPLIST_KEY_CFBundleName: "Test Your TV"
+      MARKETING_VERSION: 1.0.0
+      CURRENT_PROJECT_VERSION: 1
+      INFOPLIST_KEY_GCSupportedGameControllers:
+        - ProfileName: ExtendedGamepad
+        - ProfileName: MicroGamepad
+      INFOPLIST_KEY_GCSupportsControllerUserInteraction: YES

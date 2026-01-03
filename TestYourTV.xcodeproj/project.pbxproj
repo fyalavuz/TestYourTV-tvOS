@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -74,9 +74,10 @@
 		5ABCA9879C2EF0BE7208D3F4 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		5D72B14C2383F908CE51FC51 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5F53D9E22F1C79BD81E0A6FC /* BrightnessTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessTestView.swift; sourceTree = "<group>"; };
-		6A18FE0A7FED7E16ADA034DC /* TestYourTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TestYourTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A18FE0A7FED7E16ADA034DC /* TestYourTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestYourTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F06EB798C4AFE4276E59FB5 /* UniformityTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformityTestView.swift; sourceTree = "<group>"; };
 		706F08F23F4F8B11A4AFD038 /* MotionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTestView.swift; sourceTree = "<group>"; };
+		719968482F09337F0097D301 /* TestYourTV-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "TestYourTV-Info.plist"; sourceTree = "<group>"; };
 		7787471A5E9D7E838E34FBB3 /* OverscanTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverscanTestView.swift; sourceTree = "<group>"; };
 		79D451E864BA2CE4E37F29C1 /* LatticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatticeView.swift; sourceTree = "<group>"; };
 		7B030BA5C14342DD0A2773CE /* ContrastTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastTestView.swift; sourceTree = "<group>"; };
@@ -163,6 +164,7 @@
 		1A1003B0D78545DE96B31CBD = {
 			isa = PBXGroup;
 			children = (
+				719968482F09337F0097D301 /* TestYourTV-Info.plist */,
 				B1E80FFE6D2558F486FEF657 /* Patterns */,
 				5C94A54E788FBA16725EB765 /* Resources */,
 				14D1350CCCC03FD94414C482 /* Sources */,
@@ -240,7 +242,6 @@
 			);
 			mainGroup = 1A1003B0D78545DE96B31CBD;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -323,15 +324,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VAW6FMKNP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TestYourTV-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Test Your TV";
 				INFOPLIST_KEY_CFBundleName = "Test Your TV";
+				INFOPLIST_KEY_GCSupportedGameControllers = "{\n    ProfileName = ExtendedGamepad;\n} {\n    ProfileName = MicroGamepad;\n}";
+				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -344,15 +350,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VAW6FMKNP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TestYourTV-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Test Your TV";
 				INFOPLIST_KEY_CFBundleName = "Test Your TV";
+				INFOPLIST_KEY_GCSupportedGameControllers = "{\n    ProfileName = ExtendedGamepad;\n} {\n    ProfileName = MicroGamepad;\n}";
+				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.firat.TestYourTV;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
