@@ -2,21 +2,20 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("hasLaunched") private var hasLaunched = false
-    @State private var showOnboarding = false
 
     var body: some View {
-        NavigationStack {
-            HomeHubView()
-        }
-        .overlay {
-            if !hasLaunched {
+        ZStack {
+            if hasLaunched {
+                NavigationStack {
+                    HomeHubView()
+                }
+            } else {
                 OnboardingView(onComplete: {
-                    withAnimation {
+                    withAnimation(.easeOut(duration: 0.25)) {
                         hasLaunched = true
                     }
                 })
                 .transition(.opacity)
-                .zIndex(100)
             }
         }
     }
